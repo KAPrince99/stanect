@@ -1,13 +1,15 @@
 "use client";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { motion } from "motion/react";
 import Image from "next/image";
+import { Button } from "./button";
 
 export default function Pill() {
   return (
     <motion.div
       className="
         h-12 sm:h-14
-        w-[95%] sm:w-[700px]
+        w-[98%] sm:w-[700px]
         bg-gray-200/10
         rounded-2xl
         flex justify-between items-center
@@ -40,7 +42,14 @@ export default function Pill() {
 
       {/* Right — Profile */}
       <div className="text-gray-500 text-sm sm:text-base font-medium hover:text-gray-200 transition-colors">
-        Profile
+        <SignedOut>
+          <SignInButton>
+            <Button>Login</Button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
     </motion.div>
   );

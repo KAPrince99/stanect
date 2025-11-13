@@ -1,8 +1,11 @@
 import CompanionCard from "@/components/ui/companionCard";
 import { mockData } from "@/mock/data";
-import React from "react";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const { userId } = await auth();
+  if (!userId) redirect("/login");
   return (
     <main className="mt-15 px-4 sm:px-6 md:px-10">
       {/* <div className="mb-4 text-lg font-semibold text-gray-700">Tabs</div> */}

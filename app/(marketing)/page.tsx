@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
-export default function Homepage() {
+export default async function Homepage() {
   return (
     <div className="flex items-center justify-center gap-2">
       <Image

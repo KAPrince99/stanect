@@ -10,7 +10,7 @@ export default function Navbar() {
       transition={{ type: "spring", stiffness: 120, damping: 15 }}
       className="
         grid place-items-center
-        sticky top-0 z-[100]
+        sticky top-0 z-100
         bg-gray-100/0 backdrop-blur-md 
         
         
