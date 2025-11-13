@@ -8,15 +8,15 @@ export default function Pill() {
   return (
     <motion.div
       className="
-        h-12 sm:h-14
+        h-10 sm:h-12
         w-[98%] sm:w-[700px]
-        bg-gray-200/10
+        bg-stone-200
         rounded-2xl
         flex justify-between items-center
         px-4
-        mt-3 mb-[-50px]
-        backdrop-blur-md
-        cursor-pointer
+        
+        
+     
         transition-all duration-300 
       "
       animate={{ scale: 1 }}

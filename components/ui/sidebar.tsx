@@ -6,12 +6,13 @@ import LordIcon from "./lordIcon";
 
 const icons = [
   { src: "https://cdn.lordicon.com/pgirtdfe.json", id: 1, href: "/dashboard" },
-  { src: "https://cdn.lordicon.com/ueoydrft.json", id: 2, href: "/new" },
+  { src: "https://cdn.lordicon.com/ytklkgsc.json", id: 2, href: "/pricing" },
+  { src: "https://cdn.lordicon.com/ueoydrft.json", id: 3, href: "/new" },
 ];
 
 export default function Sidebar() {
   return (
-    <aside className="w-[150px] hidden sm:block overflow-y-auto">
+    <aside className="w-[150px] hidden sm:block overflow-y-auto z-200 ">
       <div className="flex justify-center items-start mt-4">
         <Link href="/">
           <Image src="/logo/logo.svg" alt="logo" height={35} width={35} />
@@ -19,7 +20,7 @@ export default function Sidebar() {
       </div>
       <div className="flex justify-center items-start my-7">
         <motion.div
-          className=" bg-gray-100/10 backdrop-blur-md hover:bg-gray-100 w-15 h-30  rounded-4xl flex flex-col justify-start items-center gap-y-2 pt-3 shadow-lg"
+          className=" bg-stone-200 backdrop-blur-md hover:bg-gray-100 w-15 h-40  rounded-4xl flex flex-col justify-start items-center gap-y-2 pt-3 shadow-lg"
           animate={{ scale: 1 }}
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 1, type: "spring", stiffness: 200 }}
@@ -27,7 +28,7 @@ export default function Sidebar() {
           {icons.map((icon) => (
             <motion.div
               key={icon.id}
-              className="w-10 h-10 bg-white grid place-items-center rounded-full cursor-pointer"
+              className="w-10 h-10 bg-white grid place-items-center rounded-full cursor-pointer hover:bg-gray-900/10"
               animate={{ scale: 1 }}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 1.3 }}

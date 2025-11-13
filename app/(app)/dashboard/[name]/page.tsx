@@ -6,5 +6,5 @@ export default async function page({
   params: Promise<{ name: string }>;
 }) {
   const { name } = await params;
-  return <div>{name}</div>;
+  return <div className=" mt-15 sm:mt-20">{name}</div>;
 }
