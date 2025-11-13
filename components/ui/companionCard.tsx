@@ -5,8 +5,8 @@ import { MockDataPrps } from "@/mock/data";
 
 export default function CompanionCard({ mock }: { mock: MockDataPrps }) {
   return (
-    <div className="w-full max-w-xs sm:max-w-sm md:max-w-md bg-white shadow-md rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
-      <div className="relative aspect-square">
+    <>
+      <div className="w-full max-w-[300px] aspect-square relative">
         <Image
           src={mock.image!}
           alt={mock.name}
@@ -23,6 +23,6 @@ export default function CompanionCard({ mock }: { mock: MockDataPrps }) {
         </div>
         <Button className="w-full">Let&apos;s Talk</Button>
       </div>
-    </div>
+    </>
   );
 }

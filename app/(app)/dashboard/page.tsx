@@ -1,6 +1,7 @@
 import CompanionCard from "@/components/ui/companionCard";
 import { mockData } from "@/mock/data";
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function Dashboard() {
@@ -23,7 +24,13 @@ export default async function Dashboard() {
   "
       >
         {mockData.map((mock) => (
-          <CompanionCard key={mock.name} mock={mock} />
+          <Link
+            href={`/dashboard/${mock.name}`}
+            key={mock.name}
+            className="w-full max-w-xs sm:max-w-sm md:max-w-md bg-white shadow-md rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
+          >
+            <CompanionCard key={mock.name} mock={mock} />
+          </Link>
         ))}
       </div>
     </main>
