@@ -14,7 +14,7 @@ export default async function Homepage() {
         {/* <h1 className="text-5xl font-semibold text-gray-600 ">Stanect</h1> */}
         <Link href="/dashboard">
           <button className="bg-blue-400 p-2 rounded-md text-white cursor-pointer">
-            Get Started
+            App
           </button>
         </Link>
       </div>
