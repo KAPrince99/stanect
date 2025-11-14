@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function CompanionCard({ mock }: { mock: MockDataPrps }) {
   return (
-    <main className="w-full max-w-xs sm:max-w-sm md:max-w-md bg-stone-200 shadow-sm  overflow-hidden transition-all duration-300 hover:shadow-lg  p-1 mt-2 sm:mt-5 rounded-2xl">
+    <main className="w-full max-w-xs sm:max-w-sm md:max-w-md bg-stone-100 shadow-sm  overflow-hidden transition-all duration-300 hover:shadow-lg  p-1 mt-2 sm:mt-5 rounded-2xl">
       <div className="w-full max-w-[320px] aspect-square relative ">
         <Image
           src={mock.image!}
