@@ -29,7 +29,7 @@ function DockIcon({ icon }: { icon: IconsProps }) {
 
   return (
     <motion.div
-      className="w-8 h-8 bg-white rounded-full grid place-items-center"
+      className="w-10 h-10 bg-white rounded-full grid place-items-center"
       animate={controls}
       transition={{ type: "spring", stiffness: 300, damping: 15 }}
       onPointerDown={startPress}
@@ -43,8 +43,8 @@ function DockIcon({ icon }: { icon: IconsProps }) {
           trigger="loop"
           state="hover-pinch"
           colors="primary:#121331,secondary:#4bb3fd,tertiary:#4bb3fd,quaternary:#4bb3fd,quinary:#3a3347,senary:#646e78,septenary:#ebe6ef"
-          width={20}
-          height={20}
+          width={30}
+          height={30}
         />
       </Link>
     </motion.div>
@@ -53,7 +53,7 @@ function DockIcon({ icon }: { icon: IconsProps }) {
 
 export default function MobileDock({ icons }: { icons: IconsProps[] }) {
   return (
-    <div className="bg-stone-200 w-32 h-10 rounded-4xl flex justify-start items-center space-x-2 pl-2 fixed z-100 bottom-2 left-[34%] sm:hidden">
+    <div className="bg-stone-200 w-36 h-13 rounded-4xl flex justify-start items-center space-x-2 px-2 fixed z-100 bottom-6 left-[34%] sm:hidden">
       {icons.map((icon) => (
         <DockIcon key={icon.id} icon={icon} />
       ))}
