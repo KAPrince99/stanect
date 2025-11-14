@@ -53,7 +53,7 @@ function DockIcon({ icon }: { icon: IconsProps }) {
 
 export default function MobileDock({ icons }: { icons: IconsProps[] }) {
   return (
-    <div className="bg-stone-200 w-32 h-10 rounded-4xl flex justify-start items-center space-x-2 pl-2 fixed z-100 bottom-2 left-[34%]">
+    <div className="bg-stone-200 w-32 h-10 rounded-4xl flex justify-start items-center space-x-2 pl-2 fixed z-100 bottom-2 left-[34% sm:hidden">
       {icons.map((icon) => (
         <DockIcon key={icon.id} icon={icon} />
       ))}
