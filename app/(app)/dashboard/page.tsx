@@ -12,10 +12,11 @@ export default async function Dashboard() {
       <div
         className="
     grid
-    sm:grid-cols-2
+    grid-cols-2
     md:grid-cols-3
     lg:grid-cols-4
-    gap-4
+    gap-2
+    md:gap-4
     sm:gap-6
     place-items-center
   "
