@@ -68,7 +68,7 @@ export default function AvatarForm({
         </CardHeader>
         <CardContent>
           <form>
-            <div className="lg:hidden mt-4 mb-4">
+            <div className=" mt-4 mb-4">
               <p className="text-card-foreground text-[14px] font-medium">
                 Avatar
               </p>
