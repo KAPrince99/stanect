@@ -58,16 +58,16 @@ function DrawerContent({
         className={cn(
           "group/drawer-content bg-background fixed z-50 flex h-auto flex-col",
 
-          // TOP drawer (50% height)
+          // TOP drawer (90% height)
           "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[50vh] data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=top]:border-b",
 
           // BOTTOM drawer (90% height)
           "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[90vh] data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=bottom]:border-t",
 
-          // RIGHT drawer (50% width)
+          // RIGHT drawer (90% width)
           "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-1/2 data-[vaul-drawer-direction=right]:border-l",
 
-          // LEFT drawer (50% width)
+          // LEFT drawer (90% width)
           "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-1/2 data-[vaul-drawer-direction=left]:border-r",
 
           className
