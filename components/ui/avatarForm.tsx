@@ -22,6 +22,8 @@ import {
 } from "./select";
 import { Button } from "./button";
 import { DrawerDemo } from "./drawerDemo";
+import LordIcon from "./lordIcon";
+import { useState } from "react";
 
 const formSchema = z.object({
   avatar: z.string().min(1, "avatar is required"),
@@ -39,6 +41,7 @@ export default function AvatarForm({
 }: {
   urlSelected: string | null;
 }) {
+  const [showAnimation, setShowAnimation] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,11 +68,44 @@ export default function AvatarForm({
         </CardHeader>
         <CardContent>
           <form>
-            <Input
-              type="hidden"
-              name="avatar"
-              value={urlSelected !== null ? String(urlSelected) : ""}
-            />
+            <div className="lg:hidden mt-4 mb-4">
+              <p className="text-card-foreground text-[14px] font-medium">
+                Avatar
+              </p>
+              <div className="flex gap-2  items-center">
+                <DrawerDemo setShowAnimation={setShowAnimation} />
+                {showAnimation && (
+                  <LordIcon
+                    src="https://cdn.lordicon.com/amtdygnu.json"
+                    trigger="loop"
+                    state="hover-pinch"
+                    colors="primary:#16c72e,secondary:#16c72e"
+                    width={40}
+                    height={40}
+                  />
+                )}
+              </div>
+            </div>
+            <FieldGroup>
+              <Controller
+                name="name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <Input
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      type="hidden"
+                      name="avatar"
+                      value={urlSelected !== null ? String(urlSelected) : ""}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </FieldGroup>
 
             <FieldGroup>
               <Controller
@@ -201,9 +237,6 @@ export default function AvatarForm({
                 )}
               />
             </FieldGroup>
-            <div className="lg:hidden mt-4">
-              <DrawerDemo />
-            </div>
 
             <Button type="submit" className="w-full cursor-pointer mt-2">
               Create Companion

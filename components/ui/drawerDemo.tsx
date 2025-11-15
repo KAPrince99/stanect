@@ -1,9 +1,5 @@
 "use client";
 
-import * as React from "react";
-import { Minus, Plus } from "lucide-react";
-import { Bar, BarChart, ResponsiveContainer } from "recharts";
-
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -15,119 +11,92 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { mockData } from "@/mock/data";
+import Image from "next/image";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
 
-const data = [
-  {
-    goal: 400,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 239,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 349,
-  },
-];
+export function DrawerDemo({
+  setShowAnimation,
+}: {
+  setShowAnimation: (showAnimation: boolean) => void;
+}) {
+  const router = useRouter();
+  const params = useSearchParams();
+  // const urlSelected = params.get("selectedAvatar");
 
-export function DrawerDemo() {
-  const [goal, setGoal] = React.useState(350);
-
-  function onClick(adjustment: number) {
-    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
-  }
-
+  const [selected, setSelected] = useState<string | null>(null);
+  const [finalSelect, setFinalSelect] = useState(false);
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline">Open Drawer</Button>
+        <Button className="bg-[#0072c3] cursor-pointer">Choose Avatar</Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
-            <DrawerTitle>Move Goal</DrawerTitle>
-            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+            <DrawerTitle className="text-xl">Select Avatar</DrawerTitle>
+            <DrawerDescription>
+              Image would represent your Companion
+            </DrawerDescription>
           </DrawerHeader>
-          <div className="p-4 pb-0">
-            <div className="flex items-center justify-center space-x-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
-                onClick={() => onClick(-10)}
-                disabled={goal <= 200}
-              >
-                <Minus />
-                <span className="sr-only">Decrease</span>
-              </Button>
-              <div className="flex-1 text-center">
-                <div className="text-7xl font-bold tracking-tighter">
-                  {goal}
-                </div>
-                <div className="text-muted-foreground text-[0.70rem] uppercase">
-                  Calories/day
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
-                onClick={() => onClick(10)}
-                disabled={goal >= 400}
-              >
-                <Plus />
-                <span className="sr-only">Increase</span>
-              </Button>
-            </div>
-            <div className="mt-3 h-[120px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data}>
-                  <Bar
-                    dataKey="goal"
-                    style={
-                      {
-                        fill: "hsl(var(--foreground))",
-                        opacity: 0.9,
-                      } as React.CSSProperties
-                    }
+          <section className="bg-stone-100 grid grid-cols-4 gap-2 ">
+            {mockData.map((data) => {
+              const isSelected = selected === data.image;
+
+              return (
+                <div
+                  key={data.name}
+                  onClick={() => !finalSelect && setSelected(data.image)}
+                  className={`
+                        relative aspect-square w-20  overflow-hidden cursor-pointer rounded-md
+                        border-6 transition-all
+                        ${
+                          isSelected ? " border-black" : " border-transparent"
+                        } ${
+                    finalSelect && !isSelected ? "border-transparent" : ""
+                  }
+                      `}
+                >
+                  <Image
+                    src={data.image}
+                    alt={data.name}
+                    fill
+                    className="object-cover"
+                    priority
                   />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+                </div>
+              );
+            })}
+          </section>
+
           <DrawerFooter>
-            <Button>Submit</Button>
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button
+                disabled={finalSelect || selected === null}
+                className="cursor-pointer"
+                onClick={() => {
+                  setFinalSelect(true);
+                  setShowAnimation(true);
+                  router.push(`?selectedAvatar=${selected}`);
+                }}
+              >
+                Submit
+              </Button>
             </DrawerClose>
+
+            <Button
+              variant="outline"
+              className={`cursor-pointer ${
+                finalSelect ? "bg-black text-white" : ""
+              }`}
+              disabled={!finalSelect}
+              onClick={() => {
+                setFinalSelect(false);
+              }}
+            >
+              Undo
+            </Button>
           </DrawerFooter>
         </div>
       </DrawerContent>
