@@ -1,5 +1,14 @@
-import React from "react";
+import CreateCompanion from "@/components/ui/createCompanion";
+import { Suspense } from "react";
 
 export default function page() {
-  return <div className="mt-15 sm:mt-20">New Companion</div>;
+  return (
+    <main className="min-h-screen py-20">
+      <div className="px-2 md:px-6 lg:px-8 ">
+        <Suspense fallback={<div>Loading...</div>}>
+          <CreateCompanion />
+        </Suspense>
+      </div>
+    </main>
+  );
 }

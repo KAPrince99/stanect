@@ -1,6 +1,5 @@
 import CompanionCard from "@/components/ui/companionCard";
 import MobileDock from "@/components/ui/mobileDock";
-import NavPill from "@/components/ui/navPill";
 import { mockData } from "@/mock/data";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
