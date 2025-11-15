@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "./select";
 import { Button } from "./button";
+import { DrawerDemo } from "./drawerDemo";
 
 const formSchema = z.object({
   avatar: z.string().min(1, "avatar is required"),
@@ -200,6 +201,10 @@ export default function AvatarForm({
                 )}
               />
             </FieldGroup>
+            <div className="lg:hidden mt-4">
+              <DrawerDemo />
+            </div>
+
             <Button type="submit" className="w-full cursor-pointer mt-2">
               Create Companion
             </Button>
