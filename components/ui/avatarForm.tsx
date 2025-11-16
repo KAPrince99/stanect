@@ -33,6 +33,8 @@ import {
 
 import { AvatarProps, CreateCompanionProps } from "@/types/types";
 import { createCompanion } from "@/app/(app)/actions/actions";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 // ----------------------
 //     ZOD SCHEMA
@@ -78,7 +80,8 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const result = await createCompanion(values);
 
-    if (result) {
+    if (result.success) {
+      toast.success(result.message, { className: "bg-[#0072c3] text-white" });
       redirect("/dashboard");
     } else {
       console.log("Failed to create companion");
@@ -222,8 +225,16 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
             </FieldGroup>
 
             {/* Submit */}
-            <Button type="submit" className="w-full cursor-pointer mt-2">
-              Create Companion
+            <Button
+              type="submit"
+              className="w-full cursor-pointer mt-2"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "create Companion"
+              )}
             </Button>
           </form>
         </CardContent>

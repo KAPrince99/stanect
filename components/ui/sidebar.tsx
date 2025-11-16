@@ -26,7 +26,7 @@ export default function Sidebar() {
       </div>
       <div className="flex justify-center items-start my-7">
         <motion.div
-          className=" bg-stone-200 backdrop-blur-md hover:bg-gray-100 w-15 h-40  rounded-4xl flex flex-col justify-start items-center gap-y-2 pt-3 shadow-lg"
+          className=" bg-stone-100 backdrop-blur-md hover:bg-gray-100 w-15 h-40  rounded-4xl flex flex-col justify-start items-center gap-y-2 pt-3 shadow-xl border border-stone-200"
           animate={{ scale: 1 }}
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 1, type: "spring", stiffness: 200 }}
@@ -34,7 +34,7 @@ export default function Sidebar() {
           {icons.map((icon) => (
             <motion.div
               key={icon.id}
-              className="w-10 h-10 bg-white grid place-items-center rounded-full cursor-pointer hover:bg-gray-900/10"
+              className="w-10 h-10 bg-stone-100 grid place-items-center rounded-full cursor-pointer hover:bg-gray-900/10"
               animate={{ scale: 1 }}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 1.3 }}

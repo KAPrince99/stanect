@@ -2,6 +2,8 @@
 import { createSupabaseClient } from "@/lib/supabase";
 import { AvatarProps, CreateCompanionProps } from "@/types/types";
 import { auth } from "@clerk/nextjs/server";
+import { toast } from "sonner";
+import { success } from "zod";
 
 export async function getAvatars(): Promise<AvatarProps[]> {
   const supabase = createSupabaseClient();
@@ -33,5 +35,9 @@ export async function createCompanion(formData: CreateCompanionProps) {
     throw new Error(error?.message || "Failed to create a companion");
   console.log("DATA HERE:", data);
 
-  return data;
+  return {
+    success: true,
+    message: "Companion created successfully 🎉",
+    data,
+  };
 }

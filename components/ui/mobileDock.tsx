@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import LordIcon from "./lordIcon";
 
+
 interface IconsProps {
   src: string;
   id: number;
@@ -12,6 +13,7 @@ interface IconsProps {
 }
 
 function DockIcon({ icon }: { icon: IconsProps }) {
+ 
   const controls = useAnimation();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -29,7 +31,7 @@ function DockIcon({ icon }: { icon: IconsProps }) {
 
   return (
     <motion.div
-      className="w-10 h-10 bg-white rounded-full grid place-items-center"
+      className="w-10 h-10 bg-stone-100 rounded-full grid place-items-center"
       animate={controls}
       transition={{ type: "spring", stiffness: 300, damping: 15 }}
       onPointerDown={startPress}
@@ -53,7 +55,7 @@ function DockIcon({ icon }: { icon: IconsProps }) {
 
 export default function MobileDock({ icons }: { icons: IconsProps[] }) {
   return (
-    <div className="bg-stone-200 w-36 h-13 rounded-4xl flex justify-start items-center space-x-2 px-2 fixed z-100 bottom-6 left-[34%] sm:hidden">
+    <div className="bg-stone-100 w-36 h-13 rounded-4xl flex justify-start items-center space-x-2 px-2 fixed z-100 bottom-6 left-[34%] sm:hidden  border-2 shadow-xl">
       {icons.map((icon) => (
         <DockIcon key={icon.id} icon={icon} />
       ))}
