@@ -1,8 +1,8 @@
-"use client";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { Button } from "./button";
+import UploadButton from "./uploadButton";
 
 export default function Pill() {
   return (
@@ -27,6 +27,7 @@ export default function Pill() {
       <div className="tracking-wide text-gray-500 font-medium hidden sm:block">
         Stanect
       </div>
+      <UploadButton />
 
       {/* Center — Logo (mobile only) */}
       <div className="flex justify-center items-center sm:hidden">
@@ -36,7 +37,6 @@ export default function Pill() {
           height={32}
           width={32}
           className="transition-transform duration-300 hover:scale-105"
-          priority
         />
       </div>
 

@@ -15,7 +15,13 @@ export default function Sidebar() {
     <aside className="w-[150px] hidden sm:block overflow-y-auto z-200 ">
       <div className="flex justify-center items-start mt-4">
         <Link href="/">
-          <Image src="/logo/logo.svg" alt="logo" height={35} width={35} />
+          <Image
+            src="/logo/logo.svg"
+            alt="logo"
+            height={35}
+            width={35}
+            loading="eager"
+          />
         </Link>
       </div>
       <div className="flex justify-center items-start my-7">

@@ -1,5 +1,4 @@
 "use client";
-
 import Pill from "./pill";
 import { motion } from "motion/react";
 

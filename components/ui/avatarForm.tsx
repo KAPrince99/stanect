@@ -1,16 +1,18 @@
 "use client";
+
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useSearchParams, redirect } from "next/navigation";
+
 import { Input } from "./input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./card";
+import { Button } from "./button";
+import { DrawerDemo } from "./drawerDemo";
+import LordIcon from "./lordIcon";
+
 import { Field, FieldError, FieldGroup, FieldLabel } from "./field";
+
 import {
   Select,
   SelectContent,
@@ -20,60 +22,96 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./select";
-import { Button } from "./button";
-import { DrawerDemo } from "./drawerDemo";
-import LordIcon from "./lordIcon";
-import { useState } from "react";
 
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "./card";
+
+import { AvatarProps, CreateCompanionProps } from "@/types/types";
+import { createCompanion } from "@/app/(app)/actions/actions";
+
+// ----------------------
+//     ZOD SCHEMA
+// ----------------------
 const formSchema = z.object({
-  avatar: z.string().min(1, "avatar is required"),
-  name: z.string().min(1, "companion is required"),
-  venue: z.string().min(1, "venue is required"),
+  avatar_id: z.string().min(1, "Select an avatar"),
+  name: z.string().min(1, "Companion name is required"),
+  venue: z.string().min(1, "Venue is required"),
   voice: z.string().min(1, "Voice is required"),
   style: z.string().min(1, "Style is required"),
-  duration: z.coerce.number().min(1, {
-    message: "Duration must be at least 1",
-  }),
+  duration: z.string().min(1, "Minimum duration is 1 minute"),
 });
 
-export default function AvatarForm({
-  urlSelected,
-}: {
-  urlSelected: string | null;
-}) {
+interface AvatarFormProps {
+  avatars: AvatarProps[];
+}
+
+export default function AvatarForm({ avatars }: AvatarFormProps) {
+  const params = useSearchParams();
+  const urlSelected = params.get("avatarId");
+
   const [showAnimation, setShowAnimation] = useState(false);
-  const form = useForm({
+
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      avatar: "",
+      avatar_id: "",
       name: "",
       venue: "",
       voice: "",
       style: "",
-      duration: 15,
+      duration: "15",
     },
   });
 
-  async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("Created SuccessFully");
+  // Sync avatarId from URL → form
+  useEffect(() => {
+    if (urlSelected) {
+      form.setValue("avatar_id", urlSelected);
+    }
+  }, [urlSelected, form]);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const result = await createCompanion(values);
+
+    if (result) {
+      redirect("/dashboard");
+    } else {
+      console.log("Failed to create companion");
+    }
   }
+
+  // ----------------------
+  //        UI
+  // ----------------------
   return (
     <main>
-      <Card className="bg-stone-100 ">
+      <Card className="bg-stone-100">
         <CardHeader>
           <CardTitle className="text-2xl">Companion Builder</CardTitle>
           <CardDescription>
             Populate your companion information below
           </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <form>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Mobile Avatar Picker */}
             <div className="lg:hidden mt-4 mb-4">
               <p className="text-card-foreground text-[14px] font-medium">
                 Avatar
               </p>
-              <div className="flex gap-2  items-center">
-                <DrawerDemo setShowAnimation={setShowAnimation} />
+
+              <div className="flex gap-2 items-center">
+                <DrawerDemo
+                  setShowAnimation={setShowAnimation}
+                  avatars={avatars}
+                />
+
                 {showAnimation && (
                   <LordIcon
                     src="https://cdn.lordicon.com/amtdygnu.json"
@@ -86,83 +124,42 @@ export default function AvatarForm({
                 )}
               </div>
             </div>
+
+            <Input type="hidden" {...form.register("avatar_id")} />
+            <FieldError errors={[form.formState.errors.avatar_id]} />
+
+            {/* Companion Name */}
             <FieldGroup>
-              <Controller
-                name="name"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <Input
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      type="hidden"
-                      name="avatar"
-                      value={urlSelected !== null ? String(urlSelected) : ""}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+              <Field>
+                <FieldLabel>Companion Name</FieldLabel>
+                <Input
+                  placeholder="Enter the companion name"
+                  {...form.register("name")}
+                />
+                <FieldError errors={[form.formState.errors.name]} />
+              </Field>
             </FieldGroup>
 
+            {/* Venue */}
             <FieldGroup>
-              <Controller
-                name="name"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Companion Name</FieldLabel>
-                    <Input
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Enter the companion name"
-                      autoComplete="name"
-                      className=""
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+              <Field>
+                <FieldLabel>Venue</FieldLabel>
+                <Input placeholder="Ex. Gym" {...form.register("venue")} />
+                <FieldError errors={[form.formState.errors.venue]} />
+              </Field>
             </FieldGroup>
+
+            {/* Voice (SELECT) */}
             <FieldGroup>
-              <Controller
-                name="venue"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Venue</FieldLabel>
-                    <Input
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Ex. Gym"
-                      autoComplete="venue"
-                      className=""
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-            <FieldGroup>
-              <Controller
-                name="voice"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Voice</FieldLabel>
-                    <Select
-                      aria-invalid={fieldState.invalid}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="">
+              <Field>
+                <FieldLabel>Voice</FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="voice"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
                         <SelectValue placeholder="Select the voice" />
                       </SelectTrigger>
                       <SelectContent>
@@ -173,71 +170,58 @@ export default function AvatarForm({
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+                  )}
+                />
+
+                <FieldError errors={[form.formState.errors.voice]} />
+              </Field>
             </FieldGroup>
+
+            {/* Style (SELECT) */}
             <FieldGroup>
-              <Controller
-                name="style"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Style</FieldLabel>
-                    <Select
-                      aria-invalid={fieldState.invalid}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="">
+              <Field>
+                <FieldLabel>Style</FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="style"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
                         <SelectValue placeholder="Select the style" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>style Types</SelectLabel>
+                          <SelectLabel>Style Types</SelectLabel>
                           <SelectItem value="formal">Formal</SelectItem>
                           <SelectItem value="casual">Casual</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-            <FieldGroup>
-              <Controller
-                name="duration"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>
-                      Estimated session duration in minutes
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      value={
-                        field.value !== undefined ? Number(field.value) : ""
-                      }
-                      type="number"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="15"
-                      className="input"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+                  )}
+                />
+
+                <FieldError errors={[form.formState.errors.style]} />
+              </Field>
             </FieldGroup>
 
+            {/* Duration */}
+            <FieldGroup>
+              <Field>
+                <FieldLabel>Estimated session duration (minutes)</FieldLabel>
+
+                <Input
+                  type="text"
+                  min={1}
+                  placeholder="15"
+                  {...form.register("duration", { valueAsNumber: false })}
+                />
+
+                <FieldError errors={[form.formState.errors.duration]} />
+              </Field>
+            </FieldGroup>
+
+            {/* Submit */}
             <Button type="submit" className="w-full cursor-pointer mt-2">
               Create Companion
             </Button>

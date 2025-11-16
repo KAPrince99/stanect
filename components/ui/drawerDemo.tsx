@@ -12,21 +12,21 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { mockData } from "@/mock/data";
+import { AvatarProps } from "@/types/types";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function DrawerDemo({
-  setShowAnimation,
-}: {
+interface DrawerDemoProps {
   setShowAnimation: (showAnimation: boolean) => void;
-}) {
+  avatars: AvatarProps[];
+}
+
+export function DrawerDemo({ setShowAnimation, avatars }: DrawerDemoProps) {
   const router = useRouter();
-  const params = useSearchParams();
-  // const urlSelected = params.get("selectedAvatar");
 
   const [selected, setSelected] = useState<string | null>(null);
-  const [finalSelect, setFinalSelect] = useState(false);
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -41,28 +41,25 @@ export function DrawerDemo({
             </DrawerDescription>
           </DrawerHeader>
           <section className="bg-stone-100 grid grid-cols-4 gap-2 ">
-            {mockData.map((data) => {
-              const isSelected = selected === data.image;
+            {avatars.map((avatar) => {
+              const isSelected = selected === avatar.id;
 
               return (
                 <div
-                  key={data.name}
-                  onClick={() => !finalSelect && setSelected(data.image)}
+                  key={avatar.id}
+                  onClick={() => setSelected(avatar.id)}
                   className={`
                         relative aspect-square w-20  overflow-hidden cursor-pointer rounded-md
                         border-6 transition-all
-                        ${
-                          isSelected ? " border-black" : " border-transparent"
-                        } ${
-                    finalSelect && !isSelected ? "border-transparent" : ""
-                  }
+                        ${isSelected ? " border-black" : " border-transparent"} 
                       `}
                 >
                   <Image
-                    src={data.image}
-                    alt={data.name}
+                    src={avatar.image_url}
+                    alt={avatar.name}
                     fill
                     className="object-cover"
+                    sizes="(min-width: 1024px) 25vw, 100vw"
                     priority
                   />
                 </div>
@@ -73,19 +70,17 @@ export function DrawerDemo({
           <DrawerFooter>
             <DrawerClose asChild>
               <Button
-                disabled={finalSelect || selected === null}
                 className="cursor-pointer"
                 onClick={() => {
-                  setFinalSelect(true);
                   setShowAnimation(true);
-                  router.push(`?selectedAvatar=${selected}`);
+                  router.push(`?avatarId=${selected}`);
                 }}
               >
                 Submit
               </Button>
             </DrawerClose>
 
-            <Button
+            {/* <Button
               variant="outline"
               className={`cursor-pointer ${
                 finalSelect ? "bg-black text-white" : ""
@@ -96,7 +91,7 @@ export function DrawerDemo({
               }}
             >
               Undo
-            </Button>
+            </Button> */}
           </DrawerFooter>
         </div>
       </DrawerContent>

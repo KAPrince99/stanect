@@ -7,7 +7,7 @@ export interface MockDataPrps {
 export const mockData = [
   {
     image: "/avatars/avatar_1.jpg",
-    name: "Starcy Benson",
+    name: "avatar_one",
     location: "Restaurant",
     duration: "5",
   },
@@ -52,5 +52,40 @@ export const mockData = [
     name: "Bernard Doku",
     location: "Pizza Joint",
     duration: "20",
+  },
+];
+
+export const mockAvatars = [
+  {
+    image_url: "/avatars/avatar_1.jpg",
+    name: "avatar_one",
+  },
+  {
+    image_url: "/avatars/avatar_2.jpg",
+    name: "avatar_two",
+  },
+  {
+    image_url: "/avatars/avatar_3.jpg",
+    name: "avatar_three",
+  },
+  {
+    image_url: "/avatars/avatar_4.jpg",
+    name: "avatar_four",
+  },
+  {
+    image_url: "/avatars/avatar_5.jpg",
+    name: "avatar_five",
+  },
+  {
+    image_url: "/avatars/avatar_6.jpg",
+    name: "avatar_six",
+  },
+  {
+    image_url: "/avatars/avatar_7.jpg",
+    name: "avatar_seven",
+  },
+  {
+    image_url: "/avatars/avatar_8.jpg",
+    name: "avatar_eight",
   },
 ];

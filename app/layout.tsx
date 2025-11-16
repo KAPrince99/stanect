@@ -1,8 +1,9 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import QueryProvider from "./providers/queryProvider";
 import "./globals.css";
 
 export const metadata = {
-  title: "Tiny Voice",
+  title: "StaNect",
   description: "Your AI voice companion",
 };
 
@@ -13,8 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body>{children}</body>
+      <html lang="en" data-scroll-behavior="smooth">
+        <body>
+          <QueryProvider>{children}</QueryProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
