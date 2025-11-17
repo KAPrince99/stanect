@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import CompanionCardSkeleton from "./companionCardSkeleton";
 
 async function fetchCompanions(userId: string) {
   const data = getCompanions(userId);
@@ -33,7 +34,7 @@ export default function CompanionList({ userId }: { userId: string }) {
     enabled: !!userId,
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <CompanionCardSkeleton />;
   if (error) throw new Error(error.message);
 
   return (

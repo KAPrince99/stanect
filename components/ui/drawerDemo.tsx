@@ -37,7 +37,7 @@ export function DrawerDemo({ setShowAnimation, avatars }: DrawerDemoProps) {
           <DrawerHeader>
             <DrawerTitle className="text-xl">Select Avatar</DrawerTitle>
             <DrawerDescription>
-              Image would represent your Companion
+              Chosen Avatar Image would represent your Companion
             </DrawerDescription>
           </DrawerHeader>
           <section className="bg-stone-100 grid grid-cols-4 gap-2 ">

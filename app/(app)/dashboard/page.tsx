@@ -1,6 +1,8 @@
+import CompanionCardSkeleton from "@/components/ui/companionCardSkeleton";
 import CompanionList from "@/components/ui/companionList";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 export default async function Dashboard() {
   const { userId } = await auth();
   if (!userId) redirect("/login");
@@ -18,7 +20,9 @@ export default async function Dashboard() {
     
   "
     >
-      <CompanionList userId={userId} />
+      <Suspense fallback={<CompanionCardSkeleton />}>
+        <CompanionList userId={userId} />
+      </Suspense>
     </main>
   );
 }

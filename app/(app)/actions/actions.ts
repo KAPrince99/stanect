@@ -2,8 +2,6 @@
 import { createSupabaseClient } from "@/lib/supabase";
 import { AvatarProps, CreateCompanionProps } from "@/types/types";
 import { auth } from "@clerk/nextjs/server";
-import { toast } from "sonner";
-import { success } from "zod";
 
 export async function getAvatars(): Promise<AvatarProps[]> {
   const supabase = createSupabaseClient();
@@ -39,5 +37,15 @@ export async function createCompanion(formData: CreateCompanionProps) {
     success: true,
     message: "Companion created successfully 🎉",
     data,
+  };
+}
+
+export async function deleteCompanion(id: string) {
+  const supbase = createSupabaseClient();
+  const { error } = await supbase.from("companions").delete().eq("id", id);
+  if (error) throw new Error("Failed to delete companion");
+  return {
+    success: true,
+    message: "Companion deleted successfully🎉",
   };
 }

@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { Button } from "./button";
 import UploadButton from "./uploadButton";
+import Link from "next/link";
 
 export default function Pill() {
   return (
@@ -23,14 +24,12 @@ export default function Pill() {
       whileHover={{ scale: 1.04 }}
       transition={{ duration: 0.1 }}
     >
-      {/* Left — Brand name (hidden on mobile) */}
       <div className="tracking-wide text-gray-500 font-medium hidden sm:block">
         Stanect
       </div>
       <UploadButton />
 
-      {/* Center — Logo (mobile only) */}
-      <div className="flex justify-center items-center sm:hidden">
+      <Link href="/" className="flex justify-center items-center sm:hidden">
         <Image
           src="/logo/logo.svg"
           alt="Stanect logo"
@@ -38,9 +37,8 @@ export default function Pill() {
           width={32}
           className="transition-transform duration-300 hover:scale-105"
         />
-      </div>
+      </Link>
 
-      {/* Right — Profile */}
       <div className="text-gray-500 text-sm sm:text-base font-medium hover:text-gray-200 transition-colors">
         <SignedOut>
           <SignInButton>

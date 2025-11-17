@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { AvatarProps } from "@/types/types";
+import { Card, CardDescription, CardHeader, CardTitle } from "./card";
 
 export default function DesktopAvatarSelection({
   avatars,
@@ -24,33 +25,41 @@ export default function DesktopAvatarSelection({
 
   return (
     <main className="hidden lg:block">
-      <section className="bg-stone-100 grid grid-cols-4 gap-2 ">
-        {avatars.map((avatar) => {
-          const isSelected = selected === avatar.id;
+      <Card className="bg-stone-100">
+        <CardHeader>
+          <CardTitle className="text-2xl">Select Avatar</CardTitle>
+          <CardDescription>
+            Chosen Avatar Image would represent your Companion
+          </CardDescription>
+        </CardHeader>
+        <section className="bg-stone-100 grid grid-cols-4 gap-2 ">
+          {avatars?.map((avatar) => {
+            const isSelected = selected === avatar.id;
 
-          return (
-            <div
-              role="button"
-              key={avatar.id}
-              onClick={() => setSelected(avatar.id)}
-              className={`
+            return (
+              <div
+                role="button"
+                key={avatar.id}
+                onClick={() => setSelected(avatar.id)}
+                className={`
               relative aspect-square w-30  overflow-hidden cursor-pointer rounded-md
               border-6 transition-all
               ${isSelected ? " border-black" : " border-transparent"}
             `}
-            >
-              <Image
-                src={avatar.image_url!}
-                alt={avatar.name}
-                fill
-                className="object-cover"
-                sizes="(min-width: 1024px) 25vw, 100vw"
-                priority
-              />
-            </div>
-          );
-        })}
-      </section>
+              >
+                <Image
+                  src={avatar.image_url!}
+                  alt={avatar.name}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 25vw, 100vw"
+                  priority
+                />
+              </div>
+            );
+          })}
+        </section>
+      </Card>
     </main>
   );
 }

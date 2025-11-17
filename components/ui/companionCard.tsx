@@ -9,7 +9,7 @@ export default function CompanionCard({
   companion: CompanionProps;
 }) {
   return (
-    <main
+    <article
       className="
     w-full
     bg-stone-100 shadow-sm
@@ -27,6 +27,9 @@ export default function CompanionCard({
           sizes="(max-width: 768px) 100vw, 300px"
           loading="eager"
         />
+        <p className="bg-black text-stone-100 absolute top-2 left-2 rounded px-2 text-sm">
+          {companion.duration} mins
+        </p>
       </div>
 
       <div className="p-4 flex flex-col gap-2 text-center">
@@ -37,7 +40,7 @@ export default function CompanionCard({
           <p className="text-sm text-gray-500">{companion.venue}</p>
         </div>
 
-        <Link href={`/dashboard/${companion.name}`}>
+        <Link href={`/dashboard/${companion.id}`}>
           <Button
             className="
           w-full cursor-pointer
@@ -53,6 +56,6 @@ export default function CompanionCard({
           </Button>
         </Link>
       </div>
-    </main>
+    </article>
   );
 }

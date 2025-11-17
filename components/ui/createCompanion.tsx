@@ -3,6 +3,7 @@ import DesktopAvatarSelection from "./desktopAvatarSelection";
 import AvatarForm from "./avatarForm";
 import { useQuery } from "@tanstack/react-query";
 import { getAvatars } from "@/app/(app)/actions/actions";
+import CreateComponentSkeleton from "./createComponentSkeleton";
 
 export default function CreateCompanion() {
   const {
@@ -14,8 +15,8 @@ export default function CreateCompanion() {
     queryFn: getAvatars,
   });
 
-  if (error) throw new Error(error.message);
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <CreateComponentSkeleton />;
+  if (error) throw new Error("Error loading avatars");
 
   return (
     <main className="grid grid-cols-1 lg:grid-cols-2 gap-1 sm:gap-7 xl:gap-1 min-h-screen ">
