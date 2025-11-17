@@ -31,6 +31,9 @@ export default function CompanionList({ userId }: { userId: string }) {
   } = useQuery({
     queryKey: ["companions", userId],
     queryFn: () => fetchCompanions(userId),
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
     enabled: !!userId,
   });
 
