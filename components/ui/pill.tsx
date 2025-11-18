@@ -10,7 +10,7 @@ export default function Pill() {
     <motion.div
       className="
         h-10 sm:h-12
-        w-[98%] sm:w-[700px]
+        w-[98%] sm:w-[420px] md:w-[500px] lg:w-[700px]
         bg-stone-200
         rounded-2xl
         flex justify-between items-center

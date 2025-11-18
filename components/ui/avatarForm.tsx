@@ -126,7 +126,7 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="lg:hidden mt-4 mb-4">
               <p className="text-card-foreground text-[14px] font-medium">
                 Avatar

@@ -32,7 +32,7 @@ export default function DesktopAvatarSelection({
             Chosen Avatar Image would represent your Companion
           </CardDescription>
         </CardHeader>
-        <section className="bg-stone-100 grid grid-cols-4 gap-2 ">
+        <section className="bg-stone-100 grid grid-cols-3 2xl:grid-cols-4 gap-2 ">
           {avatars?.map((avatar) => {
             const isSelected = selected === avatar.id;
 
@@ -42,8 +42,8 @@ export default function DesktopAvatarSelection({
                 key={avatar.id}
                 onClick={() => setSelected(avatar.id)}
                 className={`
-              relative aspect-square w-30  overflow-hidden cursor-pointer rounded-md
-              border-6 transition-all
+              relative aspect-square w-full  overflow-hidden cursor-pointer rounded-md
+              border-6 transition-all hover:scale-[1.03]
               ${isSelected ? " border-black" : " border-transparent"}
             `}
               >
@@ -52,7 +52,7 @@ export default function DesktopAvatarSelection({
                   alt={avatar.name}
                   fill
                   className="object-cover"
-                  sizes="(min-width: 1024px) 25vw, 100vw"
+                  sizes="(min-width: 1024px) 33vw, (min-width: 1440px) 25vw, 100vw"
                   priority
                 />
               </div>

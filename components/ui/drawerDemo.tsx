@@ -49,17 +49,17 @@ export function DrawerDemo({ setShowAnimation, avatars }: DrawerDemoProps) {
                   key={avatar.id}
                   onClick={() => setSelected(avatar.id)}
                   className={`
-                        relative aspect-square w-20  overflow-hidden cursor-pointer rounded-md
+                        relative aspect-square w-full  overflow-hidden cursor-pointer rounded-md
                         border-6 transition-all
                         ${isSelected ? " border-black" : " border-transparent"} 
                       `}
                 >
                   <Image
-                    src={avatar.image_url}
+                    src={avatar.image_url!}
                     alt={avatar.name}
                     fill
                     className="object-cover"
-                    sizes="(min-width: 1024px) 25vw, 100vw"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 1440px) 25vw, 100vw"
                     priority
                   />
                 </div>
