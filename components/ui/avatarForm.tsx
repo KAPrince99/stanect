@@ -4,7 +4,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { useSearchParams, redirect } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import { Input } from "./input";
 import { Button } from "./button";
@@ -35,10 +35,8 @@ import { AvatarProps, CreateCompanionProps } from "@/types/types";
 import { createCompanion } from "@/app/(app)/actions/actions";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// ----------------------
-//     ZOD SCHEMA
-// ----------------------
 const formSchema = z.object({
   avatar_id: z.string().min(1, "Select an avatar"),
   name: z.string().min(1, "Companion name is required"),
@@ -53,6 +51,8 @@ interface AvatarFormProps {
 }
 
 export default function AvatarForm({ avatars }: AvatarFormProps) {
+  const queryClient = useQueryClient();
+  const router = useRouter();
   const params = useSearchParams();
   const urlSelected = params.get("avatarId");
 
@@ -77,20 +77,38 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
     }
   }, [urlSelected, form]);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const result = await createCompanion(values);
+  const mutation = useMutation({
+    mutationFn: (data: CreateCompanionProps) => createCompanion(data),
+    onMutate: async (newCompanion) => {
+      await queryClient.cancelQueries({ queryKey: ["companions"] });
+      const previousData = queryClient.getQueryData<AvatarProps[]>([
+        "companions",
+      ]);
+      queryClient.setQueryData(["companions"], (old?: AvatarProps[]) => [
+        ...(old || []),
+        { id: "temp-id" + Math.random(), ...newCompanion },
+      ]);
+      return { previousData };
+    },
+    onError: (err, newCompanion, context) => {
+      queryClient.setQueryData(["companions"], context?.previousData);
+      toast.error("Failed to create companion");
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["companions"],
+        type: "all",
+      });
+      toast.success("Companion created successfully 🎉");
 
-    if (result.success) {
-      toast.success(result.message, { className: "bg-[#0072c3] text-white" });
-      redirect("/dashboard");
-    } else {
-      console.log("Failed to create companion");
-    }
+      router.replace("/dashboard");
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    mutation.mutate(values);
   }
 
-  // ----------------------
-  //        UI
-  // ----------------------
   return (
     <main>
       <Card className="bg-stone-100">
@@ -103,7 +121,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
 
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Mobile Avatar Picker */}
             <div className="lg:hidden mt-4 mb-4">
               <p className="text-card-foreground text-[14px] font-medium">
                 Avatar
@@ -131,7 +148,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
             <Input type="hidden" {...form.register("avatar_id")} />
             <FieldError errors={[form.formState.errors.avatar_id]} />
 
-            {/* Companion Name */}
             <FieldGroup>
               <Field>
                 <FieldLabel>Companion Name</FieldLabel>
@@ -143,7 +159,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
               </Field>
             </FieldGroup>
 
-            {/* Venue */}
             <FieldGroup>
               <Field>
                 <FieldLabel>Venue</FieldLabel>
@@ -152,7 +167,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
               </Field>
             </FieldGroup>
 
-            {/* Voice (SELECT) */}
             <FieldGroup>
               <Field>
                 <FieldLabel>Voice</FieldLabel>
@@ -227,13 +241,23 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
             {/* Submit */}
             <Button
               type="submit"
-              className="w-full cursor-pointer mt-2"
-              disabled={form.formState.isSubmitting}
+              className="w-full cursor-pointer mt-2 flex items-center justify-center gap-2"
+              disabled={mutation.isPending}
             >
-              {form.formState.isSubmitting ? (
-                <Loader2 className="animate-spin" />
+              {mutation.isPending ? (
+                <>
+                  <Loader2 className="animate-spin h-4 w-4" />
+                  <LordIcon
+                    src="https://cdn.lordicon.com/amtdygnu.json"
+                    trigger="loop"
+                    state="hover-pinch"
+                    colors="primary:#16c72e,secondary:#16c72e"
+                    width={35}
+                    height={35}
+                  />
+                </>
               ) : (
-                "create Companion"
+                "Create Companion"
               )}
             </Button>
           </form>

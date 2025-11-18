@@ -25,7 +25,6 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
   const mutation = useMutation({
     mutationFn: (id: string) => deleteCompanion(id),
 
-    // 1️⃣ Optimistic update
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: ["companions"] });
       const previousData = queryClient.getQueryData<CompanionProps[]>([
@@ -34,10 +33,10 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
       queryClient.setQueryData(["companions"], (old?: CompanionProps[]) =>
         old?.filter((c) => c.id !== id)
       );
+      router.replace("/dashboard");
       return { previousData };
     },
 
-    // 2️⃣ Rollback if error
     onError: (err, id, context) => {
       if (context?.previousData) {
         queryClient.setQueryData(["companions"], context.previousData);
@@ -45,20 +44,12 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
       toast.error("Failed to delete companion");
     },
 
-    // 3️⃣ On success
     onSuccess: async () => {
-      toast.success("Companion deleted successfully 🎉");
-
-      // Force fresh data from server
       await queryClient.invalidateQueries({
         queryKey: ["companions"],
         type: "all",
       });
-
-      // Small delay to let toast appear
-      setTimeout(() => {
-        router.replace("/dashboard"); // redirect after fresh data
-      }, 300);
+      toast.success("Companion deleted successfully 🎉");
     },
   });
 
