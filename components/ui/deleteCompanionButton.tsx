@@ -17,14 +17,15 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CompanionProps } from "@/types/types";
+import React from "react";
 
 export default function DeleteCompanionButton({ id }: { id: string }) {
+  const [open, setOpen] = React.useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: (id: string) => deleteCompanion(id),
-
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: ["companions"] });
       const previousData = queryClient.getQueryData<CompanionProps[]>([
@@ -33,33 +34,41 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
       queryClient.setQueryData(["companions"], (old?: CompanionProps[]) =>
         old?.filter((c) => c.id !== id)
       );
-      router.replace("/dashboard");
       return { previousData };
     },
-
     onError: (err, id, context) => {
       if (context?.previousData) {
         queryClient.setQueryData(["companions"], context.previousData);
       }
-      toast.error("Failed to delete companion");
+      toast.error("Failed to delete companion", {
+        style: { background: "#ff4d4f" },
+      });
     },
-
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["companions"],
         type: "all",
       });
-      toast.success("Companion deleted successfully 🎉");
+      toast.success("Companion deleted successfully 🎉", {
+        style: {
+          background: "linear-gradient(135deg,#0072c3,#00c6ff])",
+        },
+      });
+      router.replace("/dashboard");
+      setOpen(false);
     },
   });
 
+  const handleDelete = () => {
+    mutation.mutate(id);
+  };
+
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="cursor-pointer">
-          Delete
-        </Button>
+        <Button variant="destructive">Delete</Button>
       </AlertDialogTrigger>
+
       <AlertDialogContent className="bg-stone-100">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -68,21 +77,21 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
             avatar and remove its data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
+
         <AlertDialogFooter>
-          <AlertDialogCancel className="cursor-pointer">
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => mutation.mutate(id)}
-            className="cursor-pointer bg-destructive hover:bg-destructive/90 text-white"
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+          <Button
+            onClick={handleDelete}
             disabled={mutation.isPending}
+            className="bg-destructive hover:bg-destructive/90 text-white"
           >
             {mutation.isPending ? (
-              <Loader2 className="animate-spin" />
+              <Loader2 className="animate-spin h-4 w-4" />
             ) : (
               "Continue"
             )}
-          </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

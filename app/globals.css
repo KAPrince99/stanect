@@ -133,3 +133,37 @@ html {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+/* Bounce-in animation for all toasts */
+.toast {
+  animation: toast-bounce-in 0.4s ease forwards;
+}
+
+/* Exit animation */
+.toast.exit {
+  animation: toast-bounce-out 0.3s ease forwards;
+}
+
+@keyframes toast-bounce-in {
+  0% {
+    transform: translateY(-20px) scale(0.9);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(5px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-bounce-out {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px) scale(0.9);
+    opacity: 0;
+  }
+}

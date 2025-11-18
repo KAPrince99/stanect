@@ -24,7 +24,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </main>
       </div>
-      <Toaster position="top-center" />
+      <Toaster
+        position="top-right"
+        richColors
+        toastOptions={{
+          style: {
+            background: "linear-gradient(135deg,#0072c3,#004cff95])",
+            borderRadius: "1rem",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+            fontWeight: 500,
+            padding: "0.75rem 1.25rem",
+          },
+        }}
+      />
     </div>
   );
 }

@@ -92,14 +92,20 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
     },
     onError: (err, newCompanion, context) => {
       queryClient.setQueryData(["companions"], context?.previousData);
-      toast.error("Failed to create companion");
+      toast.error("❌ Failed to create companion", {
+        style: { background: "#ff4d4f" },
+      });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["companions"],
         type: "all",
       });
-      toast.success("Companion created successfully 🎉");
+      toast.success("Companion created successfully 🎉", {
+        style: {
+          background: "linear-gradient(135deg,#0072c3,#00c6ff])",
+        },
+      });
 
       router.replace("/dashboard");
     },
@@ -194,7 +200,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
               </Field>
             </FieldGroup>
 
-            {/* Style (SELECT) */}
             <FieldGroup>
               <Field>
                 <FieldLabel>Style</FieldLabel>
@@ -222,7 +227,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
               </Field>
             </FieldGroup>
 
-            {/* Duration */}
             <FieldGroup>
               <Field>
                 <FieldLabel>Estimated session duration (minutes)</FieldLabel>
@@ -238,7 +242,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
               </Field>
             </FieldGroup>
 
-            {/* Submit */}
             <Button
               type="submit"
               className="w-full cursor-pointer mt-2 flex items-center justify-center gap-2"
