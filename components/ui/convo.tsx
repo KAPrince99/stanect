@@ -27,7 +27,7 @@ export default function Convo({ id }: { id: string }) {
   const firstName = user.firstName ?? "User";
 
   return (
-    <div className="flex flex-col md:flex-row h-[80vh] bg-gray-900 text-white w-full rounded-xl overflow-hidden shadow-xl">
+    <div className="flex flex-col md:flex-row h-screen md:h-[80vh] bg-gray-900 text-white w-full rounded-xl overflow-hidden shadow-xl">
       {/* LEFT SIDE */}
       <div className="flex flex-col flex-1 p-4 md:p-8 space-y-6 overflow-y-auto scrollbar-hide">
         {/* HEADER */}
