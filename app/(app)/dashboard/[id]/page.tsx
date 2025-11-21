@@ -1,11 +1,11 @@
-import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
+import Convo from "@/components/ui/convo";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = await params;
 
   return (
-    <div className="mt-15 sm:mt-20 ">
-      <DeleteCompanionButton id={id} />
-    </div>
+    <main className="mt-15 sm:mt-20 mx-auto max-w-7xl  sm:px-6 lg:px-8">
+      <Convo id={id} />
+    </main>
   );
 }

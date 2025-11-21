@@ -9,6 +9,18 @@ export async function getAvatars(): Promise<AvatarProps[]> {
   if (!data || error) if (error) throw new Error("Error fetching avatars");
   return (data ?? []) as AvatarProps[];
 }
+
+export async function getSingleCompanion(id: string) {
+  const supabase = createSupabaseClient();
+  const { data, error } = await supabase
+    .from("companions")
+    .select("*, avatars:avatar_id (image_url)")
+    .eq("id", id)
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export async function getCompanions(id: string) {
   const supabase = createSupabaseClient();
 

@@ -66,7 +66,9 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">Delete</Button>
+        <Button variant="destructive" className="cursor-pointer">
+          Delete
+        </Button>
       </AlertDialogTrigger>
 
       <AlertDialogContent className="bg-stone-100">
@@ -79,12 +81,14 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="cursor-pointer">
+            Cancel
+          </AlertDialogCancel>
 
           <Button
             onClick={handleDelete}
             disabled={mutation.isPending}
-            className="bg-destructive hover:bg-destructive/90 text-white"
+            className="bg-destructive hover:bg-destructive/90 text-white cursor-pointer"
           >
             {mutation.isPending ? (
               <Loader2 className="animate-spin h-4 w-4" />
