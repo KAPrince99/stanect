@@ -29,7 +29,7 @@ export default function Convo({ id }: { id: string }) {
   return (
     <div className="flex flex-col md:flex-row h-screen md:h-[80vh] bg-gray-900 text-white w-full rounded-xl overflow-hidden shadow-xl">
       {/* LEFT SIDE */}
-      <div className="flex flex-col flex-1 p-4 md:p-8 space-y-6 overflow-y-auto scrollbar-hide">
+      <div className="flex flex-col flex-1 p-4 md:p-8 space-y-4 overflow-y-auto scrollbar-hide">
         {/* HEADER */}
         <div className="flex justify-center items-center pt-2 text-center">
           <div>
@@ -69,7 +69,7 @@ export default function Convo({ id }: { id: string }) {
         </div>
 
         {/* CONTROLS */}
-        <div className="flex justify-center pt-4">
+        <div className="flex justify-center">
           <div className="flex justify-between items-center w-full max-w-md gap-6">
             {/* Mic */}
             <Button className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 text-white border border-white/20 shadow-lg flex items-center justify-center transition cursor-pointer">
