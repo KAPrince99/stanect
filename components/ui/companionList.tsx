@@ -9,6 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import CompanionCardSkeleton from "./companionCardSkeleton";
+import { useRef } from "react";
 
 async function fetchCompanions(userId: string) {
   const data = getCompanions(userId);
@@ -16,12 +17,16 @@ async function fetchCompanions(userId: string) {
 }
 
 export default function CompanionList({ userId }: { userId: string }) {
+  const firstRef = useRef<HTMLButtonElement>(null);
   useGSAP(() => {
-    gsap.to("#first", {
-      scale: 1.1,
-      repeat: -1,
-      yoyo: true,
-    });
+    if (firstRef.current) {
+      gsap.to(firstRef.current, {
+        scale: 1.1,
+        repeat: -1,
+        yoyo: true,
+        duration: 0.8,
+      });
+    }
   });
   const { user } = useUser();
   const {
@@ -47,7 +52,7 @@ export default function CompanionList({ userId }: { userId: string }) {
           <h1 className="text-2xl md:text-3xl ">Welcome, {user?.firstName}.</h1>
           <Link href="/new">
             <Button
-              id="first"
+              ref={firstRef}
               className="cursor-pointer py-4 md:py-6 md:text-md rounded-2xl"
             >
               <LordIcon

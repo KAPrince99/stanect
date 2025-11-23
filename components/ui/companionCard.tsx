@@ -21,7 +21,7 @@ export default function CompanionCard({
       <div className="w-full aspect-square relative">
         <Image
           src={companion.avatars.image_url!}
-          alt={companion.name}
+          alt={`${companion.companion_name} avatar`}
           fill
           className="object-cover rounded-lg"
           sizes="(max-width: 768px) 100vw, 300px"
@@ -35,9 +35,9 @@ export default function CompanionCard({
       <div className="p-4 flex flex-col gap-2 text-center">
         <div>
           <p className="text-lg font-semibold text-gray-800">
-            {companion.name}
+            {companion.companion_name}
           </p>
-          <p className="text-sm text-gray-500">{companion.venue}</p>
+          <p className="text-sm text-gray-500">{companion.scene}</p>
         </div>
 
         <Link href={`/dashboard/${companion.id}`}>

@@ -11,10 +11,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { mockData } from "@/mock/data";
 import { AvatarProps } from "@/types/types";
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface DrawerDemoProps {
@@ -56,7 +55,7 @@ export function DrawerDemo({ setShowAnimation, avatars }: DrawerDemoProps) {
                 >
                   <Image
                     src={avatar.image_url!}
-                    alt={avatar.name}
+                    alt={`${avatar.name}'s name`}
                     fill
                     className="object-cover"
                     sizes="(min-width: 1024px) 33vw, (min-width: 1440px) 25vw, 100vw"

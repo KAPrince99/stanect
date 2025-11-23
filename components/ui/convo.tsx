@@ -1,30 +1,108 @@
 "use client";
 
 import Image from "next/image";
-import { useUser } from "@clerk/nextjs";
 import { Button } from "./button";
 import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
-import { useQuery } from "@tanstack/react-query";
+import { CompanionProps } from "@/types/types";
+import { useEffect, useRef, useState } from "react";
+import { vapiSdk } from "@/lib/vapiSdk";
 
-import { getSingleCompanion } from "@/app/(app)/actions/actions";
-import ConvoSkeleton from "./convoSkeleton";
+interface ConvoProps {
+  companion: CompanionProps;
+  imageUrl: string;
+  firstName: string;
+}
 
-export default function Convo({ id }: { id: string }) {
-  const { user } = useUser();
-  const { data: companion, isLoading } = useQuery({
-    queryKey: ["companion", id],
-    queryFn: async () => getSingleCompanion(id),
-  });
-  console.log("COMPANION DATA:", companion);
+type Message = {
+  role: "assistant" | "user";
+  content: string;
+};
 
-  if (!user) return null;
-  if (isLoading) return <ConvoSkeleton />;
-  if (!companion) return <div>Companion not found</div>;
+enum CallStatus {
+  INACTIVE = "INACTIVE",
+  CONNECTING = "CONNECTING",
+  ACTIVE = "ACTIVE",
+  FINISHED = "FINISHED",
+}
 
-  const { avatars, name } = companion;
-  const companionImageUrl = avatars?.image_url;
-  const imageUrl = user.imageUrl ?? "/avatar-placeholder.png";
-  const firstName = user.firstName ?? "User";
+export default function Convo({ companion, imageUrl, firstName }: ConvoProps) {
+  const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    const onCallStart = () => {
+      setCallStatus(CallStatus.ACTIVE);
+    };
+
+    const onCallEnd = () => {
+      setCallStatus(CallStatus.FINISHED);
+    };
+
+    const onMessage = (message: any) => {
+      if (message.type === "transcript" && message.transcriptType === "final") {
+        const newMessage: Message = {
+          role: message.role,
+          content: message.transcript,
+        };
+        setMessages((prev) => [newMessage, ...prev]);
+      }
+    };
+
+    const onError = (err: Error) => {
+      console.error("Vapi error:", err);
+      setCallStatus(CallStatus.INACTIVE);
+    };
+
+    const onSpeechStart = () => setIsSpeaking(true);
+    const onSpeechEnd = () => setIsSpeaking(false);
+
+    vapiSdk.on("call-start", onCallStart);
+    vapiSdk.on("call-end", onCallEnd);
+    vapiSdk.on("error", onError);
+    vapiSdk.on("message", onMessage);
+    vapiSdk.on("speech-start", onSpeechStart);
+    vapiSdk.on("speech-end", onSpeechEnd);
+
+    return () => {
+      vapiSdk.off("call-start", onCallStart);
+      vapiSdk.off("call-end", onCallEnd);
+      vapiSdk.off("error", onError);
+      vapiSdk.off("message", onMessage);
+      vapiSdk.off("speech-start", onSpeechStart);
+      vapiSdk.off("speech-end", onSpeechEnd);
+    };
+  }, []);
+
+  const handleCall = async () => {
+    if (callStatus !== CallStatus.INACTIVE) return;
+
+    setMessages([]);
+    setCallStatus(CallStatus.CONNECTING);
+
+    try {
+      await vapiSdk.start(companion.assistant_id, {
+        clientMessages: ["transcript"],
+        serverMessages: [],
+      });
+    } catch (err) {
+      console.error("Error starting Vapi call:", err);
+      setCallStatus(CallStatus.INACTIVE);
+    }
+  };
+
+  const handleDisconnect = () => {
+    vapiSdk.stop();
+  };
+
+  const toggleMicrophone = () => {
+    if (callStatus !== CallStatus.ACTIVE) return;
+
+    const muted = vapiSdk.isMuted();
+    vapiSdk.setMuted(!muted);
+    setIsMuted(!muted);
+  };
 
   return (
     <div className="flex flex-col md:flex-row h-screen md:h-[80vh] bg-gray-900 text-white w-full rounded-xl overflow-hidden shadow-xl">
@@ -33,37 +111,42 @@ export default function Convo({ id }: { id: string }) {
         {/* HEADER */}
         <div className="flex justify-center items-center pt-2 text-center">
           <div>
-            <p className="text-gray-400 text-lg">Calling...</p>
+            <p className="text-gray-400 text-lg">
+              {callStatus === CallStatus.ACTIVE
+                ? "Session Active"
+                : callStatus === CallStatus.CONNECTING
+                ? "Connecting..."
+                : callStatus === CallStatus.FINISHED
+                ? "Session Ended"
+                : "Ready"}
+            </p>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
-              {name}
+              {companion?.companion_name}
             </h1>
           </div>
         </div>
 
         {/* VIDEOS */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* COMPANION VIDEO */}
+          {/* COMPANION VIDEO / IMAGE */}
           <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-gray-800">
-            {companionImageUrl && (
-              <Image
-                src={companionImageUrl}
-                alt={name}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority
-              />
-            )}
+            <Image
+              src={companion.avatars.image_url!}
+              alt={`${companion?.companion_name} avatar`}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
           </div>
 
-          {/* USER VIDEO */}
+          {/* USER IMAGE */}
           <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-gray-800 hidden md:block">
             <Image
-              src={imageUrl}
-              alt={firstName}
+              src={imageUrl!}
+              alt={`${firstName}'s  avatar`}
               fill
-              className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
             />
           </div>
         </div>
@@ -72,42 +155,56 @@ export default function Convo({ id }: { id: string }) {
         <div className="flex justify-center">
           <div className="flex justify-between items-center w-full max-w-md gap-6">
             {/* Mic */}
-            <Button className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 text-white border border-white/20 shadow-lg flex items-center justify-center transition cursor-pointer">
-              Mic
+            <Button
+              onClick={toggleMicrophone}
+              disabled={callStatus !== CallStatus.ACTIVE}
+              className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center"
+            >
+              {isMuted ? "Mic Off" : "Mic On"}
             </Button>
 
             {/* End Call */}
-            <Button className="w-20 h-20 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-2xl flex items-center justify-center transition font-semibold cursor-pointer">
-              End
+            <Button
+              onClick={
+                callStatus === CallStatus.ACTIVE ? handleDisconnect : handleCall
+              }
+              className={`w-20 h-20 rounded-full text-white flex items-center justify-center font-semibold ${
+                callStatus === CallStatus.ACTIVE
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
+            >
+              {callStatus === CallStatus.ACTIVE
+                ? "End"
+                : callStatus === CallStatus.CONNECTING
+                ? "..."
+                : "Call"}
             </Button>
 
             {/* More */}
-            <Button className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 text-white border border-white/20 shadow-lg flex items-center justify-center transition cursor-pointer">
+            <Button className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center">
               More
             </Button>
           </div>
         </div>
       </div>
 
-      {/* RIGHT SIDE: TRANSCRIPT */}
+      {/* RIGHT SIDE — TRANSCRIPT */}
       <aside className="w-full md:w-1/3 bg-gray-800 border-l border-gray-700 p-6 overflow-y-auto scrollbar-hide hidden md:flex flex-col">
         <div className="flex justify-between items-center pb-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold text-gray-200">Transcript</h2>
-          <DeleteCompanionButton id={id} />
+          <DeleteCompanionButton id={companion.id} />
         </div>
 
         <div className="flex-1 space-y-4 mt-4 text-gray-300">
-          <p>
-            <span className="font-semibold text-white">{name}:</span> Lorem
-            ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
-
-          <p>
-            <span className="font-semibold text-white">You:</span> Proin a magna
-            a mi cursus fermentum.
-          </p>
-
-          {/* More transcript entries can go here */}
+          {messages.map((m, i) => (
+            <p key={i}>
+              <span className="font-semibold text-white">
+                {m.role === "assistant" ? companion.companion_name : "You"}:
+              </span>{" "}
+              {m.content}
+            </p>
+          ))}
         </div>
       </aside>
     </div>

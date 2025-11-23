@@ -1,7 +1,8 @@
 "use server";
+import { buildAssistant } from "@/lib/buildAssistant";
 import { createSupabaseClient } from "@/lib/supabase";
 import { AvatarProps, CreateCompanionProps } from "@/types/types";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export async function getAvatars(): Promise<AvatarProps[]> {
   const supabase = createSupabaseClient();
@@ -35,20 +36,44 @@ export async function getCompanions(id: string) {
 }
 export async function createCompanion(formData: CreateCompanionProps) {
   const { userId } = await auth();
+  const user = await currentUser();
   const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from("companions")
-    .insert({ ...formData, owner_id: userId })
+    .insert({ ...formData, owner_id: userId, username: user?.firstName })
     .select();
 
   if (error || !data)
     throw new Error(error?.message || "Failed to create a companion");
   console.log("DATA HERE:", data);
 
+  const companion = data[0];
+
+  const assistantConfig = buildAssistant(companion);
+  console.log("ASSISTANT CONFIG:", assistantConfig);
+
+  const vapiRes = await fetch("https://api.vapi.ai/assistant", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.VAPI_PRIVATE_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(assistantConfig),
+  });
+
+  const vapiData = await vapiRes.json();
+  console.log("VAPI RESPONSE:", vapiData);
+
+  await supabase
+    .from("companions")
+    .update({ assistant_id: vapiData.id })
+    .eq("id", companion.id);
+
   return {
     success: true,
     message: "Companion created successfully 🎉",
-    data,
+    data: companion,
+    vapi: vapiData,
   };
 }
 

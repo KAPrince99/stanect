@@ -49,7 +49,7 @@ export default function DesktopAvatarSelection({
               >
                 <Image
                   src={avatar.image_url!}
-                  alt={avatar.name}
+                  alt={`${avatar.name}'s avatar`}
                   fill
                   className="object-cover"
                   sizes="(min-width: 1024px) 33vw, (min-width: 1440px) 25vw, 100vw"

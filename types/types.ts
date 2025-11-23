@@ -5,8 +5,8 @@ export interface AvatarProps {
 }
 
 export interface CreateCompanionProps {
-  name: string;
-  venue: string;
+  companion_name: string;
+  scene: string;
   voice: string;
   duration: string;
   avatar_id: string;
@@ -17,9 +17,11 @@ export interface CompanionProps {
   avatars: { image_url: string };
   duration: string;
   id: string;
-  name: string;
+  companion_name: string;
   owner_id: string;
-  style: string;
-  venue: string;
+  country: string;
+  scene: string;
   voice: string;
+  username: string;
+  assistant_id: string;
 }

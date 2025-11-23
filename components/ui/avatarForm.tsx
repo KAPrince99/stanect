@@ -35,14 +35,29 @@ import { AvatarProps, CreateCompanionProps } from "@/types/types";
 import { createCompanion } from "@/app/(app)/actions/actions";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
+import { getNames, getCode } from "country-list";
+import * as Flags from "country-flag-icons/react/3x2";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+// Map country names to SVG flag components
+const countryOptions = getNames()
+  .sort()
+  .map((name) => {
+    const code = getCode(name); // e.g., "US", "GB"
+    const FlagComponent = (Flags as any)[code]; // dynamically get component
+    return { name, FlagComponent };
+  });
 
 const formSchema = z.object({
   avatar_id: z.string().min(1, "Select an avatar"),
-  name: z.string().min(1, "Companion name is required"),
-  venue: z.string().min(1, "Venue is required"),
-  voice: z.string().min(1, "Voice is required"),
-  style: z.string().min(1, "Style is required"),
+  companion_name: z.string().min(1, "Companion name is required"),
+  scene: z.string().min(1, "scene is required"),
+  voice: z.enum(["male", "female"], {
+    message: "Please select a valid voice type",
+  }),
+  country: z.string().min(1, "Country is required"),
   duration: z.string().min(1, "Minimum duration is 1 minute"),
 });
 
@@ -62,10 +77,10 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       avatar_id: "",
-      name: "",
-      venue: "",
+      companion_name: "",
+      scene: "",
       voice: "",
-      style: "",
+      country: "",
       duration: "15",
     },
   });
@@ -159,17 +174,17 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
                 <FieldLabel>Companion Name</FieldLabel>
                 <Input
                   placeholder="Enter the companion name"
-                  {...form.register("name")}
+                  {...form.register("companion_name")}
                 />
-                <FieldError errors={[form.formState.errors.name]} />
+                <FieldError errors={[form.formState.errors.companion_name]} />
               </Field>
             </FieldGroup>
 
             <FieldGroup>
               <Field>
-                <FieldLabel>Venue</FieldLabel>
-                <Input placeholder="Ex. Gym" {...form.register("venue")} />
-                <FieldError errors={[form.formState.errors.venue]} />
+                <FieldLabel>Scene</FieldLabel>
+                <Input placeholder="Ex. Gym" {...form.register("scene")} />
+                <FieldError errors={[form.formState.errors.scene]} />
               </Field>
             </FieldGroup>
 
@@ -200,30 +215,39 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
               </Field>
             </FieldGroup>
 
+            {/* Countries */}
             <FieldGroup>
               <Field>
-                <FieldLabel>Style</FieldLabel>
-
+                <FieldLabel>Country</FieldLabel>
                 <Controller
                   control={form.control}
-                  name="style"
+                  name="country"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select the style" />
+                        <SelectValue placeholder="Select a country" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-72 overflow-y-auto">
                         <SelectGroup>
-                          <SelectLabel>Style Types</SelectLabel>
-                          <SelectItem value="formal">Formal</SelectItem>
-                          <SelectItem value="casual">Casual</SelectItem>
+                          <SelectLabel>Countries</SelectLabel>
+                          {countryOptions.map(({ name, FlagComponent }) => (
+                            <SelectItem
+                              key={name}
+                              value={name}
+                              className="flex items-center gap-2"
+                            >
+                              {FlagComponent && (
+                                <FlagComponent className="w-5 h-5" />
+                              )}
+                              <span>{name}</span>
+                            </SelectItem>
+                          ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   )}
                 />
-
-                <FieldError errors={[form.formState.errors.style]} />
+                <FieldError errors={[form.formState.errors.country]} />
               </Field>
             </FieldGroup>
 
