@@ -37,7 +37,6 @@ export default function Convo({ id }: ConvoProps) {
   const { user } = useUser();
   const imageUrl = user?.imageUrl ?? "/avatar-placeholder.png";
   const firstName = user?.firstName ?? "User";
-  if (!user) router.push("/sign-in");
 
   useEffect(() => {
     const onCallStart = () => {
@@ -128,7 +127,7 @@ export default function Convo({ id }: ConvoProps) {
   return (
     <div className="flex flex-col md:flex-row h-screen md:h-[80vh] bg-gray-900 text-white w-full rounded-xl overflow-hidden shadow-xl">
       {/* LEFT SIDE */}
-      <div className="flex flex-col flex-1 p-4 md:p-8 space-y-4 overflow-y-auto scrollbar-hide">
+      <div className="flex flex-col flex-1  p-4 md:p-8 space-y-4 overflow-y-auto scrollbar-hide">
         {/* HEADER */}
         <div className="flex justify-center items-center pt-2 text-center">
           <div>
@@ -148,7 +147,7 @@ export default function Convo({ id }: ConvoProps) {
         </div>
 
         {/* VIDEOS */}
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className=" grid grid-cols-1 md:grid-cols-2 md:gap-3 lg:gap-6">
           {/* COMPANION VIDEO / IMAGE */}
           <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-gray-800">
             <Image
@@ -173,7 +172,7 @@ export default function Convo({ id }: ConvoProps) {
         </div>
 
         {/* CONTROLS */}
-        <div className="flex justify-center">
+        <div className="flex justify-center items-start">
           <div className="flex justify-between items-start w-full max-w-md gap-6">
             {/* Mic */}
             <Button
