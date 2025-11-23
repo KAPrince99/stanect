@@ -3,14 +3,16 @@
 import Image from "next/image";
 import { Button } from "./button";
 import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
-import { CompanionProps } from "@/types/types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { vapiSdk } from "@/lib/vapiSdk";
+import { useQuery } from "@tanstack/react-query";
+import { getSingleCompanion } from "@/app/(app)/actions/actions";
+import ConvoSkeleton from "./convoSkeleton";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface ConvoProps {
-  companion: CompanionProps;
-  imageUrl: string;
-  firstName: string;
+  id: string;
 }
 
 type Message = {
@@ -25,11 +27,17 @@ enum CallStatus {
   FINISHED = "FINISHED",
 }
 
-export default function Convo({ companion, imageUrl, firstName }: ConvoProps) {
+export default function Convo({ id }: ConvoProps) {
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const router = useRouter();
+
+  const { user } = useUser();
+  const imageUrl = user?.imageUrl ?? "/avatar-placeholder.png";
+  const firstName = user?.firstName ?? "User";
+  if (!user) router.push("/sign-in");
 
   useEffect(() => {
     const onCallStart = () => {
@@ -75,6 +83,15 @@ export default function Convo({ companion, imageUrl, firstName }: ConvoProps) {
     };
   }, []);
 
+  const {
+    data: companion,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["companions", id],
+    queryFn: () => getSingleCompanion(id),
+  });
+
   const handleCall = async () => {
     if (callStatus !== CallStatus.INACTIVE) return;
 
@@ -103,6 +120,10 @@ export default function Convo({ companion, imageUrl, firstName }: ConvoProps) {
     vapiSdk.setMuted(!muted);
     setIsMuted(!muted);
   };
+
+  if (isLoading) return <ConvoSkeleton />;
+  if (companion?.length === 0) return <div>No data Found</div>;
+  if (error) throw new Error(error.message);
 
   return (
     <div className="flex flex-col md:flex-row h-screen md:h-[80vh] bg-gray-900 text-white w-full rounded-xl overflow-hidden shadow-xl">
@@ -153,7 +174,7 @@ export default function Convo({ companion, imageUrl, firstName }: ConvoProps) {
 
         {/* CONTROLS */}
         <div className="flex justify-center">
-          <div className="flex justify-between items-center w-full max-w-md gap-6">
+          <div className="flex justify-between items-start w-full max-w-md gap-6">
             {/* Mic */}
             <Button
               onClick={toggleMicrophone}
