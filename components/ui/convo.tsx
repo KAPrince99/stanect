@@ -172,7 +172,7 @@ export default function Convo({ id }: ConvoProps) {
         </div>
 
         {/* CONTROLS */}
-        <div className="flex justify-center items-start">
+        <div className="flex justify-center items-center">
           <div className="flex justify-between items-start w-full max-w-md gap-6">
             {/* Mic */}
             <Button
