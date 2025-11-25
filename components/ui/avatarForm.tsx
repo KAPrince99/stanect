@@ -2,294 +2,328 @@
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Loader2,
+  Sparkles,
+  User,
+  MapPin,
+  Mic,
+  Clock,
+  Globe,
+  ChevronDown,
+} from "lucide-react";
+import { toast } from "sonner";
 
 import { Input } from "./input";
 import { Button } from "./button";
 import { DrawerDemo } from "./drawerDemo";
 import LordIcon from "./lordIcon";
-
-import { Field, FieldError, FieldGroup, FieldLabel } from "./field";
-
+import { getNames, getCode } from "country-list";
+import * as Flags from "country-flag-icons/react/3x2";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createCompanion } from "@/app/(app)/actions/actions";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "./select";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "./card";
-
-import { AvatarProps, CreateCompanionProps } from "@/types/types";
-import { createCompanion } from "@/app/(app)/actions/actions";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-
-import { getNames, getCode } from "country-list";
-import * as Flags from "country-flag-icons/react/3x2";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-// Map country names to SVG flag components
 const countryOptions = getNames()
   .sort()
-  .map((name) => {
-    const code = getCode(name); // e.g., "US", "GB"
-    const FlagComponent = (Flags as any)[code]; // dynamically get component
-    return { name, FlagComponent };
-  });
+  .map((name) => ({
+    name,
+    code: getCode(name),
+    Flag: (Flags as any)[getCode(name)],
+  }))
+  .filter((c) => c.code);
 
 const formSchema = z.object({
-  avatar_id: z.string().min(1, "Select an avatar"),
-  companion_name: z.string().min(1, "Companion name is required"),
-  scene: z.string().min(1, "scene is required"),
-  voice: z.enum(["male", "female"], {
-    message: "Please select a valid voice type",
-  }),
-  country: z.string().min(1, "Country is required"),
-  duration: z.string().min(1, "Minimum duration is 1 minute"),
+  avatar_id: z.string().min(1, "Please select an avatar"),
+  companion_name: z.string().min(2, "Name must be at least 2 characters"),
+  scene: z.string().min(2, "Scene is required (e.g. Gym, Bar, Beach)"),
+  voice: z.enum(["male", "female"]),
+  country: z.string().min(1, "Please select a country"),
+  duration: z
+    .string()
+    .regex(/^\d+$/, "Must be a number")
+    .min(1, "At least 1 minute"),
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 interface AvatarFormProps {
-  avatars: AvatarProps[];
+  avatars: { id: string; image_url: string }[];
 }
 
 export default function AvatarForm({ avatars }: AvatarFormProps) {
-  const queryClient = useQueryClient();
   const router = useRouter();
   const params = useSearchParams();
-  const urlSelected = params.get("avatarId");
+  const urlAvatarId = params.get("avatarId");
+  const queryClient = useQueryClient();
 
-  const [showAnimation, setShowAnimation] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      avatar_id: "",
+      avatar_id: urlAvatarId || "",
       companion_name: "",
       scene: "",
-      voice: "",
+      voice: undefined,
       country: "",
       duration: "15",
     },
   });
 
-  // Sync avatarId from URL → form
   useEffect(() => {
-    if (urlSelected) {
-      form.setValue("avatar_id", urlSelected);
-    }
-  }, [urlSelected, form]);
+    if (urlAvatarId) form.setValue("avatar_id", urlAvatarId);
+  }, [urlAvatarId, form]);
 
   const mutation = useMutation({
-    mutationFn: (data: CreateCompanionProps) => createCompanion(data),
-    onMutate: async (newCompanion) => {
-      await queryClient.cancelQueries({ queryKey: ["companions"] });
-      const previousData = queryClient.getQueryData<AvatarProps[]>([
-        "companions",
-      ]);
-      queryClient.setQueryData(["companions"], (old?: AvatarProps[]) => [
-        ...(old || []),
-        { id: "temp-id" + Math.random(), ...newCompanion },
-      ]);
-      return { previousData };
-    },
-    onError: (err, newCompanion, context) => {
-      queryClient.setQueryData(["companions"], context?.previousData);
-      toast.error("❌ Failed to create companion", {
-        style: { background: "#ff4d4f" },
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["companions"],
-        type: "all",
-      });
-      toast.success("Companion created successfully 🎉", {
+    mutationFn: createCompanion,
+    onSuccess: () => {
+      setShowSuccess(true);
+      queryClient.invalidateQueries({ queryKey: ["companions"] });
+      toast.success("Your companion is alive", {
+        description: "She’s ready when you are",
+        icon: <Sparkles className="w-5 h-5" />,
         style: {
-          background: "linear-gradient(135deg,#0072c3,#00c6ff])",
+          background: "linear-gradient(135deg, #1e40af, #3b82f6)",
+          color: "white",
         },
       });
-
-      router.replace("/dashboard");
+      setTimeout(() => router.replace("/dashboard"), 1200);
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        description: "Please try again",
+        style: { background: "#dc2626" },
+      });
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    mutation.mutate(values);
-  }
+  const onSubmit = (data: FormData) => {
+    mutation.mutate(data as any);
+  };
 
   return (
-    <main>
-      <Card className="bg-stone-100">
-        <CardHeader>
-          <CardTitle className="text-2xl">Companion Builder</CardTitle>
-          <CardDescription>
-            Populate your companion information below
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-screen bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] p-6 md:p-10">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl mx-auto"
+      >
+        {/* Header */}
+        <div className="text-center mb-12">
+          <motion.h1
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent"
+          >
+            Bring Her to Life
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-4 text-white/70 text-lg font-light"
+          >
+            One last step — give her a name, voice, and soul
+          </motion.p>
+        </div>
 
-        <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="lg:hidden mt-4 mb-4">
-              <p className="text-card-foreground text-[14px] font-medium">
-                Avatar
-              </p>
-
-              <div className="flex gap-2 items-center">
-                <DrawerDemo
-                  setShowAnimation={setShowAnimation}
-                  avatars={avatars}
-                />
-
-                {showAnimation && (
-                  <LordIcon
-                    src="https://cdn.lordicon.com/amtdygnu.json"
-                    trigger="loop"
-                    state="hover-pinch"
-                    colors="primary:#16c72e,secondary:#16c72e"
-                    width={40}
-                    height={40}
-                  />
+        {/* Form Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl overflow-hidden"
+        >
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-8 md:p-12 space-y-10"
+          >
+            {/* Avatar Picker */}
+            <div className="space-y-4">
+              <label className="text-white/90 font-medium flex items-center gap-3">
+                <User className="w-5 h-5 text-amber-400" />
+                Selected Avatar
+              </label>
+              <div className="flex items-center gap-6">
+                <DrawerDemo avatars={avatars} />
+                {form.watch("avatar_id") && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center"
+                  >
+                    <Sparkles className="w-8 h-8 text-emerald-400" />
+                  </motion.div>
                 )}
               </div>
             </div>
 
-            <Input type="hidden" {...form.register("avatar_id")} />
-            <FieldError errors={[form.formState.errors.avatar_id]} />
+            {/* Name */}
+            <div className="space-y-3">
+              <label className="text-white/90 font-medium">Her Name</label>
+              <Input
+                placeholder="Sophia, Alex, Mia..."
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-14 text-lg"
+                {...form.register("companion_name")}
+              />
+            </div>
 
-            <FieldGroup>
-              <Field>
-                <FieldLabel>Companion Name</FieldLabel>
-                <Input
-                  placeholder="Enter the companion name"
-                  {...form.register("companion_name")}
-                />
-                <FieldError errors={[form.formState.errors.companion_name]} />
-              </Field>
-            </FieldGroup>
+            {/* Scene */}
+            <div className="space-y-3">
+              <label className="text-white/90 font-medium flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-blue-400" />
+                Where do you meet her?
+              </label>
+              <Input
+                placeholder="Gym • Coffee Shop • Bar • Beach"
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-14 text-lg"
+                {...form.register("scene")}
+              />
+            </div>
 
-            <FieldGroup>
-              <Field>
-                <FieldLabel>Scene</FieldLabel>
-                <Input placeholder="Ex. Gym" {...form.register("scene")} />
-                <FieldError errors={[form.formState.errors.scene]} />
-              </Field>
-            </FieldGroup>
+            {/* Voice */}
+            <div className="space-y-3">
+              <label className="text-white/90 font-medium flex items-center gap-2">
+                <Mic className="w-5 h-5 text-purple-400" />
+                Voice
+              </label>
+              <Controller
+                control={form.control}
+                name="voice"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white h-14 text-lg">
+                      <SelectValue placeholder="Choose her voice..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="female" className="text-lg">
+                        Female (Warm & Playful)
+                      </SelectItem>
+                      <SelectItem value="male" className="text-lg">
+                        Male (Deep & Confident)
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
 
-            <FieldGroup>
-              <Field>
-                <FieldLabel>Voice</FieldLabel>
+            {/* Country */}
+            <div className="space-y-3">
+              <label className="text-white/90 font-medium flex items-center gap-2">
+                <Globe className="w-5 h-5 text-cyan-400" />
+                Nationality
+              </label>
+              <Controller
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white h-14 text-lg">
+                      <SelectValue placeholder="Where is she from?" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-64">
+                      {countryOptions.map(({ name, Flag }) => (
+                        <SelectItem
+                          key={name}
+                          value={name}
+                          className="flex items-center gap-3 text-base"
+                        >
+                          {Flag && <Flag className="w-6 h-4 rounded-sm" />}
+                          <span>{name}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
 
-                <Controller
-                  control={form.control}
-                  name="voice"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select the voice" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Voice Types</SelectLabel>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
+            {/* Duration */}
+            <div className="space-y-3">
+              <label className="text-white/90 font-medium flex items-center gap-2">
+                <Clock className="w-5 h-5 text-amber-400" />
+                Session Length (minutes)
+              </label>
+              <Input
+                type="number"
+                placeholder="15"
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-14 text-lg"
+                {...form.register("duration")}
+              />
+            </div>
 
-                <FieldError errors={[form.formState.errors.voice]} />
-              </Field>
-            </FieldGroup>
-
-            {/* Countries */}
-            <FieldGroup>
-              <Field>
-                <FieldLabel>Country</FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="country"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a country" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-72 overflow-y-auto">
-                        <SelectGroup>
-                          <SelectLabel>Countries</SelectLabel>
-                          {countryOptions.map(({ name, FlagComponent }) => (
-                            <SelectItem
-                              key={name}
-                              value={name}
-                              className="flex items-center gap-2"
-                            >
-                              {FlagComponent && (
-                                <FlagComponent className="w-5 h-5" />
-                              )}
-                              <span>{name}</span>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <FieldError errors={[form.formState.errors.country]} />
-              </Field>
-            </FieldGroup>
-
-            <FieldGroup>
-              <Field>
-                <FieldLabel>Estimated session duration (minutes)</FieldLabel>
-
-                <Input
-                  type="text"
-                  min={1}
-                  placeholder="15"
-                  {...form.register("duration", { valueAsNumber: false })}
-                />
-
-                <FieldError errors={[form.formState.errors.duration]} />
-              </Field>
-            </FieldGroup>
-
-            <Button
-              type="submit"
-              className="w-full cursor-pointer mt-2 flex items-center justify-center gap-2"
-              disabled={mutation.isPending}
-            >
-              {mutation.isPending ? (
-                <>
-                  <Loader2 className="animate-spin h-4 w-4" />
-                  <LordIcon
-                    src="https://cdn.lordicon.com/amtdygnu.json"
-                    trigger="loop"
-                    state="hover-pinch"
-                    colors="primary:#16c72e,secondary:#16c72e"
-                    width={35}
-                    height={35}
-                  />
-                </>
-              ) : (
-                "Create Companion"
-              )}
-            </Button>
+            {/* Submit */}
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                type="submit"
+                disabled={mutation.isPending || !form.formState.isValid}
+                className="w-full h-16 text-xl font-bold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-black shadow-2xl shadow-amber-500/50 disabled:opacity-50"
+              >
+                {mutation.isPending ? (
+                  <div className="flex items-center gap-3">
+                    <Loader2 className="animate-spin" />
+                    <span>Creating her soul...</span>
+                  </div>
+                ) : showSuccess ? (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex items-center gap-3"
+                  >
+                    <Sparkles className="w-6 h-6" />
+                    She’s alive!
+                  </motion.div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-6 h-6" />
+                    Create My Companion
+                  </div>
+                )}
+              </Button>
+            </motion.div>
           </form>
-        </CardContent>
-      </Card>
-    </main>
+        </motion.div>
+
+        {/* Success Animation */}
+        <AnimatePresence>
+          {showSuccess && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 pointer-events-none flex items-center justify-center z-50"
+            >
+              <motion.div
+                animate={{ y: [0, -30, 0] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="text-9xl"
+              >
+                <LordIcon
+                  src="https://cdn.lordicon.com/amtdygnu.json"
+                  trigger="loop"
+                  state="hover-pinch"
+                  colors="primary:#facc15,secondary:#f59e0b"
+                  width={35}
+                  height={35}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </div>
   );
 }

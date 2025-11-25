@@ -1,64 +1,49 @@
+// components/ui/mobile-dock.tsx
 "use client";
 
-import { motion, useAnimation } from "framer-motion";
 import Link from "next/link";
-import { useRef } from "react";
-import LordIcon from "./lordIcon";
+import { motion } from "framer-motion";
+import { Home, Sparkles, Plus } from "lucide-react";
 
+const dockItems = [
+  { href: "/dashboard", icon: Home, label: "Home" },
+  { href: "/pricing", icon: Sparkles, label: "Premium" },
+  { href: "/new", icon: Plus, label: "Create" },
+];
 
-interface IconsProps {
-  src: string;
-  id: number;
-  href: string;
-}
-
-function DockIcon({ icon }: { icon: IconsProps }) {
- 
-  const controls = useAnimation();
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const startPress = () => {
-    // wait 250ms before scaling
-    timerRef.current = setTimeout(() => {
-      controls.start({ scale: 1.4 });
-    }, 250);
-  };
-
-  const endPress = () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    controls.start({ scale: 1 });
-  };
-
+export default function MobileDock() {
   return (
     <motion.div
-      className="w-10 h-10 bg-stone-100 rounded-full grid place-items-center"
-      animate={controls}
-      transition={{ type: "spring", stiffness: 300, damping: 15 }}
-      onPointerDown={startPress}
-      onPointerUp={endPress}
-      onPointerCancel={endPress}
-      onPointerLeave={endPress}
+      initial={{ y: 100 }}
+      animate={{ y: 0 }}
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 lg:hidden"
     >
-      <Link href={icon.href}>
-        <LordIcon
-          src={icon.src}
-          trigger="loop"
-          state="hover-pinch"
-          colors="primary:#121331,secondary:#4bb3fd,tertiary:#4bb3fd,quaternary:#4bb3fd,quinary:#3a3347,senary:#646e78,septenary:#ebe6ef"
-          width={30}
-          height={30}
-        />
-      </Link>
-    </motion.div>
-  );
-}
+      <div className="relative">
+        {/* Blur Background */}
+        <div className="absolute inset-0 bg-white/10 backdrop-blur-2xl rounded-full scale-110" />
 
-export default function MobileDock({ icons }: { icons: IconsProps[] }) {
-  return (
-    <div className="bg-stone-100 w-36 h-13 rounded-4xl flex justify-start items-center space-x-2 px-2 fixed z-100 bottom-6 left-[34%] sm:hidden  border-2 shadow-xl">
-      {icons.map((icon) => (
-        <DockIcon key={icon.id} icon={icon} />
-      ))}
-    </div>
+        {/* Dock */}
+        <div className="relative bg-white/10 backdrop-blur-3xl border border-white/20 rounded-full px-8 py-5 shadow-2xl flex gap-12">
+          {dockItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <motion.div
+                whileHover={{ scale: 1.3, y: -10 }}
+                whileTap={{ scale: 0.9 }}
+                className="relative"
+              >
+                {item.href === "/new" ? (
+                  <div className="relative">
+                    <div className="absolute -inset-3 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full blur-xl opacity-70" />
+                    <Plus className="w-8 h-8 text-white relative z-10" />
+                  </div>
+                ) : (
+                  <item.icon className="w-8 h-8 text-white/80 hover:text-white transition-colors" />
+                )}
+              </motion.div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </motion.div>
   );
 }

@@ -23,7 +23,7 @@ export default function Navbar() {
                         rounded-full px-6 md:px-8 shadow-2xl shadow-black/20"
         >
           {/* Logo */}
-          <Link href="/" className="flex items-center -ml-2">
+          <Link href="/" className="flex items-center -ml-2 ">
             <Image
               src="/logo/logo.svg"
               alt="Stanect"
@@ -33,7 +33,7 @@ export default function Navbar() {
             />
             <span
               className="ml-1 text-2xl font-black tracking-tighter 
-                             bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent"
+                             bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent "
             >
               tanect
             </span>

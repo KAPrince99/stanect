@@ -1,76 +1,127 @@
+// components/dashboard/dashboard-content.tsx
 "use client";
-import CompanionCard from "./companionCard";
-import { useQuery } from "@tanstack/react-query";
-import { getCompanions } from "@/app/(app)/actions/actions";
-import { Button } from "./button";
-import LordIcon from "./lordIcon";
-import Link from "next/link";
-import { useUser } from "@clerk/nextjs";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import CompanionCardSkeleton from "./companionCardSkeleton";
-import { useRef } from "react";
 
-async function fetchCompanions(userId: string) {
-  const data = getCompanions(userId);
-  return data;
-}
+import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
+
+import { getCompanions } from "@/app/(app)/actions/actions";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useUser } from "@clerk/nextjs";
+import { Sparkles, Heart, Plus } from "lucide-react";
+import CompanionCard from "./companionCard";
 
 export default function CompanionList({ userId }: { userId: string }) {
-  const firstRef = useRef<HTMLButtonElement>(null);
-  useGSAP(() => {
-    if (firstRef.current) {
-      gsap.to(firstRef.current, {
-        scale: 1.1,
-        repeat: -1,
-        yoyo: true,
-        duration: 0.8,
-      });
-    }
-  });
   const { user } = useUser();
-  const {
-    data: companions,
-    isLoading,
-    error,
-  } = useQuery({
+
+  const { data: companions = [], isLoading } = useQuery({
     queryKey: ["companions", userId],
-    queryFn: () => fetchCompanions(userId),
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnWindowFocus: false,
-    enabled: !!userId,
+    queryFn: () => getCompanions(userId),
   });
 
-  if (isLoading) return <CompanionCardSkeleton />;
-  if (error) throw new Error(error.message);
+  if (isLoading) return null;
 
   return (
-    <>
-      {companions?.length === 0 && (
-        <div className="mt-5 space-y-3 md:space-y-5">
-          <h1 className="text-2xl md:text-3xl ">Welcome, {user?.firstName}.</h1>
+    <div className="relative min-h-screen px-6 py-20 md:px-10 lg:px-16">
+      {/* Floating Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{ y: [0, -60, 0], x: [0, 40, 0] }}
+          transition={{ repeat: Infinity, duration: 25 }}
+          className="absolute top-20 -left-32 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{ y: [0, 80, 0], x: [0, -50, 0] }}
+          transition={{ repeat: Infinity, duration: 30 }}
+          className="absolute bottom-10 right-0 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl"
+        />
+      </div>
+
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-16"
+      >
+        <h1 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+          Welcome back, {user?.firstName || "King"}
+        </h1>
+        <p className="mt-4 text-white/70 text-lg md:text-xl font-light">
+          {companions.length === 0
+            ? "Your confidence journey starts now"
+            : `You have ${companions.length} ${
+                companions.length === 1 ? "companion" : "companions"
+              } waiting`}
+        </p>
+      </motion.div>
+
+      {/* Empty State */}
+      {companions.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center justify-center py-20"
+        >
+          <motion.div
+            animate={{ y: [0, -20, 0] }}
+            transition={{ repeat: Infinity, duration: 4 }}
+            className="mb-10"
+          >
+            <Sparkles className="w-24 h-24 text-amber-400" />
+          </motion.div>
+
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+            No companions yet
+          </h2>
+          <p className="text-white/70 text-lg mb-10 max-w-md text-center">
+            Time to create someone who makes your heart race
+          </p>
+
           <Link href="/new">
             <Button
-              ref={firstRef}
-              className="cursor-pointer py-4 md:py-6 md:text-md rounded-2xl"
+              size="lg"
+              className="h-16 px-10 text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-2xl shadow-amber-500/50"
             >
-              <LordIcon
-                src="https://cdn.lordicon.com/ueoydrft.json"
-                trigger="loop"
-                state="hover-pinch"
-                colors="primary:#121331,secondary:#4bb3fd,tertiary:#4bb3fd,quaternary:#4bb3fd,quinary:#3a3347,senary:#646e78,septenary:#ebe6ef"
-                width={30}
-                height={30}
-              />
-              Create Your First Companion
+              <Plus className="w-7 h-7 mr-3" />
+              Create Your First
+              <Sparkles className="w-6 h-6 ml-3" />
             </Button>
           </Link>
-        </div>
+        </motion.div>
       )}
-      {companions?.map((comp) => (
-        <CompanionCard key={comp.id} companion={comp} />
-      ))}
-    </>
+
+      {/* Companions Grid */}
+      <AnimatePresence>
+        {companions.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto"
+          >
+            {companions.map((companion, i) => (
+              <motion.div
+                key={companion.id}
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <CompanionCard companion={companion} />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating CTA (always visible on mobile) */}
+      <Link href="/new">
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 shadow-2xl flex items-center justify-center hidden"
+        >
+          <Plus className="w-8 h-8 text-black" />
+        </motion.button>
+      </Link>
+    </div>
   );
 }

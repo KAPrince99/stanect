@@ -1,4 +1,4 @@
-export default function ompanionCardSkeleton() {
+export default function CompanionCardSkeleton() {
   return (
     <>
       {Array.from({ length: 8 }).map((_, index) => (

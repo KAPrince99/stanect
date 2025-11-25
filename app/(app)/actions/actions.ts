@@ -17,7 +17,7 @@ export async function getSingleCompanion(id: string) {
     .from("companions")
     .select("*, avatars:avatar_id (image_url)")
     .eq("id", id)
-    .single();
+    .maybeSingle();
   if (error) throw new Error(error.message);
   return data;
 }

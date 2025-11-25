@@ -1,16 +1,20 @@
+// components/navbar/navbar.tsx
 "use client";
+
+import { motion } from "framer-motion";
 import Pill from "./pill";
-import { motion } from "motion/react";
 
 export default function Navbar() {
   return (
     <motion.nav
-      className="bg-stone-100 flex items-center justify-center p-2 fixed left-0 top-0 right-0 z-100 backdrop-blur-md "
-      initial={{ y: -40, opacity: 0 }}
+      initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 120, damping: 15 }}
+      transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.2 }}
+      className="fixed top-0 left-0 right-0 z-[9999] flex justify-center items-center p-4 pointer-events-none"
     >
-      <Pill />
+      <div className="pointer-events-auto">
+        <Pill />
+      </div>
     </motion.nav>
   );
 }

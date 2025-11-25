@@ -40,7 +40,20 @@ export function buildAssistant(companion: CompanionProps) {
       model: "nova-3",
     },
     // firstMessage: `Hey ${companion.username}, I'm ${companion.companion_name}. Ready?`,
-    clientMessages: [],
+    clientMessages: [
+      "transcript",
+      "conversation-update",
+      "function-call",
+      "hang",
+      "model-output",
+      "speech-update",
+      "status-update",
+      "transfer-update",
+      "tool-calls",
+      "user-interrupted",
+      "voice-input",
+      "workflow.node.started",
+    ],
     serverMessages: [],
   };
 }
