@@ -125,13 +125,13 @@ export default function Convo({ id }: ConvoProps) {
   if (error) throw new Error(error.message);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen md:h-[80vh] bg-gray-900 text-white w-full rounded-xl overflow-hidden shadow-xl">
+    <div className="flex flex-col md:flex-row h-screen md:h-[80vh] bg-[#2662d0d9] text-white w-full rounded-xl overflow-hidden shadow-2xl shadow-stone-100">
       {/* LEFT SIDE */}
       <div className="flex flex-col flex-1  p-4 md:p-8 space-y-4 overflow-y-auto scrollbar-hide">
         {/* HEADER */}
         <div className="flex justify-center items-center pt-2 text-center">
           <div>
-            <p className="text-gray-400 text-lg">
+            <p className="text-stone-200 text-lg">
               {callStatus === CallStatus.ACTIVE
                 ? "Session Active"
                 : callStatus === CallStatus.CONNECTING
@@ -178,7 +178,7 @@ export default function Convo({ id }: ConvoProps) {
             <Button
               onClick={toggleMicrophone}
               disabled={callStatus !== CallStatus.ACTIVE}
-              className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center"
+              className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center cursor-pointer"
             >
               {isMuted ? "Mic Off" : "Mic On"}
             </Button>
@@ -188,7 +188,7 @@ export default function Convo({ id }: ConvoProps) {
               onClick={
                 callStatus === CallStatus.ACTIVE ? handleDisconnect : handleCall
               }
-              className={`w-20 h-20 rounded-full text-white flex items-center justify-center font-semibold ${
+              className={`w-20 h-20 rounded-full text-white flex items-center justify-center font-semibold cursor-pointer ${
                 callStatus === CallStatus.ACTIVE
                   ? "bg-red-600 hover:bg-red-700"
                   : "bg-green-600 hover:bg-green-700"
@@ -202,7 +202,7 @@ export default function Convo({ id }: ConvoProps) {
             </Button>
 
             {/* More */}
-            <Button className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center">
+            <Button className="w-16 h-16 rounded-full backdrop-blur-xl bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center cursor-pointer">
               More
             </Button>
           </div>
@@ -210,7 +210,7 @@ export default function Convo({ id }: ConvoProps) {
       </div>
 
       {/* RIGHT SIDE — TRANSCRIPT */}
-      <aside className="w-full md:w-1/3 bg-gray-800 border-l border-gray-700 p-6 overflow-y-auto scrollbar-hide hidden md:flex flex-col">
+      <aside className="w-full md:w-1/3 bg-[#2662d0d9]/20 border-l border-stone-700 p-6 overflow-y-auto scrollbar-hide hidden md:flex flex-col">
         <div className="flex justify-between items-center pb-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold text-gray-200">Transcript</h2>
           <DeleteCompanionButton id={companion.id} />
