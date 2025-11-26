@@ -18,7 +18,7 @@ export default function Pill() {
       className="
         relative
         h-14 sm:h-16
-        w-full max-w-3xl
+        w-full max-w-xl
         bg-white/10 backdrop-blur-2xl
         border border-white/20
         rounded-full
@@ -33,7 +33,7 @@ export default function Pill() {
       <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 blur-3xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
       {/* Left: Logo + Brand */}
-      <Link href="/" className="flex items-center gap-3 z-10">
+      <Link href="/" className="flex items-center  z-10">
         <div className="relative">
           <Image
             src="/logo/logo.svg"
@@ -49,8 +49,8 @@ export default function Pill() {
           />
         </div>
 
-        <span className="hidden sm:block text-2xl font-black tracking-tighter bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-          Stanect
+        <span className="hidden sm:block text-2xl font-black tracking-tighter bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent -ml-1">
+          tanect
         </span>
       </Link>
 

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { vapiSdk } from "@/lib/vapiSdk";
 import { useQuery } from "@tanstack/react-query";
 import { getSingleCompanion } from "@/app/(app)/actions/actions";
@@ -20,6 +20,7 @@ import {
   Radio,
   CheckCircle2,
 } from "lucide-react";
+import throttle from "lodash.throttle";
 
 interface ConvoProps {
   id: string;
@@ -76,28 +77,36 @@ export default function Convo({ id }: ConvoProps) {
     queryFn: () => getSingleCompanion(id),
   });
 
-  // VAPI Event Listeners
-  useEffect(() => {
-    const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
-    const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
-    const onError = () => setCallStatus(CallStatus.INACTIVE);
-    const onSpeechStart = () => setIsSpeaking(true);
-    const onSpeechEnd = () => setIsSpeaking(false);
-    const onMessage = (msg: any) => {
+  // --- Throttled message handler ---
+  const throttledMessage = useRef(
+    throttle((msg: any) => {
       if (msg.type === "transcript" && msg.transcriptType === "final") {
         setMessages((prev) => [
           { role: msg.role, content: msg.transcript },
           ...prev,
         ]);
       }
-    };
+    }, 100)
+  );
+
+  const handleVapiMessage = useCallback((msg: any) => {
+    throttledMessage.current(msg);
+  }, []);
+
+  // --- VAPI Event Listeners ---
+  useEffect(() => {
+    const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
+    const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
+    const onError = () => setCallStatus(CallStatus.INACTIVE);
+    const onSpeechStart = () => setIsSpeaking(true);
+    const onSpeechEnd = () => setIsSpeaking(false);
 
     vapiSdk.on("call-start", onCallStart);
     vapiSdk.on("call-end", onCallEnd);
     vapiSdk.on("error", onError);
     vapiSdk.on("speech-start", onSpeechStart);
     vapiSdk.on("speech-end", onSpeechEnd);
-    vapiSdk.on("message", onMessage);
+    vapiSdk.on("message", handleVapiMessage);
 
     return () => {
       vapiSdk.off("call-start", onCallStart);
@@ -105,11 +114,11 @@ export default function Convo({ id }: ConvoProps) {
       vapiSdk.off("error", onError);
       vapiSdk.off("speech-start", onSpeechStart);
       vapiSdk.off("speech-end", onSpeechEnd);
-      vapiSdk.off("message", onMessage);
+      vapiSdk.off("message", handleVapiMessage);
     };
-  }, []);
+  }, [handleVapiMessage]);
 
-  // Auto-scroll top (newest messages at top)
+  // --- Auto-scroll newest messages to top ---
   useEffect(() => {
     if (transcriptRef.current) {
       transcriptRef.current.scrollTop = 0;
@@ -127,7 +136,9 @@ export default function Convo({ id }: ConvoProps) {
       setCallStatus(CallStatus.INACTIVE);
     }
   };
+
   const handleEnd = () => vapiSdk.stop();
+
   const toggleMute = () => {
     vapiSdk.setMuted(!isMuted);
     setIsMuted(!isMuted);
@@ -142,7 +153,7 @@ export default function Convo({ id }: ConvoProps) {
   const currentStatus = statusConfig[callStatus] || statusConfig.default;
 
   return (
-    <div className="flex flex-col md:flex-row h-screen md:h-[88vh] bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] text-white w-full rounded-2xl overflow-hidden shadow-2xl">
+    <div className="flex flex-col md:flex-row h-screen md:h-[88vh] bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] text-white w-full rounded-2xl overflow-hidden shadow-2xl mt-8">
       {/* MAIN CALL AREA */}
       <div className="flex-1 flex flex-col p-6 md:p-10">
         {/* Header */}
@@ -151,7 +162,6 @@ export default function Convo({ id }: ConvoProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            {/* Status Pill */}
             <motion.div
               layout
               className={`relative flex items-center gap-3 px-6 py-3 rounded-full border backdrop-blur-xl font-medium text-sm tracking-wider ${currentStatus.color}`}
@@ -272,7 +282,6 @@ export default function Convo({ id }: ConvoProps) {
           <DeleteCompanionButton id={companion.id} />
         </div>
         <div
-          id="transcript"
           ref={transcriptRef}
           className="flex-1 p-6 space-y-6 overflow-y-auto scrollbar-hide"
         >

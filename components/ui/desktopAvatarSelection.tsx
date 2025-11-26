@@ -1,34 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { Heart, Sparkles } from "lucide-react";
 import { AvatarProps } from "@/types/types";
-import { Sparkles, Heart } from "lucide-react";
+
+interface DesktopAvatarSelectionProps {
+  avatars: AvatarProps[];
+  selected: string | null;
+  onSelect: (id: string) => void;
+}
 
 export default function DesktopAvatarSelection({
   avatars,
-}: {
-  avatars: AvatarProps[];
-}) {
-  const router = useRouter();
-  const params = useSearchParams();
-  const urlSelected = params.get("avatarId");
-  const [selected, setSelected] = useState<string | null>(urlSelected);
-
-  // Corrected useEffect to fix dependency array warning
-  useEffect(() => {
-    // Only update the URL if the selected avatar changes
-    if (selected && selected !== params.get("avatarId")) {
-      router.replace(`?avatarId=${selected}`, { scroll: false });
-    }
-  }, [selected, router, params]);
-
+  selected,
+  onSelect,
+}: DesktopAvatarSelectionProps) {
   const selectedAvatar = avatars.find((a) => a.id === selected);
 
   return (
-    <div className="hidden lg:block relative">
+    <div className="hidden lg:block relative mt-28">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -43,44 +34,41 @@ export default function DesktopAvatarSelection({
         </p>
       </motion.div>
 
-      {/* Gallery */}
+      {/* Avatar Gallery */}
       <div className="grid grid-cols-3 2xl:grid-cols-4 gap-6 max-w-7xl mx-auto px-8">
-        {avatars?.map((avatar, index) => {
+        {avatars.map((avatar, idx) => {
           const isSelected = selected === avatar.id;
 
           return (
             <motion.div
               key={avatar.id}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.05 }}
-              whileHover={{ y: -12 }}
-              onClick={() => setSelected(avatar.id)}
+              transition={{ delay: idx * 0.03 }}
+              whileHover={{ y: -8, scale: 1.05 }}
               className="group relative cursor-pointer"
+              onClick={() => onSelect(avatar.id)}
             >
-              {/* Image Container */}
               <div
-                className={`
-                  relative aspect-square rounded-3xl overflow-hidden shadow-2xl
-                  ring-4 ring-white/0 transition-all duration-500
+                className={`relative aspect-square rounded-3xl overflow-hidden shadow-2xl ring-4 ring-white/0 transition-all duration-300
                   ${
                     isSelected
                       ? "ring-amber-400 shadow-amber-400/30"
                       : "group-hover:ring-white/30"
-                  }
-                `}
+                  }`}
               >
                 <Image
                   src={avatar.image_url}
                   alt={avatar.name || "Companion"}
                   fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 1024px) 33vw, (max-width: 1536px) 25vw, 20vw"
-                  priority
+                  priority={isSelected} // prioritize the selected avatar
+                  loading={isSelected ? "eager" : "lazy"}
                 />
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* Selected Badge */}
                 <AnimatePresence>
@@ -92,27 +80,26 @@ export default function DesktopAvatarSelection({
                       className="absolute top-4 right-4 z-10"
                     >
                       <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-black font-bold px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
-                        <Heart className="w-5 h-5 fill-current" />
-                        Chosen
+                        <Heart className="w-5 h-5 fill-current" /> Chosen
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
 
                 {/* Hover Sparkles */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                  <Sparkles className="absolute top-6 left-6 w-8 h-8 text-amber-300 animate-pulse" />
-                  <Sparkles className="absolute bottom-8 right-6 w-6 h-6 text-yellow-400 animate-pulse delay-300" />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <Sparkles className="absolute top-6 left-6 w-6 h-6 text-amber-300 animate-pulse" />
+                  <Sparkles className="absolute bottom-8 right-6 w-5 h-5 text-yellow-400 animate-pulse delay-300" />
                 </div>
               </div>
 
-              {/* Name Label (appears on hover) */}
+              {/* Name Label */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 6 }}
                 whileHover={{ opacity: 1, y: 0 }}
                 className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-center"
               >
-                <p className="text-white font-medium text-lg tracking-wide bg-black/50 backdrop-blur px-6 py-2 rounded-full">
+                <p className="text-white font-medium text-lg tracking-wide bg-black/50 backdrop-blur px-4 py-1 rounded-full">
                   {avatar.name || "Unknown"}
                 </p>
               </motion.div>
@@ -125,30 +112,28 @@ export default function DesktopAvatarSelection({
       <AnimatePresence>
         {selectedAvatar && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 100 }}
+            initial={{ opacity: 0, scale: 0.8, y: 80 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 100 }}
+            exit={{ opacity: 0, scale: 0.8, y: 80 }}
             className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
           >
-            <div className="bg-gradient-to-r from-amber-400/20 to-orange-500/20 backdrop-blur-xl border border-white/30 rounded-3xl px-10 py-6 shadow-2xl">
-              <div className="flex items-center gap-6">
-                <div className="relative w-20 h-20 rounded-full overflow-hidden ring-4 ring-amber-400 shadow-lg">
-                  <Image
-                    src={selectedAvatar.image_url}
-                    alt={selectedAvatar.name || "Selected"}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <p className="text-white/70 text-sm">You chose</p>
-                  <p className="text-2xl font-bold text-white">
-                    {selectedAvatar.name || "Her"}
-                  </p>
-                  <p className="text-amber-300 text-sm font-medium mt-1">
-                    Ready to bring her to life
-                  </p>
-                </div>
+            <div className="bg-gradient-to-r from-amber-400/20 to-orange-500/20 backdrop-blur-xl border border-white/30 rounded-3xl px-8 py-5 shadow-2xl flex items-center gap-4">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden ring-4 ring-amber-400 shadow-lg">
+                <Image
+                  src={selectedAvatar.image_url}
+                  alt={selectedAvatar.name || "Selected"}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-white/70 text-sm">You chose</p>
+                <p className="text-2xl font-bold text-white">
+                  {selectedAvatar.name || "Her"}
+                </p>
+                <p className="text-amber-300 text-sm font-medium mt-1">
+                  Ready to bring her to life
+                </p>
               </div>
             </div>
           </motion.div>

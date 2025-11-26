@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -8,80 +10,57 @@ import {
 import { Skeleton } from "./skeleton";
 
 export default function CreateComponentSkeleton() {
+  const themeBg = "bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]";
+  const skeletonBg = "bg-white/10"; // subtle light against dark theme
+  const skeletonPulse = "animate-pulse";
+
   return (
-    <main className="grid grid-cols-1 lg:grid-cols-2 gap-1 sm:gap-7 xl:gap-1 min-h-screen ">
+    <main
+      className={`grid grid-cols-1 lg:grid-cols-2 min-h-screen gap-6 p-6 md:p-10 ${themeBg}`}
+    >
+      {/* LEFT — Avatar Grid */}
       <div className="hidden lg:block">
-        <section className="bg-stone-100 grid grid-cols-4 gap-2">
+        <section className="grid grid-cols-4 gap-4">
           {Array.from({ length: 16 }).map((_, i) => (
             <div
               key={i}
-              className="
-              relative aspect-square w-30 overflow-hidden rounded-md
-              border-6 border-transparent animate-pulse
-            "
-            >
-              <div className="w-full h-full bg-stone-300" />
-            </div>
+              className={`aspect-square rounded-xl ${skeletonBg} ${skeletonPulse} w-full`}
+            />
           ))}
         </section>
       </div>
-      <main>
-        <Card className="bg-stone-100">
-          <CardHeader>
-            <CardTitle className="text-2xl">
-              <Skeleton className="h-6 w-40  bg-stone-300" />
-            </CardTitle>
-            <CardDescription>
-              <Skeleton className="h-4 w-64 mt-2  bg-stone-300" />
-            </CardDescription>
-          </CardHeader>
 
-          <CardContent className="space-y-6">
-            {/* Mobile Avatar Picker */}
-            <div className="lg:hidden mt-4 mb-4">
-              <Skeleton className="h-4 w-16 mb-3  bg-stone-300" />
+      {/* RIGHT — Form Skeleton */}
+      <Card
+        className={`${skeletonBg} border border-white/10 rounded-3xl shadow-2xl overflow-hidden`}
+      >
+        <CardHeader>
+          <CardTitle>
+            <Skeleton className="h-8 w-40 mb-2 rounded-md" />
+          </CardTitle>
+          <CardDescription>
+            <Skeleton className="h-4 w-64 rounded-md" />
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Avatar Picker */}
+          <div className="flex gap-4 items-center">
+            <Skeleton className="h-16 w-16 rounded-full" />
+            <Skeleton className="h-16 w-16 rounded-full" />
+          </div>
 
-              <div className="flex gap-2 items-center">
-                <Skeleton className="h-12 w-12 rounded-md bg-stone-300" />
-                <Skeleton className="h-10 w-10 rounded-full bg-stone-300" />
-              </div>
+          {/* Input Fields */}
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="space-y-2">
+              <Skeleton className="h-4 w-32 rounded-md" />
+              <Skeleton className="h-12 w-full rounded-lg" />
             </div>
+          ))}
 
-            {/* Companion Name */}
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-32  bg-stone-300" />
-              <Skeleton className="h-10 w-full rounded-md bg-stone-300" />
-            </div>
-
-            {/* Venue */}
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20  bg-stone-300" />
-              <Skeleton className="h-10 w-full rounded-md bg-stone-300" />
-            </div>
-
-            {/* Voice */}
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20  bg-stone-300" />
-              <Skeleton className="h-10 w-full rounded-md bg-stone-300" />
-            </div>
-
-            {/* Style */}
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20  bg-stone-300" />
-              <Skeleton className="h-10 w-full rounded-md bg-stone-300" />
-            </div>
-
-            {/* Duration */}
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-60  bg-stone-300" />
-              <Skeleton className="h-10 w-full rounded-md bg-stone-300" />
-            </div>
-
-            {/* Button */}
-            <Skeleton className="h-12 w-full rounded-md bg-stone-300" />
-          </CardContent>
-        </Card>
-      </main>
+          {/* Submit Button */}
+          <Skeleton className="h-14 w-full rounded-xl mt-4" />
+        </CardContent>
+      </Card>
     </main>
   );
 }

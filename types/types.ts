@@ -25,3 +25,8 @@ export interface CompanionProps {
   username: string;
   assistant_id: string;
 }
+
+export interface VoiceProps {
+  male: string;
+  female: string;
+}

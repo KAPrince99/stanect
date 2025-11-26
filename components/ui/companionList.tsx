@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { Sparkles, Heart, Plus } from "lucide-react";
 import CompanionCard from "./companionCard";
+import LordIcon from "./lordIcon";
 
 export default function CompanionList({ userId }: { userId: string }) {
   const { user } = useUser();
@@ -24,16 +25,20 @@ export default function CompanionList({ userId }: { userId: string }) {
   return (
     <div className="relative min-h-screen px-6 py-20 md:px-10 lg:px-16">
       {/* Floating Orbs */}
+
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          animate={{ y: [0, -60, 0], x: [0, 40, 0] }}
-          transition={{ repeat: Infinity, duration: 25 }}
-          className="absolute top-20 -left-32 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"
+          style={{ willChange: "transform" }}
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          transition={{ repeat: Infinity, duration: 12 }}
+          className="absolute top-24 left-10 w-52 h-52 bg-purple-600/20 rounded-full"
         />
+
         <motion.div
-          animate={{ y: [0, 80, 0], x: [0, -50, 0] }}
-          transition={{ repeat: Infinity, duration: 30 }}
-          className="absolute bottom-10 right-0 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl"
+          style={{ willChange: "transform" }}
+          animate={{ opacity: [0.3, 0.6, 0.3] }}
+          transition={{ repeat: Infinity, duration: 15 }}
+          className="absolute bottom-16 right-12 w-48 h-48 bg-amber-500/20 rounded-full"
         />
       </div>
 
@@ -80,9 +85,15 @@ export default function CompanionList({ userId }: { userId: string }) {
           <Link href="/new">
             <Button
               size="lg"
-              className="h-16 px-10 text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-2xl shadow-amber-500/50"
+              className="h-16 px-10 text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-2xl shadow-amber-500/50 cursor-pointer"
             >
-              <Plus className="w-7 h-7 mr-3" />
+              <LordIcon
+                src="https://cdn.lordicon.com/ueoydrft.json"
+                trigger="loop"
+                colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
+                width={45}
+                height={45}
+              />
               Create Your First
               <Sparkles className="w-6 h-6 ml-3" />
             </Button>

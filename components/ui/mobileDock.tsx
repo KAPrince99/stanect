@@ -1,49 +1,75 @@
-// components/ui/mobile-dock.tsx
 "use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Home, Sparkles, Plus } from "lucide-react";
+import LordIcon from "./lordIcon";
 
 const dockItems = [
-  { href: "/dashboard", icon: Home, label: "Home" },
-  { href: "/pricing", icon: Sparkles, label: "Premium" },
-  { href: "/new", icon: Plus, label: "Create" },
+  {
+    href: "/dashboard",
+    label: "Home",
+    iconSrc: "https://cdn.lordicon.com/pgirtdfe.json",
+    width: 30,
+    height: 30,
+  },
+  {
+    href: "/pricing",
+    label: "Premium",
+    iconSrc: "https://cdn.lordicon.com/opqmrqco.json",
+    width: 30,
+    height: 30,
+  },
+  {
+    href: "/new",
+    label: "Create",
+    iconSrc: "https://cdn.lordicon.com/ueoydrft.json",
+    width: 35,
+    height: 35,
+    gradient: true,
+  },
 ];
 
 export default function MobileDock() {
   return (
-    <motion.div
-      initial={{ y: 100 }}
-      animate={{ y: 0 }}
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 lg:hidden"
-    >
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 lg:hidden">
       <div className="relative">
-        {/* Blur Background */}
-        <div className="absolute inset-0 bg-white/10 backdrop-blur-2xl rounded-full scale-110" />
+        {/* Sleek blur background */}
+        <div className="absolute inset-0 bg-white/10 backdrop-blur-2xl rounded-full scale-105" />
 
-        {/* Dock */}
-        <div className="relative bg-white/10 backdrop-blur-3xl border border-white/20 rounded-full px-8 py-5 shadow-2xl flex gap-12">
+        {/* Dock container */}
+        <div className="relative bg-white/10 backdrop-blur-3xl border border-white/20 rounded-full px-4 py-3 flex gap-8 justify-center">
           {dockItems.map((item) => (
             <Link key={item.href} href={item.href}>
               <motion.div
-                whileHover={{ scale: 1.3, y: -10 }}
+                whileHover={{ scale: 1.15 }}
                 whileTap={{ scale: 0.9 }}
                 className="relative"
               >
-                {item.href === "/new" ? (
+                {item.gradient ? (
                   <div className="relative">
-                    <div className="absolute -inset-3 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full blur-xl opacity-70" />
-                    <Plus className="w-8 h-8 text-white relative z-10" />
+                    <div className="absolute -inset-1.5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full blur-md opacity-70" />
+                    <LordIcon
+                      src={item.iconSrc}
+                      trigger="loop"
+                      colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
+                      width={item.width}
+                      height={item.height}
+                    />
                   </div>
                 ) : (
-                  <item.icon className="w-8 h-8 text-white/80 hover:text-white transition-colors" />
+                  <LordIcon
+                    src={item.iconSrc}
+                    trigger="loop"
+                    colors="primary:#4bb3fd,secondary:#e88c30,tertiary:#1a3a80"
+                    width={item.width}
+                    height={item.height}
+                  />
                 )}
               </motion.div>
             </Link>
           ))}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

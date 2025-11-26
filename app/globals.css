@@ -231,3 +231,31 @@ html {
     transform: translateY(0);
   }
 }
+
+/* Smooth scroll fallback */
+:root {
+  --ui-bg: linear-gradient(180deg, #0b1a36 0%, #1e4ea8 100%);
+}
+
+/* performance friendly: reduce backdrop-filter scope */
+.backdrop-blur-lite {
+  backdrop-filter: blur(6px);
+}
+
+/* small utility for will-change scroll hints */
+.will-change-scroll {
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+}
+
+/* gentle focus ring */
+:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.06);
+  outline-offset: 3px;
+}
+
+/* make sure heavy blur classes are not used globally */
+.no-heavy-blur * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
