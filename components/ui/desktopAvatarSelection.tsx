@@ -26,10 +26,10 @@ export default function DesktopAvatarSelection({
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-10"
       >
-        <h2 className="text-5xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+        <h2 className="text-5xl md:text-6xl font-display tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
           Choose Your Muse
         </h2>
-        <p className="mt-4 text-white/70 text-lg font-light">
+        <p className="mt-4 text-white/70 text-md md:text-lg font-inter">
           She’s waiting for you to bring her to life
         </p>
       </motion.div>

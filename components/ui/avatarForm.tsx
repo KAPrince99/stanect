@@ -112,14 +112,14 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] p-6 md:p-10 flex justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] p-2 md:p-10 flex justify-center">
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/70">
+          <h1 className="text-5xl md:text-6xl font-display tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/70">
             Bring Her to Life
           </h1>
-          <p className="mt-4 text-white/70 text-lg font-light">
+          <p className="mt-4 text-white/70 text-md md:text-lg font-inter">
             One last step — give her a name, voice, and soul
           </p>
         </div>
@@ -128,11 +128,11 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
         <div className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="p-8 md:p-12 space-y-8"
+            className="p-8 md:p-12 space-y-8 font-inter"
           >
             {/* Mobile Avatar Drawer */}
             <div className="lg:hidden space-y-4">
-              <label className="text-white/90 font-medium flex items-center gap-2">
+              <label className="text-white/90 font-inter flex items-center gap-2">
                 <User className="w-5 h-5 text-amber-400" />
                 Selected Avatar
               </label>
@@ -149,15 +149,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
                 )}
               </div>
             </div>
-
-            {/* Desktop Avatar Selection */}
-            {/* <DesktopAvatarSelection
-              avatars={avatars}
-              selected={selectedAvatar}
-              onSelect={handleAvatarSelect}
-            /> */}
-
-            {/* Inputs */}
 
             <Input name="avatar_Id" className="hidden" />
             <InputField
@@ -208,7 +199,7 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
             <Button
               type="submit"
               disabled={mutation.isPending || !form.formState.isValid}
-              className="w-full h-16 text-xl font-bold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-black shadow-2xl shadow-amber-500/50 disabled:opacity-50"
+              className="w-full h-10 md:h-12 text-md font-bold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-black shadow-2xl shadow-amber-500/50 disabled:opacity-50"
             >
               {mutation.isPending
                 ? "Creating her soul..."
@@ -260,14 +251,14 @@ function InputField({ label, icon, ...props }: any) {
   return (
     <div className="space-y-2">
       {label && (
-        <label className="text-white/90 font-medium flex items-center gap-2">
+        <label className="text-white/90 font-inter flex items-center gap-2">
           {icon}
           {label}
         </label>
       )}
       <Input
         {...props}
-        className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-14 text-lg"
+        className="bg-white/10 border-white/20 text-white placeholder:text-white/40 placeholder:text-sm md:placeholder:text-md h-10 text-sm md:text-md"
       />
     </div>
   );
@@ -277,13 +268,13 @@ function SelectField({ label, icon, value, onChange, children }: any) {
   return (
     <div className="space-y-2">
       {label && (
-        <label className="text-white/90 font-medium flex items-center gap-2">
+        <label className="text-white/90 font-inter flex items-center gap-2">
           {icon}
           {label}
         </label>
       )}
       <Select onValueChange={onChange} value={value}>
-        <SelectTrigger className="bg-white/10 border-white/20 text-white h-14 text-lg">
+        <SelectTrigger className="bg-white/10 border-white/20 text-white h-10 text-sm md:text-md">
           <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
         </SelectTrigger>
         <SelectContent>{children}</SelectContent>

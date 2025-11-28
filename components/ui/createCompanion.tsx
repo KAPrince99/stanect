@@ -55,7 +55,7 @@ export default function CreateCompanion() {
           selected={selectedAvatarId}
           onSelect={handleSelectAvatar} // updated handler
         />
-        <div className="flex items-center justify-center p-6 md:p-10 lg:p-16">
+        <div className="flex items-center justify-center  md:p-5 lg:p-16">
           <AvatarForm avatars={avatars} selectedAvatarId={selectedAvatarId} />
         </div>
       </div>

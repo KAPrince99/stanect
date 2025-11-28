@@ -14,7 +14,7 @@ import { Button } from "./button";
 import { deleteCompanion } from "@/app/(app)/actions/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CompanionProps } from "@/types/types";
 import React from "react";
@@ -66,8 +66,12 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="cursor-pointer">
-          Delete
+        <Button
+          size="icon"
+          variant="outline"
+          className="w-16 h-16 rounded-full border-white/30 bg-white/10 backdrop-blur hover:bg-white/20 cursor-pointer"
+        >
+          <Trash2 className="w-7 h-7 text-red-500" />
         </Button>
       </AlertDialogTrigger>
 

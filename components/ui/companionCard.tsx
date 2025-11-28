@@ -53,14 +53,14 @@ export default function CompanionCard({
       </Link>
 
       <div className="p-5 text-center">
-        <h3 className="text-2xl font-bold text-white mb-3">
+        <h3 className="text-xl md:text-2xl text-white mb-3">
           {companion.companion_name}
         </h3>
 
         <Link href={`/dashboard/${companion.id}`}>
           <Button
             size="lg"
-            className="w-full h-14 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-semibold text-lg shadow-lg"
+            className="w-full h-10 md:h-12 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-display cursor-pointer text-md shadow-lg"
           >
             <MessageCircle className="w-5 h-5 mr-2" />
             Let&apos;s Talk

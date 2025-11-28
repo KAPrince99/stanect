@@ -19,6 +19,8 @@ import {
   Zap,
   Radio,
   CheckCircle2,
+  Delete,
+  Trash2,
 } from "lucide-react";
 import throttle from "lodash.throttle";
 
@@ -153,7 +155,7 @@ export default function Convo({ id }: ConvoProps) {
   const currentStatus = statusConfig[callStatus] || statusConfig.default;
 
   return (
-    <div className="flex flex-col md:flex-row h-screen md:h-[88vh] bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] text-white w-full rounded-2xl overflow-hidden shadow-2xl mt-8">
+    <div className="flex flex-col md:flex-row h-screen md:h-[88vh] bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] text-white w-full rounded-2xl overflow-hidden shadow-2xl mt-10">
       {/* MAIN CALL AREA */}
       <div className="flex-1 flex flex-col p-6 md:p-10">
         {/* Header */}
@@ -180,7 +182,7 @@ export default function Convo({ id }: ConvoProps) {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="mt-6 text-5xl md:text-6xl lg:text-7xl font-black tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent"
+              className="mt-6 text-5xl md:text-6xl lg:text-7xl font-display tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent"
             >
               {companion.companion_name}
             </motion.h1>
@@ -189,7 +191,7 @@ export default function Convo({ id }: ConvoProps) {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-white/60 text-lg mt-2"
+                className="text-white/60 text-lg mt-2 font-inter"
               >
                 Say something... she’s listening
               </motion.p>
@@ -231,7 +233,7 @@ export default function Convo({ id }: ConvoProps) {
             variant="outline"
             onClick={toggleMute}
             disabled={callStatus !== CallStatus.ACTIVE}
-            className="w-16 h-16 rounded-full border-white/30 bg-white/10 backdrop-blur hover:bg-white/20"
+            className="w-16 h-16 rounded-full border-white/30 bg-white/10 backdrop-blur hover:bg-white/20 cursor-pointer"
           >
             {isMuted ? (
               <MicOff className="w-7 h-7" />
@@ -245,7 +247,7 @@ export default function Convo({ id }: ConvoProps) {
             whileTap={{ scale: 0.95 }}
             onClick={callStatus === CallStatus.ACTIVE ? handleEnd : handleCall}
             disabled={callStatus === CallStatus.CONNECTING}
-            className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-2xl transition-all ${
+            className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-2xl transition-all cursor-pointer ${
               callStatus === CallStatus.ACTIVE
                 ? "bg-red-600 hover:bg-red-700 shadow-red-600/60"
                 : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-emerald-500/60"
@@ -258,28 +260,21 @@ export default function Convo({ id }: ConvoProps) {
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
               >
-                <Phone className="w-11 h-11" />
+                <Phone className="w-11 h-11 " />
               </motion.div>
             ) : (
-              <Phone className="w-11 h-11" />
+              <Phone className="w-11 h-11 " />
             )}
           </motion.button>
 
-          <Button
-            size="icon"
-            variant="outline"
-            className="w-16 h-16 rounded-full border-white/30 bg-white/10 backdrop-blur hover:bg-white/20"
-          >
-            <MoreVertical className="w-7 h-7" />
-          </Button>
+          <DeleteCompanionButton id={companion.id} />
         </div>
       </div>
 
       {/* TRANSCRIPT SIDEBAR */}
       <aside className="hidden md:flex flex-col w-full md:w-96 bg-white/5 backdrop-blur-xl border-l border-white/10">
-        <div className="p-6 border-b border-white/10 flex justify-between items-center">
+        <div className="p-6 border-b border-white/10 flex justify-start items-center">
           <h2 className="text-xl font-bold">Conversation</h2>
-          <DeleteCompanionButton id={companion.id} />
         </div>
         <div
           ref={transcriptRef}

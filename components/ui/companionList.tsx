@@ -48,10 +48,10 @@ export default function CompanionList({ userId }: { userId: string }) {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-16"
       >
-        <h1 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
-          Welcome back, {user?.firstName || "King"}
+        <h1 className="text-5xl md:text-7xl tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+          Welcome back, {user?.firstName || "King"}.
         </h1>
-        <p className="mt-4 text-white/70 text-lg md:text-xl font-light">
+        <p className="mt-4 text-white/70 text-lg md:text-xl font-inter">
           {companions.length === 0
             ? "Your confidence journey starts now"
             : `You have ${companions.length} ${
@@ -128,7 +128,7 @@ export default function CompanionList({ userId }: { userId: string }) {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 shadow-2xl flex items-center justify-center hidden"
+          className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 shadow-2xl flex items-center justify-center hidden "
         >
           <Plus className="w-8 h-8 text-black" />
         </motion.button>

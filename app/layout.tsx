@@ -1,10 +1,27 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import QueryProvider from "./providers/queryProvider";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+
+// Primary font (body + UI)
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+});
+
+// Display font (hero titles, big text)
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display",
+  weight: ["700"],
+});
 
 export const metadata = {
   title: "StaNect",
-  description: "Your AI voice companion",
+  description: "Speak with confidence",
 };
 
 export default function RootLayout({
@@ -14,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" data-scroll-behavior="smooth">
+      <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <body>
           <QueryProvider>{children}</QueryProvider>
         </body>
