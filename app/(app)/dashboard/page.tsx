@@ -8,12 +8,11 @@ import { Suspense } from "react";
 
 export default async function Dashboard() {
   const { userId } = await auth();
-  if (!userId) redirect("/login");
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] overflow-hidden rounded-xl">
       <Suspense fallback={<CompanionCardSkeleton />}>
-        <CompanionList userId={userId} />
+        <CompanionList userId={userId!} />
       </Suspense>
     </main>
   );

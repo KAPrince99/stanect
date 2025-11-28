@@ -76,7 +76,7 @@ export default function Convo({ id }: ConvoProps) {
 
   const { data: companion, isLoading } = useQuery({
     queryKey: ["companions", id],
-    queryFn: () => getSingleCompanion(id),
+    queryFn: async () => getSingleCompanion(id),
   });
 
   // --- Throttled message handler ---
@@ -203,7 +203,7 @@ export default function Convo({ id }: ConvoProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto flex-1">
           <div className="relative aspect-square rounded-3xl overflow-hidden ring-4 ring-white/20 shadow-2xl">
             <Image
-              src={companion.avatars?.image_url || "/avatars/avatar_0.jpg"}
+              src={companion.avatars.image_url || "/avatars/avatar_0.jpg"}
               alt={companion.companion_name}
               fill
               className="object-cover"

@@ -33,15 +33,30 @@ export default function Pill() {
       <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 blur-3xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
       {/* Left: Logo + Brand */}
-      <Link href="/" className="flex items-center  z-10">
+      <Link
+        href="/"
+        className="flex items-center z-10 no-underline focus:outline-none group"
+      >
         <div className="relative">
+          {/* Mobile Logo */}
           <Image
             src="/logo/logo.svg"
-            alt="Stanect"
-            width={42}
-            height={42}
-            className="drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
+            alt="Stanect Mobile"
+            width={30}
+            height={30}
+            className="block md:hidden drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
           />
+
+          {/* Desktop Logo */}
+          <Image
+            src="/logo/logo.svg"
+            alt="Stanect Desktop"
+            width={40}
+            height={40}
+            className="hidden md:block drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
+          />
+
+          {/* Rotating Glow */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -49,7 +64,10 @@ export default function Pill() {
           />
         </div>
 
-        <span className="hidden sm:block text-2xl font-black tracking-tighter bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent -ml-1">
+        <span
+          className="text-xl md:text-2xl font-display tracking-tighter 
+                   bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent -ml-1 md:-ml-2"
+        >
           tanect
         </span>
       </Link>
@@ -77,7 +95,6 @@ export default function Pill() {
         <SignedIn>
           <motion.div whileHover={{ scale: 1.1 }} className="relative">
             <UserButton
-              afterSignOutUrl="/"
               appearance={{
                 elements: {
                   avatarBox: "w-12 h-12 ring-4 ring-white/30 shadow-2xl",
