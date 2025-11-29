@@ -4,22 +4,7 @@ import { Sparkles } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative  overflow-y-auto mt-32 lg:mt-40 ">
-      {/* Animated Blob */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] 
-                        bg-gradient-to-r from-blue-600/30 to-cyan-500/20 
-                        blur-3xl rounded-full 
-                        animate-pulse-slow"
-        />
-        <div
-          className="absolute -top-40 -right-40 w-[700px] h-[700px] 
-                        bg-purple-600/20 blur-3xl rounded-full 
-                        animate-float"
-        />
-      </div>
-
+    <section className="relative  overflow-y-auto mt-32 lg:mt-35 bg-transparent">
       <div className="relative z-10 container mx-auto px-6 md:px-8">
         <div className="mx-auto max-w-5xl text-center">
           {/* Badge */}
@@ -37,7 +22,7 @@ export default function Hero() {
 
           {/* Main Headline */}
           <h1
-            className="mt-8 text-5xl md:text-6xl lg:text-7xl tracking-tight 
+            className="mt-8 text-5xl md:text-6xl lg:text-8xl tracking-tight 
                           bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent
                           leading-tight animate-fade-up animation-delay-200"
           >
@@ -50,25 +35,21 @@ export default function Hero() {
               freeze
             </span>
             <br />
-            meeting someone you like.
+            meeting someone you really like.
           </h1>
 
           {/* Subheadline */}
           <p
-            className="mx-auto mt-6 md:mt-8 max-w-3xl text-lg md:text-xl lg:text-2xl 
+            className="mx-auto mt-6 md:mt-8 max-w-3xl text-lg  lg:text-xl 
                          text-white/80 font-inter leading-relaxed 
                          animate-fade-up animation-delay-600"
           >
-            Practice real conversations with stunning, hyper-realistic AI
-            companions — in the gym, coffee shop, bar, or anywhere life happens.
-            <span className="block mt-3 text-white/90  font-bold">
-              Feel the spark. Build unshakable confidence. Zero judgment.
-            </span>
+            Made For People who Struggle to Connect
           </p>
 
           {/* CTA */}
 
-          <div className="mt-12 animate-fade-up animation-delay-800">
+          <div className="mt-8 animate-fade-up animation-delay-800">
             <WrapButton
               className=" text-lg md:text-xl font-display 
                          shadow-2xl shadow-amber-500/25 

@@ -8,7 +8,7 @@ export default function Demo() {
   const [playing, setPlaying] = useState(false);
 
   return (
-    <section className="relative py-32 px-6 bg-gradient-to-b from-[#0b132b] via-[#0f1a36] to-[#0b132b]">
+    <section className="relative py-32 px-6 bg-transparent">
       <div className="relative max-w-7xl mx-auto text-center">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}

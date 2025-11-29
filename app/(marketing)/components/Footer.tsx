@@ -12,7 +12,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-t from-black via-[#0b132b] to-[#0f1a36]/50 border-t border-white/10">
+    <footer className="relative overflow-hidden bg-transparent">
       {/* Floating background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
