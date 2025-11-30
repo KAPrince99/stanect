@@ -87,7 +87,6 @@ text-2xl
           <div
             className="
     flex 
-    flex-col md:flex-row 
     items-center 
     justify-center 
     gap-6 md:gap-10 lg:gap-14
