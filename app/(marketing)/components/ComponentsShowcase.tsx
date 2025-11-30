@@ -67,9 +67,8 @@ text-2xl
             />
             <span className="block mt-2">Zero judgement.</span>
           </h2>
-
-          <div className="mt-5">
-            <MaskedDiv maskType="type-2" className="my-4">
+          <div className="mt-10">
+            <MaskedDiv maskType="type-2" className="my-6 max-w-4xl mx-auto">
               <video
                 className="cursor-pointer transition-all duration-300 hover:scale-105"
                 playsInline
@@ -85,8 +84,17 @@ text-2xl
             </MaskedDiv>
           </div>
 
-          <div className="flex  items-center justify-between -mt-4 md:-mt-18 lg:--mt-20">
-            <MaskedDiv maskType="type-1" size={0.35} className="rotate-180 ">
+          <div
+            className="
+    flex 
+    flex-col md:flex-row 
+    items-center 
+    justify-center 
+    gap-6 md:gap-10 lg:gap-14
+    -mt-4 md:-mt-16 lg:-mt-20
+  "
+          >
+            <MaskedDiv maskType="type-1" size={0.35} className="rotate-180">
               <video playsInline muted autoPlay loop>
                 <source
                   src="https://videos.pexels.com/video-files/18069803/18069803-uhd_1440_2560_24fps.mp4"
@@ -104,7 +112,7 @@ text-2xl
               </video>
             </MaskedDiv>
 
-            <MaskedDiv maskType="type-1" size={0.25} className="rotate-180 ">
+            <MaskedDiv maskType="type-1" size={0.25} className="rotate-180">
               <video playsInline muted autoPlay loop>
                 <source
                   src="https://videos.pexels.com/video-files/18069166/18069166-uhd_2560_1440_24fps.mp4"

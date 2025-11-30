@@ -17,9 +17,9 @@ export default async function Homepage() {
       <ComponentsShowcase />
       <AppleCardsCarouselDemo />
       {/* <Testimonials /> */}
-      <Pricing />
+      {/* <Pricing /> */}
       {/* <Scenario /> */}
-      <Demo />
+      {/* <Demo /> */}
       <Footer />
     </MarketingLayout>
   );
