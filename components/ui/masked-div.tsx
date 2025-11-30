@@ -11,7 +11,7 @@ interface SvgPath {
 }
 
 interface MaskedDivProps {
-  children: React.ReactElement<HTMLImageElement | HTMLVideoElement>;
+  children: React.ReactElement<HTMLVideoElement | HTMLImageElement>;
   maskType?: MaskType;
   className?: string;
   backgroundColor?: string;
@@ -52,56 +52,28 @@ const MaskedDiv: React.FC<MaskedDivProps> = ({
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      const videoElement = videoRef.current;
-      if (!videoElement) return;
-
-      if (document.hidden) {
-        videoElement.pause();
-      } else {
-        // Only play if the video should be playing
-        const playPromise = videoElement.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            // Auto-play was prevented, handle this case silently
-          });
-        }
-      }
+      if (!videoRef.current) return;
+      if (document.hidden) videoRef.current.pause();
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Intersection Observer for viewport visibility
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const videoElement = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) {
-            const playPromise = videoElement.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(() => {
-                // Handle auto-play prevention silently
-              });
-            }
-          } else {
-            videoElement.pause();
-          }
+          const vid = entry.target as HTMLVideoElement;
+          if (!entry.isIntersecting) vid.pause();
+          else vid.play().catch(() => {});
         });
       },
-      {
-        threshold: 0.1, // Start playing when 10% of the video is visible
-      }
+      { threshold: 0.1 }
     );
 
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
-    }
+    if (videoRef.current) observer.observe(videoRef.current);
 
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      if (videoRef.current) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        observer.unobserve(videoRef.current);
-      }
+      if (videoRef.current) observer.unobserve(videoRef.current);
     };
   }, []);
 
@@ -126,7 +98,12 @@ const MaskedDiv: React.FC<MaskedDivProps> = ({
   return (
     <section className={`relative ${className}`} style={containerStyle}>
       {React.cloneElement(children, {
-        className: `w-full h-full object-cover hover:scale-105 transition-all duration-300 ${
+        ref: videoRef,
+        autoPlay: true,
+        muted: true,
+        playsInline: true,
+        loop: true,
+        className: `w-full h-full object-cover transition-all duration-300 ${
           children.props.className || ""
         }`,
       })}
