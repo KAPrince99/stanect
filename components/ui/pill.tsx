@@ -39,22 +39,22 @@ export default function Pill() {
       >
         <div className="relative">
           {/* Mobile Logo */}
-          <Image
+          {/* <Image
             src="/logo/logo.svg"
             alt="Stanect Mobile"
             width={30}
             height={30}
             className="block md:hidden drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
-          />
+          /> */}
 
           {/* Desktop Logo */}
-          <Image
+          {/* <Image
             src="/logo/logo.svg"
             alt="Stanect Desktop"
             width={40}
             height={40}
             className="hidden md:block drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
-          />
+          /> */}
 
           {/* Rotating Glow */}
           <motion.div
@@ -64,12 +64,11 @@ export default function Pill() {
           />
         </div>
 
-        <span
-          className="text-xl md:text-2xl font-display tracking-tighter 
-                   bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent -ml-1 md:-ml-2"
-        >
-          tanect
-        </span>
+        <div className="text-xl font-extrabold tracking-tight">
+          <span className="bg-gradient-to-r from-white via-white/90 to-white/50 bg-clip-text text-transparent">
+            Stanect
+          </span>
+        </div>
       </Link>
 
       {/* Center: Upload (only on large screens) */}
