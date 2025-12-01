@@ -42,13 +42,13 @@ export default function CreateCompanion() {
 
   if (error || !avatars)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]">
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
         <p className="text-white/70 text-xl">Failed to load avatars...</p>
       </div>
     );
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] rounded-xl">
+    <div className="min-h-screen relative overflow-hidden bg-transparent rounded-xl">
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
         <DesktopAvatarSelection
           avatars={avatars}

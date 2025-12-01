@@ -24,24 +24,6 @@ export default function CompanionList({ userId }: { userId: string }) {
 
   return (
     <div className="relative min-h-screen px-6 py-20 md:px-10 lg:px-16">
-      {/* Floating Orbs */}
-
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          style={{ willChange: "transform" }}
-          animate={{ opacity: [0.4, 0.8, 0.4] }}
-          transition={{ repeat: Infinity, duration: 12 }}
-          className="absolute top-24 left-10 w-52 h-52 bg-purple-600/20 rounded-full"
-        />
-
-        <motion.div
-          style={{ willChange: "transform" }}
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
-          transition={{ repeat: Infinity, duration: 15 }}
-          className="absolute bottom-16 right-12 w-48 h-48 bg-amber-500/20 rounded-full"
-        />
-      </div>
-
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}

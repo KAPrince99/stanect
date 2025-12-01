@@ -60,7 +60,7 @@ const tiers = [
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] py-16 px-4 sm:px-6 mt-3">
+    <div className="min-h-screen bg-transparent py-16 px-4 sm:px-6 mt-3">
       {/* Soft Background Movement */}
       <motion.div
         className="fixed inset-0 pointer-events-none"

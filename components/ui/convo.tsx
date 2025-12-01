@@ -1,28 +1,31 @@
 "use client";
 
-import Image from "next/image";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import { motion, AnimatePresence } from "framer-motion";
+import throttle from "lodash.throttle";
+import * as THREE from "three";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@clerk/nextjs";
+
 import { Button } from "@/components/ui/button";
 import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
-import { useEffect, useState, useRef, useCallback } from "react";
-import { vapiSdk } from "@/lib/vapiSdk";
-import { useQuery } from "@tanstack/react-query";
-import { getSingleCompanion } from "@/app/(app)/actions/actions";
 import ConvoSkeleton from "./convoSkeleton";
-import { useUser } from "@clerk/nextjs";
-import { motion, AnimatePresence } from "framer-motion";
+import { getSingleCompanion } from "@/app/(app)/actions/actions";
+import { vapiSdk } from "@/lib/vapiSdk";
+
 import {
   Mic,
   MicOff,
   Phone,
   PhoneOff,
-  MoreVertical,
   Zap,
   Radio,
   CheckCircle2,
-  Delete,
-  Trash2,
+  MessageCircle,
+  X,
 } from "lucide-react";
-import throttle from "lodash.throttle";
 
 interface ConvoProps {
   id: string;
@@ -37,7 +40,6 @@ enum CallStatus {
   INACTIVE = "INACTIVE",
   CONNECTING = "CONNECTING",
   ACTIVE = "ACTIVE",
-  FINISHED = "FINISHED",
 }
 
 const statusConfig = {
@@ -48,98 +50,171 @@ const statusConfig = {
   },
   [CallStatus.ACTIVE]: {
     label: "Live • She can hear you",
-    icon: <Zap className="w-4 h-4" />,
+    icon: <Zap className="w-4 h-4 animate-pulse" />,
     color: "bg-emerald-500/20 border-emerald-500/50 text-emerald-300",
   },
-  [CallStatus.FINISHED]: {
-    label: "Session ended",
-    icon: <CheckCircle2 className="w-4 h-4" />,
-    color: "bg-gray-500/20 border-gray-500/50 text-gray-400",
-  },
   default: {
-    label: "Ready when you are",
+    label: "Ready to talk",
     icon: null,
     color: "bg-blue-500/20 border-blue-500/40 text-blue-300",
   },
 };
 
+// Globe shaders with orange gradient and vibration support
+const vertexShader = `
+  varying vec3 vNormal;
+  void main() {
+    vNormal = normal;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+  }
+`;
+
+const fragmentShader = `
+  uniform float uTime;
+  varying vec3 vNormal;
+
+  void main() {
+    // Gradient: base orange to bright accent
+    vec3 baseColor = vec3(0.91, 0.55, 0.19);   // #e88c30
+    vec3 brightOrange = vec3(1.0, 0.65, 0.33); // #ffa550
+
+    // Vertical gradient + soft pulsing
+    float glow = 0.2 + 0.15 * sin(uTime * 2.0);
+    float gradient = (vNormal.y + 1.0) / 2.0;
+    vec3 finalColor = mix(baseColor, brightOrange, gradient + glow);
+
+    gl_FragColor = vec4(finalColor,1.0);
+  }
+`;
+
+const Globe = ({ isActive }: { isActive: boolean }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const uniforms = useRef({ uTime: { value: 0 } });
+
+  useFrame((state) => {
+    uniforms.current.uTime.value = state.clock.getElapsedTime();
+
+    if (isActive && meshRef.current) {
+      // Vibrate / pulse when call is active
+      const t = state.clock.getElapsedTime();
+      meshRef.current.rotation.x += 0.002 * Math.sin(t * 20);
+      meshRef.current.rotation.y += 0.002 * Math.cos(t * 20);
+      const scale = 1 + 0.015 * Math.sin(t * 10);
+      meshRef.current.scale.set(scale, scale, scale);
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} rotation={[0.4, 0.6, 0]}>
+      <icosahedronGeometry args={[3.2, 40]} />
+      <shaderMaterial
+        uniforms={uniforms.current}
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+        side={THREE.DoubleSide}
+        wireframe={false}
+      />
+    </mesh>
+  );
+};
+
 export default function Convo({ id }: ConvoProps) {
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
   const [isMuted, setIsMuted] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [showTranscript, setShowTranscript] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [statusLabel, setStatusLabel] = useState("Ready to talk");
   const transcriptRef = useRef<HTMLDivElement>(null);
 
   const { user } = useUser();
-  const imageUrl = user?.imageUrl ?? "/avatar-placeholder.png";
-  const firstName = user?.firstName ?? "You";
+
+  // Screen size detection
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const { data: companion, isLoading } = useQuery({
     queryKey: ["companions", id],
     queryFn: async () => getSingleCompanion(id),
   });
 
-  // --- Throttled message handler ---
   const throttledMessage = useRef(
     throttle((msg: any) => {
-      if (msg.type === "transcript" && msg.transcriptType === "final") {
+      if (
+        msg.type === "transcript" &&
+        msg.transcriptType === "final" &&
+        msg.transcript
+      ) {
         setMessages((prev) => [
           { role: msg.role, content: msg.transcript },
           ...prev,
         ]);
       }
-    }, 100)
+    }, 150)
   );
 
   const handleVapiMessage = useCallback((msg: any) => {
     throttledMessage.current(msg);
   }, []);
 
-  // --- VAPI Event Listeners ---
   useEffect(() => {
-    const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
-    const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
+    const onCallStart = () => {
+      setCallStatus(CallStatus.ACTIVE);
+      setStatusLabel("Live • She can hear you");
+    };
+    const onCallEnd = () => {
+      setCallStatus(CallStatus.INACTIVE);
+      setIsMuted(false);
+      setStatusLabel("Call ended");
+      setTimeout(() => setStatusLabel("Ready to talk"), 2000);
+    };
     const onError = () => setCallStatus(CallStatus.INACTIVE);
-    const onSpeechStart = () => setIsSpeaking(true);
-    const onSpeechEnd = () => setIsSpeaking(false);
 
     vapiSdk.on("call-start", onCallStart);
     vapiSdk.on("call-end", onCallEnd);
     vapiSdk.on("error", onError);
-    vapiSdk.on("speech-start", onSpeechStart);
-    vapiSdk.on("speech-end", onSpeechEnd);
     vapiSdk.on("message", handleVapiMessage);
 
     return () => {
       vapiSdk.off("call-start", onCallStart);
       vapiSdk.off("call-end", onCallEnd);
       vapiSdk.off("error", onError);
-      vapiSdk.off("speech-start", onSpeechStart);
-      vapiSdk.off("speech-end", onSpeechEnd);
       vapiSdk.off("message", handleVapiMessage);
     };
   }, [handleVapiMessage]);
 
-  // --- Auto-scroll newest messages to top ---
   useEffect(() => {
-    if (transcriptRef.current) {
-      transcriptRef.current.scrollTop = 0;
-    }
+    if (transcriptRef.current) transcriptRef.current.scrollTop = 0;
   }, [messages]);
 
   const handleCall = async () => {
-    if (!companion?.assistant_id || callStatus !== CallStatus.INACTIVE) return;
+    if (callStatus !== CallStatus.INACTIVE || !companion?.assistant_id) return;
+
     setMessages([]);
     setCallStatus(CallStatus.CONNECTING);
+    setStatusLabel("Connecting to her...");
+
     try {
       await vapiSdk.start(companion.assistant_id);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setCallStatus(CallStatus.INACTIVE);
+      setStatusLabel("Ready to talk");
     }
   };
 
-  const handleEnd = () => vapiSdk.stop();
+  const handleEnd = () => {
+    if (callStatus !== CallStatus.ACTIVE) return;
+
+    vapiSdk.stop();
+    setCallStatus(CallStatus.INACTIVE);
+    setIsMuted(false);
+    setStatusLabel("Call ended");
+    setTimeout(() => setStatusLabel("Ready to talk"), 2000);
+  };
 
   const toggleMute = () => {
     vapiSdk.setMuted(!isMuted);
@@ -149,196 +224,166 @@ export default function Convo({ id }: ConvoProps) {
   if (isLoading) return <ConvoSkeleton />;
   if (!companion)
     return (
-      <div className="text-white text-center p-10">Companion not found</div>
+      <div className="text-center text-white p-10 text-xl">
+        Companion not found
+      </div>
     );
 
   const currentStatus = statusConfig[callStatus] || statusConfig.default;
 
   return (
-    <div className="flex flex-col md:flex-row h-screen md:h-[88vh] bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] text-white w-full rounded-2xl overflow-hidden shadow-2xl mt-10">
-      {/* MAIN CALL AREA */}
-      <div className="flex-1 flex flex-col p-6 md:p-10">
+    <div className="flex h-[80vh] relative text-white overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#1e4ea8]/20">
+      {/* Main Conversation Area */}
+      <div className="flex-1 flex flex-col items-center justify-start p-4 md:p-4 relative z-10 overflow-y-auto">
         {/* Header */}
-        <div className="flex flex-col items-center gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-4 mb-8"
+        >
+          <div
+            className={`inline-flex items-center gap-3 px-6 py-3 rounded-full border backdrop-blur-xl text-sm font-medium ${currentStatus.color}`}
           >
-            <motion.div
-              layout
-              className={`relative flex items-center gap-3 px-6 py-3 rounded-full border backdrop-blur-xl font-medium text-sm tracking-wider ${currentStatus.color}`}
-            >
-              {currentStatus.icon}
-              <span>{currentStatus.label}</span>
-              {callStatus === CallStatus.ACTIVE && (
-                <div className="absolute -top-1 -right-1">
-                  <div className="w-4 h-4 bg-emerald-400 rounded-full animate-ping" />
-                  <div className="absolute inset-0 w-4 h-4 bg-emerald-400 rounded-full" />
-                </div>
-              )}
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="mt-6 text-5xl md:text-6xl lg:text-7xl font-display tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent"
-            >
-              {companion.companion_name}
-            </motion.h1>
-
-            {callStatus === CallStatus.ACTIVE && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-white/60 text-lg mt-2 font-inter"
-              >
-                Say something... she’s listening
-              </motion.p>
-            )}
-          </motion.div>
-        </div>
-
-        {/* Avatars */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto flex-1">
-          <div className="relative aspect-square rounded-3xl overflow-hidden ring-4 ring-white/20 shadow-2xl">
-            <Image
-              src={companion.avatars.image_url || "/avatars/avatar_0.jpg"}
-              alt={companion.companion_name}
-              fill
-              className="object-cover"
-            />
-            {isSpeaking && (
-              <div className="absolute inset-0 ring-8 ring-emerald-400/60 animate-pulse" />
-            )}
+            {currentStatus.icon} <span>{statusLabel}</span>
           </div>
 
-          <div className="relative aspect-square rounded-3xl overflow-hidden ring-4 ring-white/10 shadow-2xl hidden md:block">
-            <Image
-              src={imageUrl}
-              alt={firstName}
-              fill
-              className="object-cover"
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+            {companion.companion_name}
+          </h1>
+
+          {callStatus === CallStatus.ACTIVE && (
+            <p className="text-white/60 text-lg">
+              Say something... she’s listening
+            </p>
+          )}
+        </motion.div>
+
+        {/* Globe */}
+        <div
+          className="w-full max-w-sm sm:max-w-xl md:max-w-4xl lg:max-w-5xl mx-auto"
+          style={{ height: "clamp(300px, 60vh, 700px)" }}
+        >
+          <Canvas camera={{ position: [5, 5, 8], fov: 50 }}>
+            <ambientLight intensity={0.8} />
+            <directionalLight position={[10, 10, 5]} />
+            <Globe isActive={callStatus === CallStatus.ACTIVE} />
+            <OrbitControls
+              enableZoom={false}
+              autoRotate
+              autoRotateSpeed={0.5}
             />
-            <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur px-4 py-1.5 rounded-full text-sm font-medium">
-              You
+          </Canvas>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 py-5 z-20">
+          <DeleteCompanionButton id={id} />
+
+          {callStatus === CallStatus.INACTIVE ? (
+            <Button
+              className="px-6 py-3 text-lg font-semibold rounded-full bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center"
+              onClick={handleCall}
+            >
+              <Phone className="w-5 h-5 mr-2" /> Start Call
+            </Button>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Button
+                className="p-3 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-xl transition-colors"
+                onClick={toggleMute}
+              >
+                {isMuted ? (
+                  <MicOff className="w-5 h-5 text-white" />
+                ) : (
+                  <Mic className="w-5 h-5 text-white" />
+                )}
+              </Button>
+              <Button
+                className="p-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
+                onClick={handleEnd}
+              >
+                <PhoneOff className="w-5 h-5 text-white" />
+              </Button>
             </div>
-          </div>
-        </div>
-
-        {/* Controls */}
-        <div className="flex justify-center gap-10 mt-12">
-          <Button
-            size="icon"
-            variant="outline"
-            onClick={toggleMute}
-            disabled={callStatus !== CallStatus.ACTIVE}
-            className="w-16 h-16 rounded-full border-white/30 bg-white/10 backdrop-blur hover:bg-white/20 cursor-pointer"
-          >
-            {isMuted ? (
-              <MicOff className="w-7 h-7" />
-            ) : (
-              <Mic className="w-7 h-7" />
-            )}
-          </Button>
-
-          <motion.button
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={callStatus === CallStatus.ACTIVE ? handleEnd : handleCall}
-            disabled={callStatus === CallStatus.CONNECTING}
-            className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-2xl transition-all cursor-pointer ${
-              callStatus === CallStatus.ACTIVE
-                ? "bg-red-600 hover:bg-red-700 shadow-red-600/60"
-                : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-emerald-500/60"
-            }`}
-          >
-            {callStatus === CallStatus.ACTIVE ? (
-              <PhoneOff className="w-11 h-11" />
-            ) : callStatus === CallStatus.CONNECTING ? (
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              >
-                <Phone className="w-11 h-11 " />
-              </motion.div>
-            ) : (
-              <Phone className="w-11 h-11 " />
-            )}
-          </motion.button>
-
-          <DeleteCompanionButton id={companion.id} />
+          )}
         </div>
       </div>
 
-      {/* TRANSCRIPT SIDEBAR */}
-      <aside className="hidden md:flex flex-col w-full md:w-96 bg-white/5 backdrop-blur-xl border-l border-white/10">
-        <div className="p-6 border-b border-white/10 flex justify-start items-center">
-          <h2 className="text-xl font-bold">Conversation</h2>
-        </div>
-        <div
-          ref={transcriptRef}
-          className="flex-1 p-6 space-y-6 overflow-y-auto scrollbar-hide"
-        >
-          <AnimatePresence initial={false}>
-            {messages.map((msg, i) => (
-              <motion.div
-                key={i}
-                layout
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className={`flex ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[80%] px-5 py-3.5 rounded-3xl shadow-lg border ${
-                    msg.role === "user"
-                      ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-400/50"
-                      : "bg-white/10 backdrop-blur-md border-white/20 text-white/95"
-                  }`}
-                >
-                  <p className="text-xs font-semibold opacity-80">
-                    {msg.role === "assistant"
-                      ? companion.companion_name
-                      : "You"}
-                  </p>
-                  <p className="mt-1.5 text-base leading-relaxed">
-                    {msg.content}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          {isSpeaking && (
+      {/* Transcript Panel */}
+      {!isDesktop && (
+        <AnimatePresence>
+          {!showTranscript && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex justify-start"
+              initial={{ opacity: 0, x: "100%" }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.3 }}
+              className="fixed bottom-4 right-4 z-30"
             >
-              <div className="px-5 py-3.5 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="flex gap-1.5">
-                  <span
-                    className="w-2 h-2 bg-white/70 rounded-full animate-bounce"
-                    style={{ animationDelay: "0ms" }}
-                  />
-                  <span
-                    className="w-2 h-2 bg-white/70 rounded-full animate-bounce"
-                    style={{ animationDelay: "150ms" }}
-                  />
-                  <span
-                    className="w-2 h-2 bg-white/70 rounded-full animate-bounce"
-                    style={{ animationDelay: "300ms" }}
-                  />
-                </div>
-              </div>
+              <Button
+                className="p-3 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-xl transition-colors"
+                onClick={() => setShowTranscript(true)}
+              >
+                <MessageCircle className="w-5 h-5 text-white" />
+              </Button>
             </motion.div>
           )}
-        </div>
-      </aside>
+        </AnimatePresence>
+      )}
+
+      <AnimatePresence>
+        {(showTranscript || isDesktop) && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-y-0 right-0 z-40 w-full max-w-sm backdrop-blur-lg md:static md:w-1/3 md:max-w-none flex flex-col border-l border-gray-700"
+          >
+            <div className="p-4 border-b border-gray-700 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Transcript</h2>
+              {!isDesktop && (
+                <Button
+                  className="p-1 rounded-full text-gray-400 hover:text-white"
+                  onClick={() => setShowTranscript(false)}
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              )}
+            </div>
+
+            <div
+              ref={transcriptRef}
+              className="flex-1 overflow-y-auto p-4 space-y-4"
+            >
+              {messages.length === 0 ? (
+                <div className="text-center text-gray-500 mt-10">
+                  Conversation starts here...
+                </div>
+              ) : (
+                messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`flex ${
+                      msg.role === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`max-w-[70%] p-3 rounded-xl ${
+                        msg.role === "user"
+                          ? "bg-blue-500 text-white rounded-br-none"
+                          : "bg-gray-700 text-gray-200 rounded-bl-none"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
