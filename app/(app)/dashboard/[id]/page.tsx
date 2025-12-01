@@ -13,7 +13,7 @@ export default async function Page({ params }: PageProps) {
   if (!userId) redirect("/sign-in");
 
   return (
-    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-2 mt-25 relative overflow-y-auto h-screen md:h-[90vh]">
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 md:pt-24 ml-0 md:ml-30 min-h-screen">
       <Convo id={id} />
     </main>
   );

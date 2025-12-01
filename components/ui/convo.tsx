@@ -22,7 +22,6 @@ import {
   PhoneOff,
   Zap,
   Radio,
-  CheckCircle2,
   MessageCircle,
   X,
 } from "lucide-react";
@@ -74,11 +73,9 @@ const fragmentShader = `
   varying vec3 vNormal;
 
   void main() {
-    // Gradient: base orange to bright accent
     vec3 baseColor = vec3(0.91, 0.55, 0.19);   // #e88c30
     vec3 brightOrange = vec3(1.0, 0.65, 0.33); // #ffa550
 
-    // Vertical gradient + soft pulsing
     float glow = 0.2 + 0.15 * sin(uTime * 2.0);
     float gradient = (vNormal.y + 1.0) / 2.0;
     vec3 finalColor = mix(baseColor, brightOrange, gradient + glow);
@@ -95,7 +92,6 @@ const Globe = ({ isActive }: { isActive: boolean }) => {
     uniforms.current.uTime.value = state.clock.getElapsedTime();
 
     if (isActive && meshRef.current) {
-      // Vibrate / pulse when call is active
       const t = state.clock.getElapsedTime();
       meshRef.current.rotation.x += 0.002 * Math.sin(t * 20);
       meshRef.current.rotation.y += 0.002 * Math.cos(t * 20);
@@ -232,9 +228,13 @@ export default function Convo({ id }: ConvoProps) {
   const currentStatus = statusConfig[callStatus] || statusConfig.default;
 
   return (
-    <div className="flex h-[80vh] relative text-white overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#1e4ea8]/20">
+    <div
+      className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] relative text-white
+                 overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#1e4ea8]/20
+                 ml-0 md:ml-24"
+    >
       {/* Main Conversation Area */}
-      <div className="flex-1 flex flex-col items-center justify-start p-4 md:p-4 relative z-10 overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-start p-2 relative z-10 overflow-y-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -276,7 +276,7 @@ export default function Convo({ id }: ConvoProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 py-5 z-20">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 py-2 z-20">
           <DeleteCompanionButton id={id} />
 
           {callStatus === CallStatus.INACTIVE ? (
