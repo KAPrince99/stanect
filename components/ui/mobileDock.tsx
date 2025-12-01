@@ -31,7 +31,7 @@ const dockItems = [
 
 export default function MobileDock() {
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 lg:hidden">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 hidden">
       <div className="relative">
         {/* Sleek blur background */}
         <div className="absolute inset-0 bg-white/10 backdrop-blur-2xl rounded-full scale-105" />
