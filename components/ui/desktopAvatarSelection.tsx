@@ -61,7 +61,7 @@ export default function DesktopAvatarSelection({
                   src={avatar.image_url}
                   alt={avatar.name || "Companion"}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 1024px) 33vw, (max-width: 1536px) 25vw, 20vw"
                   priority={isSelected} // prioritize the selected avatar
                   loading={isSelected ? "eager" : "lazy"}
@@ -123,7 +123,7 @@ export default function DesktopAvatarSelection({
                   src={selectedAvatar.image_url}
                   alt={selectedAvatar.name || "Selected"}
                   fill
-                  className="object-cover"
+                  className="object-cover  w-full h-full"
                 />
               </div>
               <div>

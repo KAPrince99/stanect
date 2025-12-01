@@ -23,7 +23,7 @@ export default function CompanionList({ userId }: { userId: string }) {
   if (isLoading) return null;
 
   return (
-    <div className="relative min-h-screen px-6 py-20 md:px-10 lg:px-16">
+    <div className="relative px-6 py-20 md:px-10 lg:px-16">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -110,7 +110,7 @@ export default function CompanionList({ userId }: { userId: string }) {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 shadow-2xl flex items-center justify-center hidden "
+          className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 shadow-2xl flex items-center justify-center lg:hidden"
         >
           <Plus className="w-8 h-8 text-black" />
         </motion.button>

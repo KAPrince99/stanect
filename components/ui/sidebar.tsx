@@ -29,26 +29,11 @@ const navItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="hidden sm:flex fixed left-5 top-0 h-screen w-24 z-50 pointer-events-none">
-      <div className="flex flex-col items-center justify-center h-full pointer-events-auto">
-        {/* Logo */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-16"
-        >
-          <Link href="/" className="block p-4">
-            <Image
-              src="/logo/logo.svg"
-              alt="Stanect"
-              width={48}
-              height={48}
-              className="drop-shadow-2xl"
-            />
-          </Link>
-        </motion.div>
-
+    <aside
+      className="flex flex-col items-center w-24 h-full py-10 
+                 pointer-events-auto ml-5"
+    >
+      <div className="flex flex-col items-center justify-start py-50 h-full">
         {/* Main Orb */}
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-500/20 to-pink-500/20 blur-xl rounded-full scale-125 animate-pulse" />
@@ -95,7 +80,7 @@ export default function Sidebar() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-16 text-white/40 text-xs tracking-widest font-light"
+          className="mt-auto pt-16 text-white/40 text-xs tracking-widest font-light"
         >
           STANECT
         </motion.div>

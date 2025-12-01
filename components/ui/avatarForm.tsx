@@ -38,9 +38,13 @@ type FormData = z.infer<typeof formSchema>;
 
 interface AvatarFormProps {
   avatars: AvatarProps[];
+  selectedAvatarId: string | null;
 }
 
-export default function AvatarForm({ avatars }: AvatarFormProps) {
+export default function AvatarForm({
+  avatars,
+  selectedAvatarId,
+}: AvatarFormProps) {
   const router = useRouter();
   const params = useSearchParams();
   const queryClient = useQueryClient();
@@ -53,24 +57,28 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      avatar_id: urlAvatarId || "",
+      avatar_id: selectedAvatarId || urlAvatarId || "",
       companion_name: "",
       scene: "",
       voice: undefined,
       country: "",
       duration: "15",
     },
+    mode: "onBlur",
   });
 
   // Sync URL → form on mount
   useEffect(() => {
-    if (urlAvatarId) form.setValue("avatar_id", urlAvatarId);
-  }, [urlAvatarId, form]);
+    if (selectedAvatarId) {
+      form.setValue("avatar_id", selectedAvatarId);
+      setSelectedAvatar(selectedAvatarId);
+    }
+  }, [selectedAvatarId, form]);
 
   // Update form and URL when avatar changes
   const handleAvatarSelect = (id: string) => {
     setSelectedAvatar(id);
-    form.setValue("avatar_id", id);
+    form.setValue("avatar_id", id, { shouldValidate: true });
 
     const searchParams = new URLSearchParams(params.toString());
     searchParams.set("avatarId", id);
@@ -84,10 +92,6 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
       toast.success("Your companion is alive", {
         description: "She’s ready when you are",
         icon: <Sparkles className="w-5 h-5" />,
-        style: {
-          background: "linear-gradient(135deg, #1e40af, #3b82f6)",
-          color: "white",
-        },
       });
       setTimeout(() => router.replace("/dashboard"), 1200);
     },
@@ -104,7 +108,7 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
         .sort()
         .map((name) => {
           const code = getCode(name);
-          const Flag = (Flags as any)[code];
+          const Flag = Flags[code];
           return { name, code, Flag };
         })
         .filter((c) => c.code),
@@ -112,10 +116,10 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] p-2 md:p-10 flex justify-center">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-transparent p-2 md:p-10 flex justify-center w-full max-w-2xl lg:min-h-0 lg:p-0">
+      <div className="w-full ">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 lg:hidden">
           <h1 className="text-5xl md:text-6xl font-display tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/70">
             Bring Her to Life
           </h1>
@@ -150,32 +154,56 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
               </div>
             </div>
 
-            <Input name="avatar_Id" className="hidden" />
+            <Input
+              name="avatar_Id"
+              className="hidden"
+              {...form.register("avatar_id")}
+            />
             <InputField
               label="Her Name"
               placeholder="Sophia, Alex, Mia..."
+              icon={<User className="w-5 h-5 text-amber-400" />}
               {...form.register("companion_name")}
             />
+            {form.formState.errors.companion_name && (
+              <p className="text-red-400 text-sm">
+                {form.formState.errors.companion_name.message}
+              </p>
+            )}
             <InputField
               label="Where do you meet her?"
               icon={<MapPin className="w-5 h-5 text-blue-400" />}
               placeholder="Gym • Coffee Shop • Bar • Beach"
               {...form.register("scene")}
             />
+            {form.formState.errors.scene && (
+              <p className="text-red-400 text-sm">
+                {form.formState.errors.scene.message}
+              </p>
+            )}
             <SelectField
               label="Voice"
               icon={<Mic className="w-5 h-5 text-purple-400" />}
               value={form.watch("voice")}
-              onChange={(val) => form.setValue("voice", val)}
+              onChange={(val) =>
+                form.setValue("voice", val, { shouldValidate: true })
+              }
             >
-              <SelectItem value="female">Fenale</SelectItem>
+              <SelectItem value="female">Female</SelectItem>
               <SelectItem value="male">Male</SelectItem>
             </SelectField>
+            {form.formState.errors.voice && (
+              <p className="text-red-400 text-sm">
+                {form.formState.errors.voice.message}
+              </p>
+            )}
             <SelectField
               label="Nationality"
               icon={<Globe className="w-5 h-5 text-cyan-400" />}
               value={form.watch("country")}
-              onChange={(val) => form.setValue("country", val)}
+              onChange={(val) =>
+                form.setValue("country", val, { shouldValidate: true })
+              }
             >
               {countryOptions.map(({ name, Flag }) => (
                 <SelectItem
@@ -183,11 +211,17 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
                   value={name}
                   className="flex items-center gap-2"
                 >
-                  {Flag && <Flag className="w-6 h-4 rounded-sm" />}
+                  {/* Mock Flag display */}
+                  <div className="w-6 h-4 rounded-sm bg-gray-400" />
                   {name}
                 </SelectItem>
               ))}
             </SelectField>
+            {form.formState.errors.country && (
+              <p className="text-red-400 text-sm">
+                {form.formState.errors.country.message}
+              </p>
+            )}
             <InputField
               label="Session Length (minutes)"
               icon={<Clock className="w-5 h-5 text-amber-400" />}
@@ -195,10 +229,17 @@ export default function AvatarForm({ avatars }: AvatarFormProps) {
               placeholder="15"
               {...form.register("duration")}
             />
+            {form.formState.errors.duration && (
+              <p className="text-red-400 text-sm">
+                {form.formState.errors.duration.message}
+              </p>
+            )}
 
             <Button
               type="submit"
-              disabled={mutation.isPending || !form.formState.isValid}
+              disabled={
+                mutation.isPending || !form.formState.isValid || !selectedAvatar
+              }
               className="w-full h-10 md:h-12 text-md font-bold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-black shadow-2xl shadow-amber-500/50 disabled:opacity-50"
             >
               {mutation.isPending

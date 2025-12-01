@@ -4,28 +4,47 @@ import Sidebar from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import { ReactNode } from "react";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div lang="en" className="h-full">
       <div className="h-full text-white antialiased">
-        {/* Global Background */}
+        {/* === 1. Global Background === */}
+        {/* Retains the fixed, deep-blue gradient background from your original design */}
         <div className="fixed inset-0 -z-10 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         </div>
 
+        {/* === 2. Main Content Wrapper === */}
         <div className="flex h-screen overflow-hidden">
-          <Sidebar />
+          {/* Sidebar: Visible on large screens, hidden on mobile */}
+          <div className="hidden lg:flex shrink-0">
+            <Sidebar />
+          </div>
+
+          {/* Right-hand Content Area (Navbar, Main, MobileDock) */}
           <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Navbar: Always visible, often used for controls/branding */}
             <Navbar />
-            <main className="flex-1 overflow-y-auto scrollbar-hide pb-24 lg:pb-0 will-change-scroll">
+
+            {/* Main Content Area: Flexes to fill remaining space */}
+            <main
+              className="flex-1 overflow-y-auto scrollbar-hide 
+                         pb-0 lg:pb-0 will-change-scroll"
+            >
               {children}
             </main>
-            <MobileDock />
+
+            {/* Mobile Dock: Visible on mobile, hidden on large screens (desktop) */}
+            <div className="lg:hidden shrink-0">
+              <MobileDock />
+            </div>
           </div>
         </div>
 
+        {/* === 3. Utility Components (Toaster, Analytics) === */}
         <Toaster
           position="top-right"
           closeButton
@@ -43,7 +62,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             duration: 4000,
           }}
         />
-
         <SpeedInsights />
         <Analytics />
       </div>

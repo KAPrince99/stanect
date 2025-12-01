@@ -24,12 +24,6 @@ export default function CreateCompanion() {
 
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
 
-  // Initialize from URL
-  useEffect(() => {
-    const id = searchParams.get("avatarId");
-    if (id) setSelectedAvatarId(id);
-  }, [searchParams]);
-
   // Update URL when avatar changes
   const handleSelectAvatar = (id: string) => {
     setSelectedAvatarId(id);
@@ -37,6 +31,17 @@ export default function CreateCompanion() {
     params.set("avatarId", id);
     router.replace(`?${params.toString()}`);
   };
+
+  // Initialize from URL
+  useEffect(() => {
+    const id = searchParams.get("avatarId");
+    if (id) {
+      setSelectedAvatarId(id);
+    } else if (avatars && avatars.length > 0) {
+      setSelectedAvatarId(avatars[0].id);
+      handleSelectAvatar(avatars[0].id);
+    }
+  }, [searchParams, avatars]);
 
   if (isLoading) return <CreateComponentSkeleton />;
 
