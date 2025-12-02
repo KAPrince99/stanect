@@ -379,10 +379,10 @@ export default function Convo({ id }: ConvoProps) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.2 }}
-              className="fixed bottom-6 right-6 z-40"
+              className="fixed bottom-20 right-6 z-100"
             >
               <Button
-                className="p-4 rounded-full bg-gray-700 hover:bg-gray-600 shadow-xl shadow-gray-700/50 border border-gray-600"
+                className="p-4 rounded-full bg-amber-700 hover:bg-gray-600 shadow-xl shadow-gray-700/50 border border-gray-600"
                 onClick={() => setShowTranscript(true)}
               >
                 <MessageCircle className="w-6 h-6 text-white" />
@@ -410,7 +410,7 @@ export default function Convo({ id }: ConvoProps) {
               </h2>
               {!isDesktop && (
                 <Button
-                  className="p-2 rounded-full text-gray-400 hover:text-white bg-transparent hover:bg-white/10"
+                  className="p-2 rounded-full text-amber-700 hover:text-white bg-transparent hover:bg-white/10"
                   onClick={() => setShowTranscript(false)}
                 >
                   <X className="w-5 h-5" />
