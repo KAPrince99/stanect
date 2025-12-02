@@ -24,6 +24,13 @@ import { getNames, getCode } from "country-list";
 import * as Flags from "country-flag-icons/react/3x2";
 import { AvatarProps, CreateCompanionProps, VoiceProps } from "@/types/types";
 import AvatarDrawer from "./drawerDemo";
+import {
+  Choicebox,
+  ChoiceboxIndicator,
+  ChoiceboxItem,
+  ChoiceboxItemHeader,
+  ChoiceboxItemTitle,
+} from "../kibo-ui/choicebox";
 
 const formSchema = z.object({
   avatar_id: z.string().min(1, "Please select an avatar"),
@@ -181,7 +188,7 @@ export default function AvatarForm({
                 {form.formState.errors.scene.message}
               </p>
             )}
-            <SelectField
+            {/* <SelectField
               label="Voice"
               icon={<Mic className="w-5 h-5 text-purple-400" />}
               value={form.watch("voice")}
@@ -196,7 +203,58 @@ export default function AvatarForm({
               <p className="text-red-400 text-sm">
                 {form.formState.errors.voice.message}
               </p>
-            )}
+            )} */}
+            <div>
+              <div className="flex justify-start items-center gap-2 mb-4">
+                <Mic className="w-5 h-5 text-purple-400" />
+                <p className="font-inter ">Voice</p>
+              </div>
+
+              <Choicebox
+                value={form.watch("voice")}
+                onValueChange={(val: "male" | "female") =>
+                  form.setValue("voice", val, { shouldValidate: true })
+                }
+                style={{
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                }}
+              >
+                <ChoiceboxItem
+                  value="male"
+                  className={`border-2 rounded-sm transition cursor-pointer ${
+                    form.watch("voice") === "male"
+                      ? "border-amber-400 bg-amber-600/50"
+                      : "border-white/10"
+                  }`}
+                >
+                  <ChoiceboxItemHeader>
+                    <ChoiceboxItemTitle>Male</ChoiceboxItemTitle>
+                  </ChoiceboxItemHeader>
+                  <ChoiceboxIndicator />
+                </ChoiceboxItem>
+
+                <ChoiceboxItem
+                  value="female"
+                  className={`border-2 rounded-sm transition cursor-pointer ${
+                    form.watch("voice") === "female"
+                      ? "border-amber-400 bg-amber-600/50"
+                      : "border-white/10"
+                  }`}
+                >
+                  <ChoiceboxItemHeader>
+                    <ChoiceboxItemTitle>Female</ChoiceboxItemTitle>
+                  </ChoiceboxItemHeader>
+                  <ChoiceboxIndicator />
+                </ChoiceboxItem>
+              </Choicebox>
+
+              {form.formState.errors.voice && (
+                <p className="text-red-400 text-sm">
+                  {form.formState.errors.voice.message}
+                </p>
+              )}
+            </div>
+
             <SelectField
               label="Nationality"
               icon={<Globe className="w-5 h-5 text-cyan-400" />}
@@ -211,12 +269,12 @@ export default function AvatarForm({
                   value={name}
                   className="flex items-center gap-2"
                 >
-                  {/* Mock Flag display */}
-                  <div className="w-6 h-4 rounded-sm bg-gray-400" />
-                  {name}
+                  <Flag className="w-6 h-4 rounded-sm object-cover" />
+                  <span>{name}</span>
                 </SelectItem>
               ))}
             </SelectField>
+
             {form.formState.errors.country && (
               <p className="text-red-400 text-sm">
                 {form.formState.errors.country.message}

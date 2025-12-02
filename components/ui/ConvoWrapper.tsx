@@ -1,15 +1,19 @@
-// components/ui/ConvoWrapper.tsx
 "use client";
 
 import dynamic from "next/dynamic";
+import ConvoSkeleton from "./convoSkeleton"; // Assuming ConvoSkeleton is defined elsewhere
 
-// The actual Convo component you want to render
-const Convo = dynamic(() => import("@/components/ui/convo"), { ssr: false });
+// Dynamically import the main Convo component with SSR disabled
+const Convo = dynamic(() => import("@/components/ui/convo"), {
+  ssr: false,
+  loading: () => <ConvoSkeleton />,
+});
 
 interface ConvoWrapperProps {
-  id: string;
+  companionId: string; // Renamed 'id' to 'companionId' for clarity
 }
 
-export default function ConvoWrapper({ id }: ConvoWrapperProps) {
-  return <Convo id={id} />;
+// Client Component: Responsible for dynamic loading and passing props
+export default function ConvoWrapper({ companionId }: ConvoWrapperProps) {
+  return <Convo id={companionId} />;
 }

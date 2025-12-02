@@ -1,21 +1,24 @@
-// app/(app)/dashboard/[id]/page.tsx
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import ConvoWrapper from "@/components/ui/ConvoWrapper"; // Import the new wrapper
+import ConvoWrapper from "@/components/ui/ConvoWrapper";
 
 interface PageProps {
   params: { id: string };
 }
 
+// Server Component: Handles auth and initial data fetching (via ConvoWrapper/Convo)
 export default async function Page({ params }: PageProps) {
+  const userId = await auth();
   const { id } = await params;
+  if (!userId) {
+    // Redirect unauthenticated users
+    redirect("/login");
+  }
 
-  const { userId } = await auth();
-  if (!userId) redirect("/login");
-
+  // The conversation component is mounted directly below
   return (
-    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <ConvoWrapper id={id} />
-    </main>
+    <div className="min-h-[calc(100vh)] bg-transparent">
+      <ConvoWrapper companionId={id} />
+    </div>
   );
 }
