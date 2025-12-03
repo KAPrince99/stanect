@@ -104,17 +104,6 @@ export default function CompanionList({ userId }: { userId: string }) {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Floating CTA (always visible on mobile) */}
-      <Link href="/new">
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 shadow-2xl flex items-center justify-center lg:hidden"
-        >
-          <Plus className="w-8 h-8 text-black" />
-        </motion.button>
-      </Link>
     </div>
   );
 }
