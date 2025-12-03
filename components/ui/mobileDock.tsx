@@ -33,7 +33,7 @@ const dockItems = [
 export default function MobileDock() {
   return (
     // UPDATED: Fixed to bottom edge, full width (left-0 right-0 bottom-0)
-    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden w-full bg-white/10 backdrop-blur-3xl border-t border-white/20 shadow-2xl shadow-black/50">
+    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden w-full bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]  border-t border-white/20 ">
       {/* Dock container: Use justify-around to evenly space items across the bar. */}
       <div className="flex justify-around items-center h-16 max-w-xl mx-auto px-4">
         {dockItems.map((item) => (
