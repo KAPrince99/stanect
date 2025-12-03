@@ -12,10 +12,10 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
                       blur-3xl rounded-full animate-pulse-slow"
         />
 
-        <div
-          className="absolute -top-40 -right-40 w-[700px] h-[700px] 
+        {/* <div
+          className="absolute -top-40 -right-40 w-screen h-screen
                       bg-purple-600/20 blur-3xl rounded-full animate-float"
-        />
+        /> */}
       </div>
 
       {/* Content */}

@@ -57,10 +57,12 @@ text-2xl
 
     max-w-7xl       
     mx-auto         
-    px-4            
+    px-4 
+  
+             
   "
           >
-            Feel the spark. Build unshakable{" "}
+            <span>Feel the spark. Build unshakable </span>
             <LayoutTextFlip
               text=""
               words={["Confidence", "Moral", "Assurance", "Growth"]}

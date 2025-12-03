@@ -30,14 +30,14 @@ export const LayoutTextFlip = ({
     sm:text-3xl     
     md:text-4xl  
     lg:text-5xl       
-    2xl:text-7xl font-bold tracking-tight drop-shadow-lg "
+    2xl:text-7xl font-bold tracking-tight drop-shadow-lg"
       >
         {text}
       </motion.span>
 
       <motion.span
         layout
-        className="relative w-fit overflow-hidden rounded-md border border-transparent bg-white px-4 py-1 font-display text-2xl        
+        className="relative w-fit overflow-hidden rounded-md border border-transparent bg-gradient-to-r from-amber-400 to-amber-500  px-4 py-1 font-display  text-2xl        
     sm:text-2xl     
     md:text-3xl  
     lg:text-4xl       

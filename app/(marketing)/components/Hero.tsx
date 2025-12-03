@@ -4,7 +4,7 @@ import { Sparkles } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative  overflow-y-auto mt-32 lg:mt-35 bg-transparent">
+    <section className="relative  overflow-y-auto mt-25 bg-transparent">
       <div className="relative z-10 container mx-auto px-6 md:px-8">
         <div className="mx-auto max-w-5xl text-center">
           {/* Badge */}

@@ -36,29 +36,29 @@ export default function CreateComponentSkeleton() {
       >
         <CardHeader>
           <CardTitle>
-            <Skeleton className="h-8 w-40 mb-2 rounded-md" />
+            <Skeleton className="h-8 w-40 mb-2 rounded-md bg-white/10" />
           </CardTitle>
           <CardDescription>
-            <Skeleton className="h-4 w-64 rounded-md" />
+            <Skeleton className="h-4 w-64 rounded-md bg-white/10" />
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Avatar Picker */}
           <div className="flex gap-4 items-center">
-            <Skeleton className="h-16 w-16 rounded-full" />
-            <Skeleton className="h-16 w-16 rounded-full" />
+            <Skeleton className="h-16 w-16 rounded-full bg-white/10" />
+            <Skeleton className="h-16 w-16 rounded-full bg-white/10" />
           </div>
 
           {/* Input Fields */}
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="space-y-2">
-              <Skeleton className="h-4 w-32 rounded-md" />
-              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-4 w-32 rounded-md bg-white/10" />
+              <Skeleton className="h-12 w-full rounded-lg bg-white/10" />
             </div>
           ))}
 
           {/* Submit Button */}
-          <Skeleton className="h-14 w-full rounded-xl mt-4" />
+          <Skeleton className="h-14 w-full rounded-xl mt-4 bg-white/10" />
         </CardContent>
       </Card>
     </main>

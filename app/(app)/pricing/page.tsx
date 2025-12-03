@@ -16,8 +16,8 @@ const tiers = [
     price: "0",
     description: "Perfect to get started",
     features: [
-      "3 companions max",
-      "5-minute calls",
+      "1 companion max",
+      "2-minute call",
       "Basic avatars",
       "Watermarked sessions",
     ],
@@ -26,11 +26,11 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: "19",
+    price: "9",
     description: "For men who want more",
     features: [
       "Unlimited companions",
-      "30-minute calls",
+      "10-minute max calls",
       "Premium avatars",
       "No watermarks",
       "Priority voice processing",
