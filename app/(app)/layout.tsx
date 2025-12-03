@@ -8,7 +8,7 @@ import { ReactNode } from "react";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div lang="en" className="h-full">
+    <div lang="en" className="h-full w-screen">
       <div className="h-full text-white antialiased">
         {/* === 1. Global Background === */}
         {/* Retains the fixed, deep-blue gradient background from your original design */}
