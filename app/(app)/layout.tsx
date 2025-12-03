@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { ReactNode } from "react";
+import ScrollToTop from "@/components/ui/ScrollToTop";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
@@ -34,6 +35,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               className="flex-1 overflow-y-auto scrollbar-hide 
                          pb-0 lg:pb-0 will-change-scroll"
             >
+              <ScrollToTop />
               {children}
             </main>
 

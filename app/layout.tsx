@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import QueryProvider from "./providers/queryProvider";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import ScrollToTop from "@/components/ui/ScrollToTop";
 
 // Primary font (body + UI)
 const inter = Inter({
@@ -33,6 +34,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <body>
+          <ScrollToTop />
           <QueryProvider>{children}</QueryProvider>
         </body>
       </html>
