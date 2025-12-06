@@ -30,7 +30,8 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    "types/**/*.d.ts"
+    "types/**/*.d.ts",
+    "app/(app)/api/paystack/webhook"
   ],
   "exclude": ["node_modules"]
 }

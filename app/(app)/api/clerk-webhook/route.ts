@@ -2,104 +2,94 @@ import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 import { createClient } from "@supabase/supabase-js";
 
+// Use service role key (server only)
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function POST(req: Request) {
-  // 1. Get the raw body as text for Svix verification
+  // IMPORTANT: body must be read as raw text for Svix verification
   const body = await req.text();
-  const payload = JSON.parse(body);
 
-  // 2. Access headers correctly using `req.headers.get()`
   const svix_id = req.headers.get("svix-id");
   const svix_timestamp = req.headers.get("svix-timestamp");
   const svix_signature = req.headers.get("svix-signature");
 
-  // Check for missing required headers and secret
   if (!svix_id || !svix_timestamp || !svix_signature) {
     console.error("Missing svix headers");
     return new Response("Missing svix headers", { status: 400 });
   }
 
-  const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
-  if (!webhookSecret) {
-    console.error("Webhook secret missing");
-    return new Response("Webhook secret missing", { status: 400 });
-  }
-
+  const webhookSecret = process.env.CLERK_WEBHOOK_SECRET!;
   const wh = new Webhook(webhookSecret);
+
   let evt: any;
 
   try {
-    // 3. Verify using the raw body string and extracted headers
     evt = wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
     });
   } catch (err) {
-    console.error("Webhook verification failed:", err);
+    console.error("❌ Clerk webhook signature verification failed:", err);
     return new Response("Invalid signature", { status: 400 });
   }
 
-  // Rest of your logic remains the same...
-  const { id } = evt.data;
+  const clerkId = evt.data.id;
   const eventType = evt.type;
 
+  console.log("➡️ Incoming webhook:", eventType, "for user", clerkId);
+
   try {
+    // CREATE / UPDATE USER
     if (eventType === "user.created" || eventType === "user.updated") {
-      const { email_addresses, first_name, last_name } = evt.data;
-      const userEmail =
-        email_addresses?.[0]?.email_address || "no-email-provided";
-      const userName = `${first_name || ""} ${last_name || ""}`.trim();
+      const email = evt.data.email_addresses?.[0]?.email_address || null;
 
-      console.log("Preparing to upsert user:", {
-        clerk_user_id: id,
-        email: userEmail,
-        name: userName,
-      });
+      const firstName = evt.data.first_name || "";
+      const lastName = evt.data.last_name || "";
+      const name = `${firstName} ${lastName}`.trim() || null;
 
-      const userToUpsert = {
-        clerk_user_id: id || "No id",
-        email: userEmail,
-        name: userName || "No name",
-        plan: "free",
-        status: "active",
+      const userRecord = {
+        clerk_user_id: clerkId,
+        email,
+        name,
+        // Defaults match your schema: plan = 'free', status = 'active'
       };
 
       const { error } = await supabase
         .from("users")
-        .upsert([userToUpsert], { onConflict: "clerk_user_id" });
+        .upsert([userRecord], { onConflict: "clerk_user_id" });
 
       if (error) {
-        console.error("Supabase upsert error:", error);
-        throw new Error(error.message);
+        console.error("❌ Supabase upsert error:", error);
+        throw error;
       }
-      console.log(`User ${id} upserted successfully.`);
+
+      console.log("✅ User synced with Supabase:", clerkId);
     }
 
+    // DELETE USER
     if (eventType === "user.deleted") {
-      console.log(`Preparing to delete user with clerk_user_id: ${id}`);
+      console.log("🗑️ Deleting user from Supabase:", clerkId);
+
       const { error } = await supabase
         .from("users")
         .delete()
-        .eq("clerk_user_id", id);
+        .eq("clerk_user_id", clerkId);
 
       if (error) {
-        console.error("Supabase delete error:", error);
-        throw new Error(error.message);
+        console.error("❌ Supabase delete error:", error);
+        throw error;
       }
-      console.log(`User ${id} deleted successfully.`);
+
+      console.log("✅ User deleted from Supabase:", clerkId);
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (err) {
-    console.error("Webhook processing error:", err);
-    return NextResponse.json(
-      { error: (err as Error).message },
-      { status: 500 }
-    );
+  } catch (err: any) {
+    console.error("❌ Clerk webhook processing error:", err.message);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
