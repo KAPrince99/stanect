@@ -55,7 +55,6 @@ export async function POST(req: Request) {
         clerk_user_id: clerkId,
         email,
         name,
-        // Defaults match your schema: plan = 'free', status = 'active'
       };
 
       const { error } = await supabase
