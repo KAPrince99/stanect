@@ -51,7 +51,8 @@ export async function POST(req: Request) {
   try {
     if (eventType === "user.created" || eventType === "user.updated") {
       const { email_addresses, first_name, last_name } = evt.data;
-      const userEmail = email_addresses?.[0]?.email_address || null;
+      const userEmail =
+        email_addresses?.[0]?.email_address || "no-email-provided";
       const userName = `${first_name || ""} ${last_name || ""}`.trim();
 
       console.log("Preparing to upsert user:", {
