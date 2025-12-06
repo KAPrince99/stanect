@@ -10,7 +10,7 @@ const supabase = createClient(
 export async function POST(req: Request) {
   // 1. Get the raw body as text for Svix verification
   const body = await req.text();
-  const payload = JSON.parse(body); // Parse it for application logic
+  const payload = JSON.parse(body);
 
   // 2. Access headers correctly using `req.headers.get()`
   const svix_id = req.headers.get("svix-id");
