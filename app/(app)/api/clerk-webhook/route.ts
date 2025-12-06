@@ -62,9 +62,9 @@ export async function POST(req: Request) {
       });
 
       const userToUpsert = {
-        clerk_user_id: id,
+        clerk_user_id: id || "No id",
         email: userEmail,
-        name: userName,
+        name: userName || "No name",
         plan: "free",
         status: "active",
       };
