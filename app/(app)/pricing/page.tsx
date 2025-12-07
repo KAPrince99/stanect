@@ -1,3 +1,4 @@
+// Pricing page
 "use client";
 
 import { useState, useEffect } from "react";
@@ -5,15 +6,39 @@ import { Check, Zap, Crown, Sparkles, Star, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
-import { getSubscriptionStatus } from "../actions/subs";
+import { createClient } from "@supabase/supabase-js";
+import { fetchSubscriptionStatus } from "../actions/subs";
 
+// ---------------- Supabase Realtime client ----------------
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+// ---------------- Types ----------------
+type UserData = {
+  id: string;
+  clerk_user_id: string;
+  email: string | null;
+  name: string | null;
+  plan: "free" | "pro" | "king" | null;
+  status: "active" | "pending" | "cancelled" | null;
+};
+
+type SubscriptionStatus = {
+  plan: UserData["plan"];
+  status: UserData["status"];
+} | null; // It can now explicitly be null
+
+// ---------------- Animations ----------------
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
   animate: { opacity: 1, y: 0 },
 };
 
+// ---------------- Pricing tiers ----------------
 const TIERS = [
   {
     key: "free",
@@ -29,7 +54,6 @@ const TIERS = [
     ],
     cta: "Stay Free",
     popular: false,
-    color: "bg-white/5 border-white/10",
   },
   {
     key: "pro",
@@ -47,7 +71,6 @@ const TIERS = [
     ],
     cta: "Go Pro",
     popular: true,
-    color: "bg-amber-400/10 border-amber-400/30 shadow-xl",
   },
   {
     key: "king",
@@ -66,56 +89,84 @@ const TIERS = [
     ],
     cta: "Claim Your Throne",
     crown: true,
-    color: "bg-purple-600/10 border-purple-600/30 shadow-xl",
   },
 ];
 
 export default function PricingPage() {
-  const { userId: clerk_user_id } = useAuth();
+  const { user: clerk_user } = useUser();
+  const clerk_user_id = clerk_user?.id;
   const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
-  const [activePlan, setActivePlan] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
-  const { data } = useQuery({
+  // ---------------- Fetch subscription status ----------------
+  const { data } = useQuery<SubscriptionStatus>({
     queryKey: ["users", clerk_user_id],
     enabled: !!clerk_user_id,
     queryFn: async () => {
       if (!clerk_user_id) return null;
-      return await getSubscriptionStatus(clerk_user_id);
+      const user = await fetchSubscriptionStatus(clerk_user_id);
+      setUserData(user);
+      return user;
     },
   });
-  useEffect(() => {
-    if (data?.status === "active") {
-      setActivePlan(data.plan);
-    }
-  }, [data]);
 
-  // Handle subscription
+  // ---------------- Realtime updates ----------------
+  useEffect(() => {
+    if (!clerk_user_id) return;
+
+    const channel = supabase
+      .channel(`user-sub-${clerk_user_id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "users",
+          filter: `clerk_user_id=eq.${clerk_user_id}`,
+        },
+        (payload) => {
+          setUserData(payload.new as UserData);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [clerk_user_id]);
+
+  // inside your client PricingPage component
   const handleSubscribe = async (tierKey: string) => {
     try {
       setLoadingTier(tierKey);
-
       const res = await fetch("/api/paystack/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan: tierKey, interval }),
       });
-
       const data = await res.json();
 
       if (data.authorization_url) {
-        toast.success("Redirecting to Paystack...");
+        toast.success("Redirecting to Paystack for initial payment...");
+        // *** THIS IS THE CRITICAL REDIRECT ***
         window.location.href = data.authorization_url;
-      } else {
-        toast.error(data.error || "Failed to create subscription");
+        return;
       }
+
+      if (data.subscription_code && !data.authorization_url) {
+        // Should not happen for first-time customers but good fallback
+        toast.success("Subscription created — waiting for activation...");
+        return;
+      }
+
+      toast.error(data.error || "Failed to create subscription");
     } catch (err) {
       toast.error("Error creating subscription");
     } finally {
       setLoadingTier(null);
     }
   };
-
   return (
     <div className="min-h-screen bg-transparent py-16 px-4 sm:px-6 mt-3 text-white">
       <motion.div
@@ -200,13 +251,7 @@ export default function PricingPage() {
               )}
 
               <div
-                className={`relative rounded-3xl p-6 pt-10 border backdrop-blur-xl transition-all duration-300 hover:scale-[1.015] h-full flex flex-col justify-between ${
-                  tier.key === "pro"
-                    ? "bg-amber-400/10 border-amber-400/30 shadow-xl ring-2 ring-amber-500/50"
-                    : tier.key === "king"
-                    ? "bg-purple-600/10 border-purple-600/30 shadow-xl"
-                    : "bg-white/5 border-white/10"
-                }`}
+                className={`relative rounded-3xl p-6 pt-10 border backdrop-blur-xl transition-all duration-300 hover:scale-[1.015] h-full flex flex-col justify-between`}
               >
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
@@ -219,11 +264,6 @@ export default function PricingPage() {
                     <span className="text-white/60 text-lg">
                       {interval === "monthly" ? "/month" : "/year"}
                     </span>
-                    {interval === "yearly" && tier.monthly > 0 && (
-                      <span className="ml-3 text-emerald-400 text-sm font-medium block md:inline">
-                        (Save ${tier.monthly * 12 - tier.yearly})
-                      </span>
-                    )}
                   </div>
 
                   <p className="text-white/70 mb-6 min-h-12">
@@ -243,7 +283,7 @@ export default function PricingPage() {
                 </div>
 
                 <Button
-                  disabled={loadingTier !== null || tier.key === activePlan}
+                  disabled={loadingTier !== null || userData?.plan === tier.key}
                   className={`w-full h-12 text-lg font-bold rounded-full flex items-center justify-center gap-2 transition-all duration-300 ${
                     tier.popular
                       ? "bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow-lg hover:from-amber-500 hover:to-orange-600"
@@ -255,17 +295,18 @@ export default function PricingPage() {
                 >
                   {loadingTier === tier.key ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : tier.key === activePlan ? (
+                  ) : userData?.plan === tier.key ? (
                     "Active"
                   ) : (
                     tier.cta
                   )}
-                  {(tier.popular || tier.crown) && tier.key !== activePlan && (
-                    <span className="inline-block ml-1">
-                      {tier.popular && <Sparkles className="w-4 h-4" />}
-                      {tier.crown && <Crown className="w-4 h-4" />}
-                    </span>
-                  )}
+                  {(tier.popular || tier.crown) &&
+                    userData?.plan !== tier.key && (
+                      <span className="inline-block ml-1">
+                        {tier.popular && <Sparkles className="w-4 h-4" />}
+                        {tier.crown && <Crown className="w-4 h-4" />}
+                      </span>
+                    )}
                 </Button>
               </div>
             </motion.div>
