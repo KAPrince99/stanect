@@ -11,26 +11,25 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div lang="en" className="h-full w-screen">
       <div className="h-full text-white antialiased">
-        {/* === 1. Global Background === */}
-        {/* Retains the fixed, deep-blue gradient background from your original design */}
+        {/*Global Background*/}
         <div className="fixed inset-0 -z-10 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
         </div>
 
-        {/* === 2. Main Content Wrapper === */}
+        {/*  Content Wrapper */}
         <div className="flex h-screen overflow-hidden">
-          {/* Sidebar: Visible on large screens, hidden on mobile */}
+          {/* Sidebar */}
           <div className="hidden lg:flex shrink-0">
             <Sidebar />
           </div>
 
-          {/* Right-hand Content Area (Navbar, Main, MobileDock) */}
+          {/* Right-hand Content Area  */}
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Navbar: Always visible, often used for controls/branding */}
+            {/* Navbar*/}
             <Navbar />
 
-            {/* Main Content Area: Flexes to fill remaining space */}
+            {/* Main Content Area */}
             <main
               className="flex-1 overflow-y-auto scrollbar-hide 
                          pb-0 lg:pb-0 will-change-scroll"
@@ -39,14 +38,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               {children}
             </main>
 
-            {/* Mobile Dock: Visible on mobile, hidden on large screens (desktop) */}
+            {/* Mobile Dock */}
             <div className="lg:hidden shrink-0">
               <MobileDock />
             </div>
           </div>
         </div>
-
-        {/* === 3. Utility Components (Toaster, Analytics) === */}
         <Toaster
           position="top-right"
           closeButton

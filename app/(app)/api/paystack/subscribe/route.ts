@@ -30,9 +30,8 @@ async function getOrCreateCustomer(email: string, name?: string) {
 
     if (listRes.data.status && listRes.data.data.length > 0) {
       return listRes.data.data[0]; // Existing customer
-    }
+    } // 2) Create new customer
 
-    // 2) Create new customer
     const createRes = await axios.post(
       "https://api.paystack.co/customer",
       {
@@ -62,7 +61,7 @@ async function getOrCreateCustomer(email: string, name?: string) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId: clerk_user_id } = auth();
+    const { userId: clerk_user_id } = await auth();
     if (!clerk_user_id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -84,9 +83,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Plan code missing for this plan/interval" },
         { status: 400 }
-      );
+      ); // Fetch user record from Supabase
 
-    // Fetch user record from Supabase
     const { data: userRow, error: userErr } = await supabase
       .from("users")
       .select("email, name")
@@ -101,16 +99,14 @@ export async function POST(req: NextRequest) {
     }
 
     const email = userRow.email as string;
-    const name = (userRow.name as string) || undefined;
+    const name = (userRow.name as string) || undefined; // STEP 1: Ensure Paystack customer exists
 
-    // STEP 1: Ensure Paystack customer exists
     const customer = await getOrCreateCustomer(email, name);
     const customerCode = customer.customer_code;
 
     let subscription_code: string | undefined;
-    let authorization_url: string | undefined;
+    let authorization_url: string | undefined; // TRY 1: Direct Subscription Creation
 
-    // TRY 1: Direct Subscription Creation
     try {
       const subRes = await axios.post(
         "https://api.paystack.co/subscription",
@@ -125,9 +121,8 @@ export async function POST(req: NextRequest) {
 
       const subscription = subRes.data.data;
       subscription_code = subscription.subscription_code;
-      authorization_url = subscription.authorization_url; // Null if instantly charged
+      authorization_url = subscription.authorization_url; // Null if instantly charged // If successful, insert the PENDING subscription record now
 
-      // If successful, insert the PENDING subscription record now
       await supabase.from("subscriptions").insert({
         clerk_user_id,
         plan,
@@ -145,12 +140,8 @@ export async function POST(req: NextRequest) {
       ) {
         console.warn(
           "Paystack: Customer needs authorization. Initiating transaction..."
-        );
+        ); // --- FALLBACK: INITIATE TRANSACTION FOR FIRST CHARGE --- // You should determine the actual first charge amount (e.g., from a plan config) // For demonstration, assuming 10000 kobo/pesewas (100.00 currency unit)
 
-        // --- FALLBACK: INITIATE TRANSACTION FOR FIRST CHARGE ---
-
-        // You should determine the actual first charge amount (e.g., from a plan config)
-        // For demonstration, assuming 10000 kobo/pesewas (100.00 currency unit)
         const amount = 10000;
 
         const initRes = await axios.post(
@@ -158,15 +149,11 @@ export async function POST(req: NextRequest) {
           {
             email,
             amount: amount,
-            plan: planCode, // Pass plan code to create the subscription after success
-            callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/callback`,
+            plan: planCode, // Pass plan code to create the subscription after success // ⭐ CRITICAL: The user will return here after payment.
+            callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/callback`, // ⭐ FIX: Pass clerk_user_id at the top-level metadata for easy webhook consumption
             metadata: {
+              clerk_user_id: clerk_user_id, // Directly accessible by webhook
               custom_fields: [
-                {
-                  display_name: "Clerk ID",
-                  variable_name: "clerk_id",
-                  value: clerk_user_id,
-                },
                 {
                   display_name: "Plan Key",
                   variable_name: "plan_key",
@@ -188,32 +175,25 @@ export async function POST(req: NextRequest) {
           }
         );
 
-        authorization_url = initRes.data.data.authorization_url;
-
-        // Note: We skip the DB insert here and rely on the webhook/callback
-        // to handle the subscription record creation upon successful transaction.
+        authorization_url = initRes.data.data.authorization_url; // Note: We skip the DB insert here and rely on the webhook/callback // to handle the subscription record creation upon successful transaction.
       } else {
         // Re-throw any other unexpected Paystack error
         throw subError;
       }
-    }
+    } // STEP 2: Update user status to pending (if we got a redirect URL) // We update status to PENDING if a redirect is required, or if the direct sub was successful.
 
-    // STEP 2: Update user status to pending (if we got a redirect URL)
-    // We update status to PENDING if a redirect is required, or if the direct sub was successful.
     if (authorization_url || subscription_code) {
       await supabase
         .from("users")
         .update({ plan, status: "pending" })
         .eq("clerk_user_id", clerk_user_id);
-    }
+    } // STEP 3: Return redirect URL or success message
 
-    // STEP 3: Return redirect URL or success message
     if (authorization_url) {
       // This is the response for redirecting to Paystack
       return NextResponse.json({ authorization_url, subscription_code });
-    }
+    } // This is the response for an instant, successful subscription
 
-    // This is the response for an instant, successful subscription
     return NextResponse.json({
       subscription_code,
       message: "Subscription activated instantly.",

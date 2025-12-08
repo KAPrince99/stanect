@@ -1,8 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DesktopAvatarSelection from "./desktopAvatarSelection";
 import AvatarForm from "./avatarForm";
 import { getAvatars } from "@/app/(app)/actions/actions";
@@ -22,26 +21,37 @@ export default function CreateCompanion() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(
+    () => {
+      return searchParams.get("avatarId") || null;
+    }
+  );
 
   // Update URL when avatar changes
-  const handleSelectAvatar = (id: string) => {
-    setSelectedAvatarId(id);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("avatarId", id);
-    router.replace(`?${params.toString()}`);
-  };
-
-  // Initialize from URL
-  useEffect(() => {
-    const id = searchParams.get("avatarId");
-    if (id) {
+  const handleSelectAvatar = useCallback(
+    (id: string) => {
       setSelectedAvatarId(id);
-    } else if (avatars && avatars.length > 0) {
-      setSelectedAvatarId(avatars[0].id);
-      handleSelectAvatar(avatars[0].id);
+
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("avatarId", id);
+
+      router.replace(`?${params.toString()}`);
+    },
+    [router, searchParams]
+  );
+
+  // Initialize selection ONLY when no avatar is selected yet
+  useEffect(() => {
+    // If we already have an avatarId from state or URL, do nothing
+    if (selectedAvatarId) return;
+
+    // If avatars are loaded, auto-select the first one
+    if (avatars && avatars.length > 0) {
+      const firstId = avatars[0].id;
+      setSelectedAvatarId(firstId);
+      handleSelectAvatar(firstId);
     }
-  }, [searchParams, avatars]);
+  }, [avatars, selectedAvatarId, handleSelectAvatar]);
 
   if (isLoading) return <CreateComponentSkeleton />;
 

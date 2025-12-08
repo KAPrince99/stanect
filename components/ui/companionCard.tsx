@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CompanionProps } from "@/types/types";
 import { motion } from "framer-motion";
-import { Heart, MessageCircle, Timer } from "lucide-react";
+import { Heart, Mic, Timer } from "lucide-react";
 
 export default function CompanionCard({
   companion,
@@ -62,7 +62,7 @@ export default function CompanionCard({
             size="lg"
             className="w-full h-10 md:h-12 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-display cursor-pointer text-md shadow-lg"
           >
-            <MessageCircle className="w-5 h-5 mr-2" />
+            <Mic className="w-10 h-5 mr-2" />
             Let&apos;s Talk
           </Button>
         </Link>

@@ -17,7 +17,7 @@ export default async function Page({ params }: PageProps) {
 
   // The conversation component is mounted directly below
   return (
-    <div className="min-h-[calc(100vh)] bg-transparent  py-16 md:mx-10 sm:px-6 mt-5 md:mt-15">
+    <div className="min-h-[calc(100vh)] bg-transparent  py-16 md:mx-10 xl:mx-40 sm:px-6 mt-5 md:mt-15">
       <ConvoWrapper companionId={id} />
     </div>
   );

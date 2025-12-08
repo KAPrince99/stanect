@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import LordIcon from "./lordIcon";
 import { Home, Sparkles, Plus } from "lucide-react";
@@ -44,7 +43,6 @@ export default function Sidebar() {
                 href={item.href}
                 className="relative block p-4 rounded-full bg-white/5 hover:bg-white/20 transition-transform duration-300 transform hover:scale-110"
               >
-                {/* Only one motion div for hover effect */}
                 <div className="relative flex justify-center items-center">
                   {item.lordIcon && (
                     <LordIcon
@@ -67,7 +65,7 @@ export default function Sidebar() {
             ))}
           </div>
 
-          {/* Floating Particles (CSS animation instead of motion) */}
+          {/* Floating Particles */}
           <div className="absolute -inset-8 pointer-events-none animate-spin-slow">
             <span className="absolute top-0 left-1/2 w-2 h-2 bg-amber-400 rounded-full shadow-lg shadow-amber-400/50" />
             <span className="absolute bottom-10 right-10 w-1.5 h-1.5 bg-pink-400 rounded-full shadow-lg shadow-pink-400/50" />

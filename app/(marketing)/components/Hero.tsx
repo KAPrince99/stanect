@@ -1,4 +1,3 @@
-"use client";
 import WrapButton from "@/components/ui/wrap-button";
 import { Sparkles } from "lucide-react";
 

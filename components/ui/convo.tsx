@@ -2,12 +2,11 @@
 
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Bounds, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import throttle from "lodash.throttle";
 import * as THREE from "three";
 import { useQuery } from "@tanstack/react-query";
-import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
@@ -62,7 +61,8 @@ const statusConfig = {
   [CallStatus.INACTIVE]: {
     label: "Ready to initiate call",
     icon: <Headset className="w-4 h-4" />,
-    color: "bg-blue-600/20 border-blue-500/40 text-blue-300",
+    color:
+      "bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] text-white",
   },
 };
 
@@ -383,27 +383,24 @@ export default function Convo({ id }: ConvoProps) {
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024; // Check based on Tailwind 'lg'
 
   return (
-    // Updated: Use h-full/w-full to fill parent container (which handles fixed header/sidebar)
-    <div className="flex w-full h-full relative text-white   overflow-hidden lg:flex-row flex-col  md:px-10  ">
-      {/* Main Conversation Area (Left/Center) */}
-      {/* Updated: h-full and flex-col to enable internal vertical flex flow. justify-between ensures controls are at the bottom. */}
+    <div className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col  md:border md:border-white/20  md:shadow-2xl md:bg-blue-400/30 md:rounded-2xl  ">
+      {/* Main Conversation Area */}
       <div className="flex-1 flex flex-col items-center justify-between  relative z-10 overflow-y-auto h-full  px-2 ">
-        {/* Top Section: Header and Status - flex-shrink-0 prevents it from shrinking */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4 pt-2 pb-4 max-w-lg w-full flex-shrink-0"
+          className="text-center space-y-4 pt-2 pb-4 max-w-lg w-full shrink-0"
         >
           <div
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 backdrop-blur-md text-sm font-medium transition-colors ${currentStatus.color}`}
           >
             {currentStatus.icon}{" "}
-            <span className="uppercase tracking-wider">
+            <span className="uppercase tracking-wider ">
               {currentStatus.label}
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent tracking-tighter">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent tracking-tighter">
             {companion.companion_name || "AI Companion"}
           </h1>
 
@@ -414,13 +411,11 @@ export default function Convo({ id }: ConvoProps) {
           )}
         </motion.div>
 
-        {/* Middle Section: Globe 3D Canvas - Uses flex-1 to fill remaining vertical space */}
+        {/* Middle Section: Globe 3D Canvas*/}
         <div
-          className="w-full max-w-2xl mx-auto rounded-3xl overflow-hidden shadow-2xl shadow-indigo-900/50 border border-gray-800 my-4"
+          className="w-full max-w-2xl mx-auto rounded-3xl overflow-hidden  my-4"
           style={{ height: "300px" }}
         >
-          {/* Ensure the canvas fills its container */}
-
           <Canvas
             camera={{ position: [8, 8, 8], fov: 50 }}
             className=" h-full
@@ -441,8 +436,8 @@ export default function Convo({ id }: ConvoProps) {
           </Canvas>
         </div>
 
-        {/* Bottom Section: Action Buttons - flex-shrink-0 ensures this fixed-height content doesn't shrink */}
-        <div className="flex justify-center items-center gap-6 py-8 z-20 flex-shrink-0">
+        {/* Action Buttons */}
+        <div className="flex justify-center items-center gap-6 py-8 z-20 shrink-0">
           <DeleteCompanionButton id={id} />
 
           {!isCallInProgress ? (
@@ -510,13 +505,11 @@ export default function Convo({ id }: ConvoProps) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ duration: 0.3 }}
-            // Updated: Used lg:flex-shrink-0 to guarantee fixed width on desktop
-            className=" w-full h-full overflow-y-auto lg:w-[300px] xl:w-sm  flex flex-col  backdrop-blur-lg border-l border-gray-700 shadow-2xl lg:shadow-none   "
+            className=" w-full h-full overflow-y-auto lg:w-[300px] xl:w-sm  flex flex-col  backdrop-blur-lg border-l border-gray-700 shadow-2xl lg:shadow-none  "
           >
-            <div className="p-5 border-b border-gray-700 flex items-center justify-between bg-gray-900/50 flex-shrink-0">
+            <div className="p-5 border-b border-gray-700 flex items-center justify-between shrink-0 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]">
               <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-indigo-400" /> Live
-                Transcript
+                <MessageCircle className="w-5 h-5 text-white" /> Live Transcript
               </h2>
               {!isDesktop && (
                 <Button
@@ -533,7 +526,7 @@ export default function Convo({ id }: ConvoProps) {
               className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col-reverse " // flex-1 ensures it fills remaining vertical space
             >
               {messages.length === 0 ? (
-                <div className="text-center text-gray-500 p-10 mt-auto">
+                <div className="text-center text-stone-300 p-10 mt-auto">
                   <p className="font-medium text-lg">
                     Your conversation will appear here.
                   </p>

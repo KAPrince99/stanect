@@ -8,7 +8,7 @@ import { getCompanions } from "@/app/(app)/actions/actions";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
-import { Sparkles, Heart, Plus } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import CompanionCard from "./companionCard";
 import LordIcon from "./lordIcon";
 
