@@ -33,18 +33,6 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-        <head>
-          <meta name="apple-mobile-web-app-capable" content="yes" />
-
-          <meta
-            name="apple-mobile-web-app-status-bar-style"
-            content="black-translucent"
-          />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, viewport-fit=cover"
-          />
-        </head>
         <body>
           <ScrollToTop />
           <QueryProvider>{children}</QueryProvider>
