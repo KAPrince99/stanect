@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "An AI-powered voice companion that helps you build confidence and communicate better",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#000000",
+    background_color: "#0b1a36",
+    theme_color: "#1a3a80",
     icons: [
       {
         src: "/icon-192x192.png",
