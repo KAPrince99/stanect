@@ -31,6 +31,7 @@ export const metadata: Metadata = {
   themeColor: "#0b1a36", // Sets the theme color for the browser/status bar
   viewport: {
     width: "device-width",
+    userScalable: false,
     initialScale: 1,
     maximumScale: 1,
     viewportFit: "cover",

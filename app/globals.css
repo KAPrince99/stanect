@@ -123,6 +123,7 @@ html {
 
 /* 1. Body styles and preventing scroll leak (Standard CSS) */
 body {
+  -webkit-tap-highlight-color: transparent;
   /* Prevents scrolling from leaking to the document root (as intended) */
   overflow: hidden;
   /* Ensure the body itself is the correct color */
