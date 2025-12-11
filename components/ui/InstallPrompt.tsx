@@ -1,3 +1,4 @@
+// components/ui/InstallPrompt.tsx
 "use client";
 
 import { useEffect, useState } from "react";

@@ -121,6 +121,18 @@ html {
   font-family: var(--font-inter);
 }
 
+body {
+  /* Prevents scrolling from leaking to the document root */
+  overflow: hidden;
+}
+
+/* Apply overscroll-behavior to the scrollable content within your app */
+.your-scrollable-content {
+  overflow-y: scroll;
+  /* Prevents the pull-to-refresh action */
+  overscroll-behavior-y: contain;
+}
+
 h1,
 h2,
 h3,

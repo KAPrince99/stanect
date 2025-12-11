@@ -1,7 +1,7 @@
-//app/actions.ts
 "use server";
 
 import webpush from "web-push";
+import { PushSubscription } from "web-push"; // Added type import
 
 webpush.setVapidDetails(
   "mailto:hereyouwilllikeit@gmail.com",
@@ -36,7 +36,8 @@ export async function sendNotification(message: string) {
       JSON.stringify({
         title: "Test Notification",
         body: message,
-        icon: "/icon.png",
+        // *** Consistency Update: Using /icon-192x192.png as per manifest
+        icon: "/icon-192x192.png",
       })
     );
     return { success: true };
