@@ -121,11 +121,24 @@ html {
   font-family: var(--font-inter);
 }
 
+/* 1. Body styles and preventing scroll leak (Standard CSS) */
 body {
-  /* Prevents scrolling from leaking to the document root */
+  /* Prevents scrolling from leaking to the document root (as intended) */
   overflow: hidden;
+  /* Ensure the body itself is the correct color */
+  background-color: #0b1a36;
+  margin: 0;
+  padding: 0;
 }
 
+/* 2. Next.js Root Element (#__next) styles (Standard CSS) */
+/* This element holds your entire application and must also be the correct color */
+#__next {
+  /* Your dark blue color */
+  background-color: #0b1a36;
+  /* It's good practice to ensure it covers the whole screen */
+  min-height: 100vh;
+}
 /* Apply overscroll-behavior to the scrollable content within your app */
 .your-scrollable-content {
   overflow-y: scroll;
