@@ -385,7 +385,7 @@ export default function Convo({ id }: ConvoProps) {
   return (
     <div className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col  md:border md:border-white/20  md:shadow-2xl md:bg-blue-400/30 md:rounded-2xl  ">
       {/* Main Conversation Area */}
-      <div className="flex-1 flex flex-col items-center justify-between  relative z-10 overflow-y-auto h-full  px-2 gap-y-10 ">
+      <div className="flex-1 flex flex-col items-center justify-between  relative z-10 overflow-y-auto h-full  px-2 gap-y-15 ">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
