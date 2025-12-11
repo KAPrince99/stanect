@@ -12,10 +12,10 @@ export default function CompanionCard({
 }) {
   return (
     <motion.article
-      whileHover={{ y: -6 }} // smaller movement = smoother
+      whileHover={{ y: -6 }}
       transition={{ type: "spring", stiffness: 120, damping: 20 }}
       className="group relative bg-white/5 rounded-3xl overflow-hidden border border-white/10 shadow-xl"
-      style={{ willChange: "transform" }} // GPU-accelerated
+      style={{ willChange: "transform" }}
     >
       <Link href={`/dashboard/${companion.id}`}>
         <div className="relative aspect-square overflow-hidden">
@@ -27,10 +27,8 @@ export default function CompanionCard({
             style={{ willChange: "transform" }}
           />
 
-          {/* Simple overlay (no blur!) */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
 
-          {/* Duration */}
           <div className="absolute top-4 left-4 bg-black/70 px-3 py-1.5 rounded-full flex items-center gap-1.5">
             <Timer className="w-4 h-4 text-amber-400" />
             <span className="text-sm font-medium">
@@ -38,14 +36,12 @@ export default function CompanionCard({
             </span>
           </div>
 
-          {/* Scene Tag */}
           <div className="absolute bottom-4 left-4 bg-white/10 px-3 py-1.5 rounded-full">
             <span className="text-sm font-medium capitalize">
               {companion.scene}
             </span>
           </div>
 
-          {/* Hover Heart (CSS only – MUCH cheaper) */}
           <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Heart className="w-7 h-7 text-red-500 fill-red-500" />
           </div>

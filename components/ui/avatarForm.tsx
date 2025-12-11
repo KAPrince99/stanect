@@ -127,7 +127,7 @@ export default function AvatarForm({
       <div className="w-full ">
         {/* Header */}
         <div className="text-center mb-12 lg:hidden">
-          <h1 className="text-5xl md:text-6xl font-display tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/70">
+          <h1 className="text-5xl md:text-6xl font-display tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white via-white to-white/70">
             Bring Her to Life
           </h1>
           <p className="mt-4 text-white/70 text-md md:text-lg font-inter">
@@ -188,22 +188,7 @@ export default function AvatarForm({
                 {form.formState.errors.scene.message}
               </p>
             )}
-            {/* <SelectField
-              label="Voice"
-              icon={<Mic className="w-5 h-5 text-purple-400" />}
-              value={form.watch("voice")}
-              onChange={(val) =>
-                form.setValue("voice", val, { shouldValidate: true })
-              }
-            >
-              <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="male">Male</SelectItem>
-            </SelectField>
-            {form.formState.errors.voice && (
-              <p className="text-red-400 text-sm">
-                {form.formState.errors.voice.message}
-              </p>
-            )} */}
+
             <div>
               <div className="flex justify-start items-center gap-2 mb-4">
                 <Mic className="w-5 h-5 text-purple-400" />
@@ -298,7 +283,7 @@ export default function AvatarForm({
               disabled={
                 mutation.isPending || !form.formState.isValid || !selectedAvatar
               }
-              className="w-full h-10 md:h-12 text-md font-bold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-black shadow-2xl shadow-amber-500/50 disabled:opacity-50"
+              className="w-full h-10 md:h-12 text-md font-bold bg-linear-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-black shadow-2xl shadow-amber-500/50 disabled:opacity-50"
             >
               {mutation.isPending
                 ? "Creating her soul..."
@@ -307,40 +292,6 @@ export default function AvatarForm({
           </form>
         </div>
       </div>
-    </div>
-  );
-}
-
-// --- Desktop Avatar Selection ---
-interface DesktopAvatarSelectionProps {
-  avatars: AvatarProps[];
-  selected: string | null;
-  onSelect: (id: string) => void;
-}
-
-function DesktopAvatarSelection({
-  avatars,
-  selected,
-  onSelect,
-}: DesktopAvatarSelectionProps) {
-  return (
-    <div className="hidden lg:grid grid-cols-3 2xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-8">
-      {avatars.map((avatar) => (
-        <div
-          key={avatar.id}
-          className={`relative aspect-square rounded-3xl overflow-hidden cursor-pointer border-4 transition ${
-            selected === avatar.id ? "border-amber-400" : "border-transparent"
-          }`}
-          onClick={() => onSelect(avatar.id)}
-        >
-          <Image
-            src={avatar.image_url}
-            alt={avatar.name || "Avatar"}
-            fill
-            className="object-cover"
-          />
-        </div>
-      ))}
     </div>
   );
 }

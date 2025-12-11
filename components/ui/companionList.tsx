@@ -1,4 +1,3 @@
-// components/dashboard/dashboard-content.tsx
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +29,7 @@ export default function CompanionList({ userId }: { userId: string }) {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-16"
       >
-        <h1 className="text-5xl md:text-7xl tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+        <h1 className="text-5xl md:text-7xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
           Welcome back, {user?.firstName || "King"}.
         </h1>
         <p className="mt-4 text-white/70 text-lg md:text-xl font-inter">

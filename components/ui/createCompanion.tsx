@@ -40,12 +40,9 @@ export default function CreateCompanion() {
     [router, searchParams]
   );
 
-  // Initialize selection ONLY when no avatar is selected yet
   useEffect(() => {
-    // If we already have an avatarId from state or URL, do nothing
     if (selectedAvatarId) return;
 
-    // If avatars are loaded, auto-select the first one
     if (avatars && avatars.length > 0) {
       const firstId = avatars[0].id;
       setSelectedAvatarId(firstId);
@@ -68,7 +65,7 @@ export default function CreateCompanion() {
         <DesktopAvatarSelection
           avatars={avatars}
           selected={selectedAvatarId}
-          onSelect={handleSelectAvatar} // updated handler
+          onSelect={handleSelectAvatar}
         />
         <div className="flex items-center justify-center  md:p-5 lg:p-16">
           <AvatarForm avatars={avatars} selectedAvatarId={selectedAvatarId} />

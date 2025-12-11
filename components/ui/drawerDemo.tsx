@@ -7,6 +7,7 @@ import {
   DrawerContent,
   DrawerFooter,
   DrawerClose,
+  DrawerTitle,
 } from "@/components/ui/drawer";
 import { Button } from "./button";
 import Image from "next/image";
@@ -31,41 +32,42 @@ export default function AvatarDrawer({
         <Button className="bg-[#0072c3]">Choose Avatar</Button>
       </DrawerTrigger>
 
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <section className="grid grid-cols-4 gap-2">
-            {avatars.map((avatar) => (
-              <div
-                key={avatar.id}
-                className={`relative aspect-square w-full rounded-md cursor-pointer border-2 transition ${
-                  localSelected === avatar.id
-                    ? "border-black"
-                    : "border-transparent"
-                }`}
-                onClick={() => setLocalSelected(avatar.id)}
-              >
-                <Image
-                  src={avatar.image_url}
-                  alt={avatar.name || "Avatar"}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ))}
-          </section>
+      <DrawerContent className="bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8]">
+        {/* Add DrawerTitle for accessibility */}
+        <DrawerTitle className="sr-only">Choose an Avatar</DrawerTitle>
 
-          <DrawerFooter>
-            <DrawerClose asChild>
-              <Button
-                onClick={() => {
-                  if (localSelected) onSelect(localSelected);
-                }}
-              >
-                Submit
-              </Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </div>
+        <section className="grid grid-cols-4 gap-2 p-4">
+          {avatars.map((avatar) => (
+            <div
+              key={avatar.id}
+              className={`relative aspect-square w-full rounded-md cursor-pointer border-2 transition ${
+                localSelected === avatar.id
+                  ? "border-black"
+                  : "border-transparent"
+              }`}
+              onClick={() => setLocalSelected(avatar.id)}
+            >
+              <Image
+                src={avatar.image_url}
+                alt={avatar.name || "Avatar"}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </section>
+
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <Button
+              onClick={() => {
+                if (localSelected) onSelect(localSelected);
+              }}
+            >
+              Submit
+            </Button>
+          </DrawerClose>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
