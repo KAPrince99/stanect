@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import LordIcon from "./lordIcon";
+import { profile } from "console";
 
 const dockItems = [
   {
@@ -26,6 +27,14 @@ const dockItems = [
     height: 35,
     gradient: true,
   },
+  {
+    href: "/profile",
+    label: "Profile",
+    iconSrc: "https://cdn.lordicon.com/hhljfoaj.json",
+    width: 35,
+    height: 35,
+    profile: true,
+  },
 ];
 
 export default function MobileDock() {
@@ -41,7 +50,7 @@ export default function MobileDock() {
             >
               {item.gradient ? (
                 <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full blur-md opacity-50" />
+                  <div className="absolute -inset-1 bg-linear-to-r from-amber-400 to-orange-500 rounded-full blur-md opacity-50" />
                   <LordIcon
                     src={item.iconSrc}
                     trigger="loop"
@@ -50,6 +59,14 @@ export default function MobileDock() {
                     height={item.height}
                   />
                 </div>
+              ) : item.profile ? (
+                <LordIcon
+                  src={item.iconSrc}
+                  trigger="loop"
+                  colors="primary:#f5f3f1,secondary:#1a3a80,tertiary:#e88c30"
+                  width={item.width}
+                  height={item.height}
+                />
               ) : (
                 <LordIcon
                   src={item.iconSrc}
