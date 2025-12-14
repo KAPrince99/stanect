@@ -30,7 +30,8 @@ export default clerkMiddleware(async (auth, req) => {
         https://*.clerk.com
         https://*.clerk.accounts.dev
         https://cdn.lordicon.com
-        https://cdgnwgojnzotbhdzvsnr.supabase.co;        
+        https://cdgnwgojnzotbhdzvsnr.supabase.co
+        wss://cdgnwgojnzotbhdzvsnr.supabase.co;        
       frame-src https://js.paystack.co;
       media-src 'self' https://videos.pexels.com; 
       worker-src 'self' blob:; 

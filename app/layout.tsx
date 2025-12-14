@@ -41,7 +41,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${spaceGrotesk.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta
