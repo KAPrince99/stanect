@@ -2,7 +2,6 @@
 
 import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
 import MaskedDiv from "@/components/ui/masked-div";
-import { SparklesIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const ComponentsShowcase = () => {
@@ -38,7 +37,7 @@ const ComponentsShowcase = () => {
     }
   }, [charIndex, sloganIndex]);
   return (
-    <section className="py-20 overflow-x-clip">
+    <section className="py-10 md:py-20 overflow-x-clip">
       <div className="container mx-auto ">
         <div className="flex flex-col items-center">
           <h2
@@ -47,7 +46,7 @@ const ComponentsShowcase = () => {
     font-extrabold
     leading-tight
     tracking-tight
-    bg-gradient-to-r from-white via-white/90 to-white/50 
+    bg-linear-to-r from-white via-white/90 to-white/50 
     bg-clip-text text-transparent
 text-2xl        
     sm:text-2xl     

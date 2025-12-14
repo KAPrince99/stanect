@@ -29,13 +29,13 @@ export default function Navbar() {
             <Image
               src="/logo/logo.svg"
               alt="Stanect"
-              width={40}
-              height={40}
+              width={35}
+              height={35}
               className="object-contain"
             />
             <span
-              className=" text-2xl font-display tracking-tighter 
-                         bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent -ml-2"
+              className="md:hidden text-2xl font-display tracking-tighter 
+                         bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent -ml-2"
             >
               tanect
             </span>
@@ -62,7 +62,7 @@ export default function Navbar() {
               <Button
                 asChild
                 size="lg"
-                className="hidden md:flex bg-gradient-to-r from-amber-400 to-amber-500 
+                className="hidden md:flex bg-linear-to-r from-amber-400 to-amber-500 
                          hover:from-amber-500 hover:to-amber-600 
                          text-black font-inter shadow-lg hover:shadow-amber-500/50 
                          transition-all duration-300 hover:scale-105"
@@ -105,7 +105,7 @@ export default function Navbar() {
 
               <SheetContent
                 side="right"
-                className="bg-gradient-to-b from-[#0b1a36] to-[#1e4ea8] border-white/10 p-6"
+                className="bg-linear-to-b from-[#0b1a36] to-[#1e4ea8] border-white/10 p-6"
               >
                 <motion.div
                   initial={{ x: 200, opacity: 0 }}
@@ -127,12 +127,12 @@ export default function Navbar() {
                   <Button
                     asChild
                     size="lg"
-                    className="mt-6 bg-gradient-to-r from-amber-400 to-amber-500 
+                    className="mt-6 bg-linear-to-r from-amber-400 to-amber-500 
                                hover:from-amber-500 hover:to-amber-600 
                                text-black font-display"
                   >
                     <Link href={isSignedIn ? "/dashboard" : "/login"}>
-                      {isSignedIn ? "Dashboard" : "Start For Free"}
+                      {isSignedIn ? "Dashboard" : "Log in"}
                     </Link>
                   </Button>
                 </motion.div>

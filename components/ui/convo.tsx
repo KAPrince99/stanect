@@ -8,7 +8,7 @@ import ConvoSkeleton from "./convoSkeleton";
 import { getSingleCompanion } from "@/app/(app)/actions/actions";
 import { vapiSdk } from "@/lib/vapiSdk";
 
-import { Zap, Radio, X, Headset } from "lucide-react";
+import { Zap, Radio, X, Headset, Loader2 } from "lucide-react";
 
 import ConvoBlock from "./convoBlock";
 import TranscriptBlock from "./TranscriptBlock";
@@ -139,7 +139,12 @@ export default function Convo({ id }: ConvoProps) {
     }
   };
 
-  if (isLoading) return <ConvoSkeleton />;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center my-50">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   if (!companion)
     return (
       <div className="flex justify-center items-center h-screen bg-gray-900 text-white p-10">

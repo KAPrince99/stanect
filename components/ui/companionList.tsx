@@ -7,7 +7,7 @@ import { getCompanions } from "@/app/(app)/actions/actions";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
-import { Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import CompanionCard from "./companionCard";
 import LordIcon from "./lordIcon";
 
@@ -17,9 +17,15 @@ export default function CompanionList({ userId }: { userId: string }) {
   const { data: companions = [], isLoading } = useQuery({
     queryKey: ["companions", userId],
     queryFn: () => getCompanions(userId),
+    enabled: !!user,
   });
 
-  if (isLoading) return null;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center my-50">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
 
   return (
     <div className="relative px-6 py-20 md:px-10 lg:px-16">

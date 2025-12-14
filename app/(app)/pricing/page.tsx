@@ -100,7 +100,7 @@ export default function PricingPage() {
   const [userData, setUserData] = useState<UserData | null>(null);
 
   // ---------------- Fetch subscription status ----------------
-  const { data } = useQuery<SubscriptionStatus>({
+  const { data, isLoading } = useQuery<SubscriptionStatus>({
     queryKey: ["users", clerk_user_id],
     enabled: !!clerk_user_id,
     queryFn: async () => {
@@ -167,6 +167,13 @@ export default function PricingPage() {
       setLoadingTier(null);
     }
   };
+
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center my-50">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   return (
     <div className="min-h-screen bg-transparent py-16 px-4 sm:px-6 mt-3 text-white">
       <motion.div

@@ -2,11 +2,16 @@
 
 import dynamic from "next/dynamic";
 import ConvoSkeleton from "./convoSkeleton"; // Assuming ConvoSkeleton is defined elsewhere
+import { Loader2 } from "lucide-react";
 
 // Dynamically import the main Convo component with SSR disabled
 const Convo = dynamic(() => import("@/components/ui/convo"), {
   ssr: false,
-  loading: () => <ConvoSkeleton />,
+  loading: () => (
+    <div className="flex justify-center items-center my-50">
+      <Loader2 className="animate-spin" />
+    </div>
+  ),
 });
 
 interface ConvoWrapperProps {
