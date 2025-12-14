@@ -5,8 +5,15 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { SignedIn, UserButton, useUser } from "@clerk/nextjs";
+import {
+  SignedIn,
+  SignedOut,
+  SignIn,
+  SignInButton,
+  useUser,
+} from "@clerk/nextjs";
 import { motion } from "framer-motion";
+import UserButton from "@/components/ui/UserButton";
 
 export default function Navbar() {
   const { isSignedIn } = useUser();
@@ -34,7 +41,7 @@ export default function Navbar() {
               className="object-contain"
             />
             <span
-              className="md:hidden text-2xl font-display tracking-tighter 
+              className="md:hidden text-xl font-display tracking-tighter 
                          bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent -ml-2"
             >
               tanect
@@ -72,14 +79,11 @@ export default function Navbar() {
                 </Link>
               </Button>
               <SignedIn>
-                <motion.div whileHover={{ scale: 1.1 }} className="relative">
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        avatarBox: "w-12 h-12 ring-4 ring-white/30 shadow-2xl",
-                      },
-                    }}
-                  />
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="relative flex"
+                >
+                  <UserButton />
                   {/* Online Indicator */}
                   <motion.div
                     animate={{ scale: [1, 1.3, 1] }}
@@ -88,56 +92,13 @@ export default function Navbar() {
                   />
                 </motion.div>
               </SignedIn>
+
+              <SignedOut>
+                <Link href="/login" className="text-sm">
+                  Log In
+                </Link>
+              </SignedOut>
             </div>
-
-            {/* Mobile Menu */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button
-                  aria-label="Open menu"
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden text-white hover:bg-white/10"
-                >
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-
-              <SheetContent
-                side="right"
-                className="bg-linear-to-b from-[#0b1a36] to-[#1e4ea8] border-white/10 p-6"
-              >
-                <motion.div
-                  initial={{ x: 200, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: 200, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="flex flex-col gap-8 mt-10"
-                >
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.name}
-                      href={link.href}
-                      className="text-2xl font-display text-white/90 hover:text-white transition"
-                    >
-                      {link.name}
-                    </Link>
-                  ))}
-
-                  <Button
-                    asChild
-                    size="lg"
-                    className="mt-6 bg-linear-to-r from-amber-400 to-amber-500 
-                               hover:from-amber-500 hover:to-amber-600 
-                               text-black font-display"
-                  >
-                    <Link href={isSignedIn ? "/dashboard" : "/login"}>
-                      {isSignedIn ? "Dashboard" : "Log in"}
-                    </Link>
-                  </Button>
-                </motion.div>
-              </SheetContent>
-            </Sheet>
           </div>
         </div>
       </div>

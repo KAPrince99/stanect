@@ -1,11 +1,12 @@
-import CompanionCardSkeleton from "@/components/ui/companionCardSkeleton";
 import CompanionList from "@/components/ui/companionList";
 import { auth } from "@clerk/nextjs/server";
 import { Loader2 } from "lucide-react";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 export default async function Dashboard() {
   const { userId } = await auth();
+  if (!userId) redirect("/");
 
   return (
     <Suspense

@@ -4,6 +4,25 @@ import { createSupabaseClient } from "@/lib/supabase";
 import { AvatarProps, CreateCompanionProps } from "@/types/types";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
+export async function getUser(id?: string) {
+  if (!id) return null;
+
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("clerk_user_id", id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("getUser error:", error.message);
+    throw error;
+  }
+
+  return data;
+}
+
 export async function getAvatars(): Promise<AvatarProps[]> {
   const supabase = createSupabaseClient();
   const { data, error } = await supabase.from("avatars").select("*");

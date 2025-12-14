@@ -1,8 +1,9 @@
 "use client";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import LordIcon from "./lordIcon";
-import { profile } from "console";
+import UserImageContainer from "./UserImageContainer";
 
 const dockItems = [
   {
@@ -39,7 +40,7 @@ const dockItems = [
 
 export default function MobileDock() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden w-full bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]  border-t border-white/20 ">
+    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden w-full bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] border-t border-white/20">
       <div className="flex justify-around items-start h-20 max-w-xl mx-auto px-4 pt-3">
         {dockItems.map((item) => (
           <Link key={item.href} href={item.href}>
@@ -60,13 +61,7 @@ export default function MobileDock() {
                   />
                 </div>
               ) : item.profile ? (
-                <LordIcon
-                  src={item.iconSrc}
-                  trigger="loop"
-                  colors="primary:#f5f3f1,secondary:#1a3a80,tertiary:#e88c30"
-                  width={item.width}
-                  height={item.height}
-                />
+                <UserImageContainer />
               ) : (
                 <LordIcon
                   src={item.iconSrc}

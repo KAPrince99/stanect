@@ -12,16 +12,27 @@ import {
   Edit3,
   Sparkles,
   Award,
+  Loader2,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
+import { getUser } from "@/app/(app)/actions/actions";
 export default function ProfileContainer() {
   const { user } = useUser();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["users", user?.id],
+    queryFn: () => getUser(user!.id),
+    enabled: !!user?.id,
+  });
+
+  const plan = data?.plan ?? "free";
 
   const joinedDate = user?.createdAt
     ? format(new Date(user.createdAt), "dd MMMM yyyy")
     : "Unknown";
 
-  const userPlan = "Pro";
+  const userPlan = plan?.trim().split(" ")[0];
   const totalMinutesTalked = 1247;
   const userCountry = user?.publicMetadata.country || "Earth";
   const userFirstNameInitial = user?.firstName?.[0] || "S";
@@ -29,6 +40,13 @@ export default function ProfileContainer() {
     user?.lastName || ""
   }`.trim();
   const userEmail = user?.emailAddresses[0]?.emailAddress || "N/A";
+
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center my-50">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
 
   return (
     <div className="w-full max-w-4xl">

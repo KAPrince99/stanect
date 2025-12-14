@@ -1,10 +1,11 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import Image from "next/image";
+
 import Link from "next/link";
 import UploadButton from "./uploadButton";
+import UserButton from "@/components/ui/UserButton";
 import { Sparkles, LogIn } from "lucide-react";
 
 export default function Pill() {
@@ -31,31 +32,11 @@ export default function Pill() {
       {/* Floating Glow Background */}
       <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 blur-3xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-      {/* Left: Logo + Brand */}
       <Link
         href="/"
-        className="flex items-center z-10 no-underline focus:outline-none group"
+        className="flex items-center z-10 no-underline focus:outline-none group outline-none"
       >
         <div className="relative">
-          {/* Mobile Logo */}
-          {/* <Image
-            src="/logo/logo.svg"
-            alt="Stanect Mobile"
-            width={30}
-            height={30}
-            className="block md:hidden drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
-          /> */}
-
-          {/* Desktop Logo */}
-          {/* <Image
-            src="/logo/logo.svg"
-            alt="Stanect Desktop"
-            width={40}
-            height={40}
-            className="hidden md:block drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
-          /> */}
-
-          {/* Rotating Glow */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -91,14 +72,11 @@ export default function Pill() {
         </SignedOut>
 
         <SignedIn>
-          <motion.div whileHover={{ scale: 1.1 }} className="relative">
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "w-12 h-12 ring-4 ring-white/30 shadow-2xl",
-                },
-              }}
-            />
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            className="relative hidden lg:flex"
+          >
+            <UserButton />
             {/* Online Indicator */}
             <motion.div
               animate={{ scale: [1, 1.3, 1] }}
@@ -106,6 +84,11 @@ export default function Pill() {
               className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-black shadow-lg"
             />
           </motion.div>
+          <motion.div
+            animate={{ scale: [1, 1.3, 1] }}
+            transition={{ repeat: Infinity, duration: 3 }}
+            className=" w-4 h-4 bg-emerald-400 rounded-full border shadow-lg lg:hidden"
+          />
         </SignedIn>
       </div>
 
