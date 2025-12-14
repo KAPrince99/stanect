@@ -17,6 +17,7 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/app/(app)/actions/actions";
+import LoadingSpinner from "./LoadingSpinner";
 export default function ProfileContainer() {
   const { user } = useUser();
 
@@ -41,12 +42,7 @@ export default function ProfileContainer() {
   }`.trim();
   const userEmail = user?.emailAddresses[0]?.emailAddress || "N/A";
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center my-50">
-        <Loader2 className="animate-spin" />
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="w-full max-w-4xl">

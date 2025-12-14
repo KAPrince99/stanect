@@ -6,10 +6,11 @@ import { Check, Zap, Crown, Sparkles, Star, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import { fetchSubscriptionStatus } from "../actions/subs";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 // ---------------- Supabase Realtime client ----------------
 const supabase = createClient(
@@ -168,12 +169,7 @@ export default function PricingPage() {
     }
   };
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center my-50">
-        <Loader2 className="animate-spin" />
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner />;
   return (
     <div className="min-h-screen bg-transparent py-16 px-4 sm:px-6 mt-3 text-white">
       <motion.div

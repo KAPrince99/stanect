@@ -4,9 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCompanions } from "@/app/(app)/actions/actions";
 import { useUser } from "@clerk/nextjs";
-import { Loader2 } from "lucide-react";
 import CompanionCard from "./companionCard";
 import Fresh from "./Fresh";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function CompanionList({ userId }: { userId: string }) {
   const { user } = useUser();
@@ -17,12 +17,7 @@ export default function CompanionList({ userId }: { userId: string }) {
     enabled: !!user,
   });
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center my-50">
-        <Loader2 className="animate-spin" />
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="relative px-6 py-20 md:px-10 lg:px-16">

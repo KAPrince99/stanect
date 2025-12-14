@@ -5,9 +5,9 @@ import { useCallback, useEffect, useState } from "react";
 import DesktopAvatarSelection from "./desktopAvatarSelection";
 import AvatarForm from "./avatarForm";
 import { getAvatars } from "@/app/(app)/actions/actions";
-import CreateComponentSkeleton from "./createComponentSkeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function CreateCompanion() {
   const {
@@ -51,12 +51,7 @@ export default function CreateCompanion() {
     }
   }, [avatars, selectedAvatarId, handleSelectAvatar]);
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center my-50">
-        <Loader2 className="animate-spin" />
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner />;
 
   if (error || !avatars)
     return (

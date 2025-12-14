@@ -1,4 +1,5 @@
 import CompanionList from "@/components/ui/companionList";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { auth } from "@clerk/nextjs/server";
 import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -9,13 +10,7 @@ export default async function Dashboard() {
   if (!userId) redirect("/");
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center items-center my-50">
-          <Loader2 className="animate-spin" />
-        </div>
-      }
-    >
+    <Suspense fallback={<LoadingSpinner />}>
       <CompanionList userId={userId!} />
     </Suspense>
   );
