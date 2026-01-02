@@ -32,7 +32,10 @@ export default function Footer() {
           >
             Contact
           </Link>
-          <Link href="#About" className="hover:text-cyan-300 transition-colors">
+          <Link
+            href="/company"
+            className="hover:text-cyan-300 transition-colors"
+          >
             About
           </Link>
         </div>
