@@ -114,23 +114,13 @@ export default function Convo({ id }: ConvoProps) {
 
   const handleCall = async () => {
     if (callStatus !== "INACTIVE" || !companion?.assistant_id) return;
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach((track) => track.stop()); // Release mic so Vapi can take it
-    } catch (err) {
-      console.error("Microphone access denied:", err);
-      setCallStatus("ERROR");
-      return;
-    }
-
     setMessages([]);
     setCallStatus("CONNECTING");
 
     try {
       await vapiSdk.start(companion.assistant_id);
     } catch (e) {
-      console.error("SDK Start Exception:", e);
+      console.error("Failed to start VAPI call:", e);
       setCallStatus("ERROR");
       setTimeout(() => setCallStatus("INACTIVE"), 3000);
     }
