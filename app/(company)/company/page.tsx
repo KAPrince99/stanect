@@ -53,7 +53,7 @@ export default function page() {
             </Link>
           </section>
         </div>
-        <div>Prince Amanor Kabutey's Photo</div>
+        <div>Prince Amanor Kabutey&apos;s Photo</div>
       </section>
     </main>
   );
