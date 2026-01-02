@@ -15,8 +15,15 @@ export default clerkMiddleware(async (auth, req) => {
   res.headers.set(
     "Content-Security-Policy",
     `
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval'
+    default-src 'self' blob:;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:
+      https://js.paystack.co
+      https://*.clerk.com
+      https://*.clerk.accounts.dev
+      https://cdn.lordicon.com 
+      https://va.vercel-scripts.com
+      https://*.daily.co;
+    script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' blob:
       https://js.paystack.co
       https://*.clerk.com
       https://*.clerk.accounts.dev
