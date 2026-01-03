@@ -1,6 +1,6 @@
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import SmoothScroll from "@/components/ui/SmoothScroll";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
@@ -14,10 +14,10 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
         />
       </div>
       <div className="relative z-10">
-        <SmoothScroll>
-          <ScrollToTop />
-        </SmoothScroll>
-        {children}
+        <ScrollToTop />
+        <Suspense fallback={null}>
+          <SmoothScroll>{children}</SmoothScroll>
+        </Suspense>
       </div>
     </div>
   );

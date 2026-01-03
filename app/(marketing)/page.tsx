@@ -1,4 +1,3 @@
-import React from "react";
 import MarketingLayout from "./layout";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
