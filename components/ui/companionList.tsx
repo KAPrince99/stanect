@@ -20,14 +20,14 @@ export default function CompanionList({ userId }: { userId: string }) {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="relative px-6 py-20 md:px-10 lg:px-16">
+    <div className="relative px-6 py-20 md:py-25 md:px-10 lg:px-16">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-16"
       >
-        <h1 className="text-5xl md:text-7xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+        <h1 className="text-5xl md:text-6xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
           Welcome back, {user?.firstName || "King"}.
         </h1>
         <p className="mt-4 text-white/70 text-lg md:text-xl font-inter">
