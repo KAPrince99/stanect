@@ -27,7 +27,7 @@ export default function CompanionCard({
             style={{ willChange: "transform" }}
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
 
           <div className="absolute top-4 left-4 bg-black/70 px-3 py-1.5 rounded-full flex items-center gap-1.5">
             <Timer className="w-4 h-4 text-amber-400" />
@@ -59,7 +59,7 @@ export default function CompanionCard({
             className="w-full h-10 md:h-12 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-display cursor-pointer text-md shadow-lg"
           >
             <Mic className="w-10 h-5 mr-2" />
-            Let&apos;s Talk
+            Convo
           </Button>
         </Link>
       </div>

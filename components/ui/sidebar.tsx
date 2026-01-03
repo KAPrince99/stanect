@@ -13,16 +13,16 @@ const navItems = [
     lordIcon: "https://cdn.lordicon.com/pgirtdfe.json",
   },
   {
-    href: "/pricing",
-    icon: Sparkles,
-    label: "Pricing",
-    lordIcon: "https://cdn.lordicon.com/opqmrqco.json",
-  },
-  {
     href: "/new",
     icon: Plus,
     label: "Create",
     lordIcon: "https://cdn.lordicon.com/ueoydrft.json",
+  },
+  {
+    href: "/pricing",
+    icon: Sparkles,
+    label: "Pricing",
+    lordIcon: "https://cdn.lordicon.com/opqmrqco.json",
   },
 ];
 
@@ -30,7 +30,7 @@ export default function Sidebar() {
   return (
     <aside
       className="flex flex-col items-center w-24 h-full py-10 
-                 pointer-events-auto ml-5"
+                 pointer-events-auto ml-7"
     >
       <div className="flex flex-col items-center justify-start py-50 h-full">
         {/* Main Orb */}
@@ -49,8 +49,8 @@ export default function Sidebar() {
                       src={item.lordIcon}
                       trigger="loop"
                       colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
-                      width={item.href === "/new" ? 45 : 40}
-                      height={item.href === "/new" ? 45 : 40}
+                      width={item.href === "/new" ? 40 : 35}
+                      height={item.href === "/new" ? 40 : 35}
                     />
                   )}
                 </div>

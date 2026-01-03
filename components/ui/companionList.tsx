@@ -27,10 +27,10 @@ export default function CompanionList({ userId }: { userId: string }) {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-16"
       >
-        <h1 className="text-5xl md:text-6xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+        <h1 className="text-3xl md:text-5xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
           Welcome back, {user?.firstName || "King"}.
         </h1>
-        <p className="mt-4 text-white/70 text-lg md:text-xl font-inter">
+        <p className="mt-4 text-white/70 text-md md:text-lg font-inter">
           {companions.length === 0
             ? "Your confidence journey starts now"
             : `You have ${companions.length} ${
