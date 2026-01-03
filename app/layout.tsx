@@ -4,6 +4,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import type { Metadata, Viewport } from "next";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 
 const inter = Inter({
   subsets: ["latin"],

@@ -1,4 +1,5 @@
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 import { ReactNode } from "react";
 
 export default function MarketingLayout({ children }: { children: ReactNode }) {
@@ -13,7 +14,9 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
         />
       </div>
       <div className="relative z-10">
-        <ScrollToTop />
+        <SmoothScroll>
+          <ScrollToTop />
+        </SmoothScroll>
         {children}
       </div>
     </div>

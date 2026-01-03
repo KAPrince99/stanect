@@ -116,6 +116,23 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 html {
   scroll-behavior: smooth;
   font-family: var(--font-inter);
