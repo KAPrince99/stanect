@@ -171,7 +171,7 @@ export default function PricingPage() {
 
   if (isLoading) return <LoadingSpinner />;
   return (
-    <div className="min-h-screen bg-transparent py-16 px-4 sm:px-6 mt-3 text-white">
+    <div className="min-h-screen bg-transparent py-16 md:py-25 px-4 sm:px-6 mt-3 text-white">
       <motion.div
         className="fixed inset-0 pointer-events-none"
         initial={{ opacity: 0.5 }}
@@ -190,10 +190,10 @@ export default function PricingPage() {
           animate="animate"
           className="text-center mb-12"
         >
-          <h1 className="text-5xl md:text-7xl bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent font-extrabold">
+          <h1 className="text-3xl md:text-5xl bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent font-extrabold">
             Choose Your Power
           </h1>
-          <p className="text-lg md:text-2xl text-white/70 mt-4 max-w-2xl mx-auto">
+          <p className="text-md md:text-xl text-white/70 mt-4 max-w-2xl mx-auto">
             Most men stay quiet.{" "}
             <span className="text-amber-300 font-medium">
               You don’t have to.
@@ -203,7 +203,7 @@ export default function PricingPage() {
           <div className="mt-8 flex items-center justify-center gap-4 bg-white/5 border border-white/10 p-1.5 rounded-full w-fit mx-auto">
             <button
               onClick={() => setInterval("monthly")}
-              className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
+              className={`px-4 py-2 rounded-full font-medium transition-all duration-200 cursor-pointer ${
                 interval === "monthly"
                   ? "bg-white text-black shadow-lg"
                   : "bg-transparent text-white/70"
@@ -213,7 +213,7 @@ export default function PricingPage() {
             </button>
             <button
               onClick={() => setInterval("yearly")}
-              className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
+              className={`px-4 py-2 rounded-full font-medium transition-all duration-200 cursor-pointer ${
                 interval === "yearly"
                   ? "bg-white text-black shadow-lg"
                   : "bg-transparent text-white/70"
