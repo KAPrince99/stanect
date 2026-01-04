@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { Loader2, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -14,8 +14,10 @@ import {
 } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import UserButton from "@/components/ui/UserButton";
+import { useState } from "react";
 
 export default function Navbar() {
+  const [isLoading, setIsLoading] = useState(false);
   const { isSignedIn } = useUser();
   const navLinks = [
     { name: "Demo", href: "/#demo" },
@@ -68,6 +70,9 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <Button
                 asChild
+                onClick={() => {
+                  setIsLoading(true);
+                }}
                 size="lg"
                 className="hidden md:flex bg-linear-to-r from-amber-400 to-amber-500 
                          hover:from-amber-500 hover:to-amber-600 
@@ -75,7 +80,13 @@ export default function Navbar() {
                          transition-all duration-300 hover:scale-105"
               >
                 <Link href={isSignedIn ? "/dashboard" : "/login"}>
-                  {isSignedIn ? "Dashboard" : "Start For Free"}
+                  {isLoading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : isSignedIn ? (
+                    "Dashboard"
+                  ) : (
+                    "Start For Free"
+                  )}
                 </Link>
               </Button>
               <SignedIn>
