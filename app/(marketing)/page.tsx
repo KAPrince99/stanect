@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import Footer from "./components/Footer";
 import ComponentsShowcase from "./components/ComponentsShowcase";
 import { AppleCardsCarouselDemo } from "./components/CardsCarousel";
+import Pricing from "./components/Pricing";
 
 export default function Homepage() {
   return (
@@ -12,6 +13,7 @@ export default function Homepage() {
       <Hero />
       <ComponentsShowcase />
       <AppleCardsCarouselDemo />
+      <Pricing />
       <Footer />
     </MarketingLayout>
   );

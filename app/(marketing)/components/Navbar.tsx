@@ -2,16 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2, Menu } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  SignedIn,
-  SignedOut,
-  SignIn,
-  SignInButton,
-  useUser,
-} from "@clerk/nextjs";
+
+import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import UserButton from "@/components/ui/UserButton";
 import { useState } from "react";

@@ -29,7 +29,7 @@ export default function page() {
           </section>
           <section className="max-w-xl text-lg  leading-10 my-5">
             <Link
-              href="/"
+              href="https://stanect.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 underline"
