@@ -25,7 +25,7 @@ export default function CompanionList({ userId }: { userId: string }) {
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-16"
+        className="text-center mb-10"
       >
         <h1 className="text-3xl md:text-5xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
           Welcome back, {user?.firstName || "King"}.
