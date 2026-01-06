@@ -7,7 +7,7 @@ export default function page() {
       <div className="text-sm text-gray-200">
         <Link href="/">Stanect software Inc.</Link>
       </div>
-      <section className="grid grid-cols-1 md:grid-cols-2 place-content-center my-2 md:my-15 text-gray-200">
+      <section className="grid grid-cols-1 md:grid-cols-2 place-content-center space-y-10 my-2 md:my-15 text-gray-200">
         <div>
           <section className="max-w-sm">
             <h1 className="text-5xl">Small Project, Crazy Impact</h1>
