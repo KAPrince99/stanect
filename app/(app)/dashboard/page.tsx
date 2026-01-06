@@ -10,7 +10,7 @@ export default async function Dashboard() {
   if (!userId) redirect("/");
 
   return (
-    <main className="overflow-y-auto mb-15">
+    <main className="overflow-y-auto mb-20 md:mb-15">
       <Suspense fallback={<LoadingSpinner />}>
         <CompanionList userId={userId!} />
       </Suspense>
