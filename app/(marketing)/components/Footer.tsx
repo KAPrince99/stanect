@@ -43,13 +43,17 @@ export default function Footer() {
         {/* Socials */}
         <div className="flex gap-4">
           <Link
-            href="https://twitter.com"
+            href="https://x.com/facultywave?s=21&t=EA7KVzb47NhFewv2bvQfpQ"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hover:text-cyan-300 transition-colors"
           >
             <Twitter className="w-5 h-5" />
           </Link>
           <Link
-            href="https://github.com"
+            href="https://github.com/KAPrince99"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hover:text-white/80 transition-colors"
           >
             <Github className="w-5 h-5" />
