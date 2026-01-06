@@ -127,7 +127,7 @@ export default function AvatarForm({
       <div className="w-full ">
         {/* Header */}
         <div className="text-center mb-12 lg:hidden">
-          <h1 className="text-5xl md:text-6xl font-display tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white via-white to-white/70">
+          <h1 className="text-4xl md:text-6xl font-display tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white via-white to-white/70 mt-4">
             Bring Her to Life
           </h1>
           <p className="mt-4 text-white/70 text-md md:text-lg font-inter">

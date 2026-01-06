@@ -172,7 +172,7 @@ export default function PricingPage() {
 
   if (isLoading) return <LoadingSpinner />;
   return (
-    <div className="min-h-screen bg-transparent py-16 md:py-25 px-4 sm:px-6 mt-3 text-white">
+    <div className="min-h-screen bg-transparent py-25 px-4 sm:px-6 mt-3 text-white">
       <motion.div
         className="fixed inset-0 pointer-events-none"
         initial={{ opacity: 0.5 }}

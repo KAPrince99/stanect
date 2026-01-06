@@ -47,7 +47,7 @@ export default function ProfileContainer() {
   return (
     <div className="w-full max-w-4xl">
       {/* Main Card Container */}
-      <div className=" overflow-hidden">
+      <div className=" overflow-hidden mt-5">
         {/* Header Section */}
         <div className="relative p-8 md:p-10  text-center border-b border-gray-700/50">
           <div className="relative z-10">

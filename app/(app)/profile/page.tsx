@@ -11,12 +11,12 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen  overflow-hidden relative">
+    <main className="min-h-screen  overflow-hidden relative mb-30 md:mb-15">
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 sm:px-6 py-12 md:py-20">
         <Suspense fallback={<LoadingSpinner />}>
           <ProfileContainer />
         </Suspense>
       </div>
-    </div>
+    </main>
   );
 }

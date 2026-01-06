@@ -20,7 +20,7 @@ export default function CompanionList({ userId }: { userId: string }) {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="relative px-6 py-20 md:py-25 md:px-10 lg:px-16">
+    <div className="relative px-6 py-25 md:px-10 lg:px-16">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
