@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function page() {
   return (
-    <main>
+    <main className="flex flex-col p-5">
       <div className="text-sm text-gray-200">
         <Link href="/">Stanect software Inc.</Link>
       </div>
