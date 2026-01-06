@@ -4,7 +4,6 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import throttle from "lodash.throttle";
 
-import ConvoSkeleton from "./convoSkeleton";
 import { getSingleCompanion } from "@/app/(app)/actions/actions";
 import { vapiSdk } from "@/lib/vapiSdk";
 
@@ -161,7 +160,7 @@ export default function Convo({ id }: ConvoProps) {
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024;
 
   return (
-    <div className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:border md:border-white/20 md:shadow-2xl md:bg-blue-400/30 md:rounded-2xl">
+    <main className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:border md:border-white/20 md:shadow-2xl md:bg-blue-400/30 md:rounded-2xl">
       {/* Main Conversation Area */}
       <ConvoBlock
         callStatus={callStatus}
@@ -186,6 +185,6 @@ export default function Convo({ id }: ConvoProps) {
         messages={messages}
         companionName={companion.companion_name || "AI Companion"}
       />
-    </div>
+    </main>
   );
 }

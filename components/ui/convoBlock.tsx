@@ -42,7 +42,7 @@ export default function ConvoBlock({
   setShowTranscript,
 }: Props) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-between relative z-10 overflow-y-auto h-full px-2 gap-y-15 md:gap-y-0">
+    <div className="flex-1 flex flex-col items-center justify-between relative z-10  h-full px-2 gap-y-15 md:gap-y-0">
       {/* Status and Companion Name */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
