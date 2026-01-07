@@ -9,15 +9,21 @@ import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import UserButton from "@/components/ui/UserButton";
 import { useState } from "react";
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 
 export default function Navbar() {
   const [isLoading, setIsLoading] = useState(false);
   const { isSignedIn } = useUser();
+  const { scrollToSection } = useScrollToSection();
   const navLinks = [
-    { name: "Demo", href: "/#demo" },
-    { name: "Scenarios", href: "/#scenarios" },
-    { name: "Pricing", href: "/pricing" },
+    { name: "Demo", href: "/#demo", id: "demo" },
+    { name: "Scenarios", href: "/#scenarios", id: "scenarios" },
+    { name: "Pricing", href: "/#pricing", id: "pricing" },
   ];
+
+  const handleScrollToSection = (id: string) => {
+    scrollToSection(id);
+  };
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 py-4">
@@ -50,6 +56,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
+                onClick={() => handleScrollToSection(link.id)}
                 className="text-white/80 hover:text-white font-medium 
                            transition-all duration-300 hover:scale-105"
               >

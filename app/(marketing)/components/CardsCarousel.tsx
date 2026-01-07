@@ -8,7 +8,10 @@ export function AppleCardsCarouselDemo() {
   ));
 
   return (
-    <div className="w-full h-full mt-1 md:mt-10 px-4 md:px-6 lg:px-8 text-center">
+    <main
+      id="scenarios"
+      className="w-full h-full mt-1 md:mt-10 px-4 md:px-6 lg:px-8 text-center"
+    >
       <h2
         className="text-xl md:text-3xl lg:text-5xl font-black tracking-tight 
                  bg-gradient-to-r from-white via-white/90 to-white/40 
@@ -28,7 +31,7 @@ export function AppleCardsCarouselDemo() {
       <div className="mt-1">
         <Carousel items={cards} />
       </div>
-    </div>
+    </main>
   );
 }
 

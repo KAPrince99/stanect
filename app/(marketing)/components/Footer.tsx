@@ -20,12 +20,7 @@ export default function Footer() {
           >
             Features
           </Link>
-          <Link
-            href="#pricing"
-            className="hover:text-cyan-300 transition-colors"
-          >
-            Pricing
-          </Link>
+
           <Link
             href="/contact"
             className="hover:text-cyan-300 transition-colors"
