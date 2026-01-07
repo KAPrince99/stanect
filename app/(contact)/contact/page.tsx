@@ -9,8 +9,8 @@ export default function page() {
       <section className="text-sm text-gray-200">
         <Link href="/">Stanect software Inc.</Link>
       </section>
-      <div className="flex flex-col w-full md:space-y-20 lg:space-y-35 p-5">
-        <section className="flex flex-col md:flex-row items-center justify-between space-y-10 md:space-y-0">
+      <div className="flex flex-col w-full md:space-y-20 lg:space-y-35 p-5 ">
+        <section className="flex flex-col md:flex-row items-center justify-center md:justify-between space-y-10 md:space-y-0">
           <LinkComponent
             link="mailto:princeamanorkabutey@gmail.com"
             name="Email"
@@ -21,7 +21,7 @@ export default function page() {
             name="PortFolio / 26"
           />
         </section>
-        <section className="flex flex-col md:flex-row items-center justify-center space-y-10 md:space-y-0 ">
+        <section className="flex flex-col md:flex-row items-center justify-center my-10 md:my-0 md:space-y-0 ">
           <LinkComponent link="tel:+233243575398" name="Phone" />
         </section>
         <section className="flex flex-col md:flex-row items-center justify-between space-y-10 md:space-y-0">
