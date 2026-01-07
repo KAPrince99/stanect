@@ -1,40 +1,44 @@
 "use client";
 
 import Lenis from "lenis";
-import { createContext, useContext, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useRef, ReactNode } from "react";
 
-const LenisContext = createContext<Lenis | null>(null);
+const LenisContext = createContext<() => Lenis | null>(() => null);
 
-export function LenisProvider({ children }: { children: React.ReactNode }) {
+export function LenisProvider({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    const lenis = new Lenis({
+    if (typeof window === "undefined") return;
+
+    const lenisInstance = new Lenis({
       duration: 1.5,
       lerp: 0.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
 
-    lenisRef.current = lenis;
+    lenisRef.current = lenisInstance;
 
-    function raf(time: number) {
-      lenis.raf(time);
+    const raf = (time: number) => {
+      lenisInstance.raf(time);
       requestAnimationFrame(raf);
-    }
-
+    };
     requestAnimationFrame(raf);
 
     return () => {
-      lenis.destroy();
+      lenisInstance.destroy();
       lenisRef.current = null;
     };
   }, []);
 
+  const getLenis = () => lenisRef.current;
+
   return (
-    <LenisContext.Provider value={lenisRef.current}>
-      {children}
-    </LenisContext.Provider>
+    <LenisContext.Provider value={getLenis}>{children}</LenisContext.Provider>
   );
 }
 
-export const useLenisInstance = () => useContext(LenisContext);
+export const useLenisInstance = () => {
+  const getLenis = useContext(LenisContext);
+  return getLenis();
+};

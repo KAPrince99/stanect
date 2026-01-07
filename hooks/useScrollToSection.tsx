@@ -9,7 +9,7 @@ export const useScrollToSection = () => {
     if (!lenis) return;
 
     lenis.scrollTo(`#${id}`, {
-      offset: -80, // fixed header offset
+      offset: -80,
       immediate: false,
     });
   };
