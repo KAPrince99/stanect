@@ -1,18 +1,18 @@
 "use client";
-import { useLenis } from "@studio-freight/react-lenis";
+
+import { useLenisInstance } from "@/app/providers/lenisProvider";
 
 export const useScrollToSection = () => {
-  const lenis = useLenis();
+  const lenis = useLenisInstance();
 
   const scrollToSection = (id: string) => {
     if (!lenis) return;
 
     lenis.scrollTo(`#${id}`, {
-      offset: 80,
-      duration: 1.5,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      offset: -80, // fixed header offset
       immediate: false,
     });
   };
+
   return { scrollToSection };
 };

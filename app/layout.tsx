@@ -4,7 +4,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import type { Metadata, Viewport } from "next";
-import SmoothScroll from "@/components/ui/SmoothScroll";
+import { LenisProvider } from "./providers/lenisProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -70,7 +70,9 @@ export default function RootLayout({
       <body>
         <ClerkProvider>
           <ScrollToTop />
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <LenisProvider>{children}</LenisProvider>
+          </QueryProvider>
         </ClerkProvider>
       </body>
     </html>
