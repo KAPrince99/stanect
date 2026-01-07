@@ -15,7 +15,7 @@ export default function Footer() {
         {/* Quick links */}
         <div className="flex gap-6 text-sm md:text-base">
           <Link
-            href="#features"
+            href="/features"
             className="hover:text-cyan-300 transition-colors"
           >
             Features
