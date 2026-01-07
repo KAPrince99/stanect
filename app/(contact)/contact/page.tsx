@@ -21,7 +21,7 @@ export default function page() {
             name="PortFolio / 26"
           />
         </section>
-        <section className="flex flex-col md:flex-row items-center justify-center my-10 md:my-0 md:space-y-0 ">
+        <section className="flex flex-col md:flex-row items-center justify-center max-sm:my-10">
           <LinkComponent link="tel:+233243575398" name="Phone" />
         </section>
         <section className="flex flex-col md:flex-row items-center justify-between space-y-10 md:space-y-0">
