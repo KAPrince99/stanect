@@ -15,32 +15,26 @@ export default function page() {
             link="mailto:princeamanorkabutey@gmail.com"
             name="Email"
           />
+          <LinkComponent link="https://github.com/KAPrince99" name="Github" />
           <LinkComponent
-            link="mailto:princeamanorkabutey@gmail.com"
-            name="Github"
-          />
-          <LinkComponent
-            link="mailto:princeamanorkabutey@gmail.com"
+            link="https://portfolio-tan-mu-59.vercel.app/"
             name="PortFolio / 26"
           />
         </section>
         <section className="flex flex-col md:flex-row items-center justify-center space-y-10 md:space-y-0 ">
-          <LinkComponent
-            link="mailto:princeamanorkabutey@gmail.com"
-            name="Phone"
-          />
+          <LinkComponent link="tel:+233243575398" name="Phone" />
         </section>
         <section className="flex flex-col md:flex-row items-center justify-between space-y-10 md:space-y-0">
           <LinkComponent
-            link="mailto:princeamanorkabutey@gmail.com"
+            link="https://x.com/facultywave?s=21&t=EA7KVzb47NhFewv2bvQfpQ"
             name="Twitter"
           />
           <LinkComponent
-            link="mailto:princeamanorkabutey@gmail.com"
+            link="https://www.instagram.com/facultywave?igsh=bXRzd3B0ZW40Ymg0&utm_source=qr"
             name="Instagram"
           />
           <LinkComponent
-            link="mailto:princeamanorkabutey@gmail.com"
+            link="https://www.linkedin.com/in/prince-amanor-kabutey-103368177/"
             name="LinkedIn"
           />
         </section>
