@@ -27,7 +27,7 @@ export default function Footer() {
             Pricing
           </Link>
           <Link
-            href="#contact"
+            href="/contact"
             className="hover:text-cyan-300 transition-colors"
           >
             Contact
