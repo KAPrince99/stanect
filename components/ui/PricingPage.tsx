@@ -326,7 +326,7 @@ export default function PricingPage() {
           className="text-center mt-16"
         >
           <p className="text-white/60 text-lg font-inter">
-            Join 8,247+ men who speak with confidence
+            Join 8,247+ people who speak with confidence
           </p>
           <div className="flex justify-center gap-1 mt-4">
             {[...Array(5)].map((_, i) => (
