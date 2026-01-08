@@ -1,8 +1,6 @@
 import LinkComponent from "@/components/ui/LinkComponent";
 import Link from "next/link";
 
-import React from "react";
-
 export default function page() {
   return (
     <main className="min-h-screen bg-black text-white p-5 lg:p-10 overflow-y-auto">

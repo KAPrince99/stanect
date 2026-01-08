@@ -71,7 +71,7 @@ export default function RootLayout({
         <ClerkProvider>
           <ScrollToTop />
           <QueryProvider>
-            <LenisProvider>{children}</LenisProvider>
+            {children}
           </QueryProvider>
         </ClerkProvider>
       </body>

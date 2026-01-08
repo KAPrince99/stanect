@@ -1,6 +1,7 @@
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import { ReactNode, Suspense } from "react";
+import { LenisProvider } from "../providers/lenisProvider";
 
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
@@ -16,7 +17,9 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
       <div className="relative z-10">
         <ScrollToTop />
         <Suspense fallback={null}>
-          <SmoothScroll>{children}</SmoothScroll>
+          <SmoothScroll>
+            <LenisProvider>{children}</LenisProvider>
+          </SmoothScroll>
         </Suspense>
       </div>
     </div>
