@@ -1,5 +1,12 @@
 import LinkComponent from "@/components/ui/LinkComponent";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact – Stanect AI",
+  description:
+    "Get in touch with Prince Amanor Kabutey, creator of Stanect AI. Email, phone, or follow on social media.",
+};
 
 export default function page() {
   return (
@@ -7,7 +14,8 @@ export default function page() {
       <section className="text-sm text-gray-200">
         <Link href="/">Stanect software Inc.</Link>
       </section>
-      <div className="flex flex-col w-full md:space-y-20 lg:space-y-35 p-5 ">
+
+      <div className="flex flex-col w-full md:space-y-20 lg:space-y-35 p-5">
         <section className="flex flex-col md:flex-row items-center justify-center md:justify-between space-y-10 md:space-y-0">
           <LinkComponent
             link="mailto:princeamanorkabutey@gmail.com"
@@ -16,12 +24,14 @@ export default function page() {
           <LinkComponent link="https://github.com/KAPrince99" name="Github" />
           <LinkComponent
             link="https://portfolio-tan-mu-59.vercel.app/"
-            name="PortFolio / 26"
+            name="Portfolio / 26"
           />
         </section>
+
         <section className="flex flex-col md:flex-row items-center justify-center max-sm:my-10">
           <LinkComponent link="tel:+233243575398" name="Phone" />
         </section>
+
         <section className="flex flex-col md:flex-row items-center justify-between space-y-10 md:space-y-0">
           <LinkComponent
             link="https://x.com/facultywave?s=21&t=EA7KVzb47NhFewv2bvQfpQ"
