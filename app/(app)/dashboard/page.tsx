@@ -1,9 +1,20 @@
 import CompanionList from "@/components/ui/companionList";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { auth } from "@clerk/nextjs/server";
-import { Loader2 } from "lucide-react";
+
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard – Stanect AI",
+  description: "Your personal dashboard to manage Stanect AI companions.",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default async function Dashboard() {
   const { userId } = await auth();
