@@ -1,3 +1,4 @@
+//app/(app)/layout.tsx
 import MobileDock from "@/components/ui/mobileDock";
 import Navbar from "@/components/ui/navbar";
 import Sidebar from "@/components/ui/sidebar";
@@ -6,7 +7,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { ReactNode } from "react";
 import ScrollToTop from "@/components/ui/ScrollToTop";
-import SmoothScroll from "@/components/ui/SmoothScroll";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (

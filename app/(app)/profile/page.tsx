@@ -4,6 +4,17 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Profile – Stanect AI",
+  description: "Manage your Stanect AI profile and account settings.",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
+
 export default async function ProfilePage() {
   const user = await currentUser();
   if (!user) {
