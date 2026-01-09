@@ -4,27 +4,23 @@ import type { Metadata } from "next";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Stanect – AI Voice Companion for Practicing Real Conversations",
+  title:
+    "About Stanect – Solo-Built AI Voice Companion by Prince Amanor Kabutey",
   description:
-    "Stanect is an AI-powered voice companion that helps people practice conversations, improve communication skills, and gain confidence. Built solo by Prince Amanor Kabutey.",
+    "Learn about Stanect, the solo-built AI voice companion by Prince Amanor Kabutey. Discover the mission, journey, and vision behind this product designed to help people practice conversations and gain confidence.",
   keywords: [
-    "AI voice companion",
-    "conversation practice AI",
-    "communication confidence app",
-    "AI for social skills",
-    "AI communication coach",
-    "voice AI practice app",
-    "AI confidence building tool",
-    "practice conversations with AI",
-    "AI speaking practice software",
-    "solo developer AI project",
     "Stanect AI",
+    "AI voice companion founder story",
+    "Prince Amanor Kabutey",
+    "solo developer AI app",
+    "communication AI mission",
+    "AI product journey",
   ],
   authors: [{ name: "Prince Amanor Kabutey" }],
   creator: "Prince Amanor Kabutey",
   metadataBase: new URL("https://www.stanect.com"),
   alternates: {
-    canonical: "https://www.stanect.com/",
+    canonical: "https://www.stanect.com/about",
   },
   robots: {
     index: true,
@@ -35,17 +31,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Stanect – AI Voice Companion",
+    title: "About Stanect – Solo-Built AI Voice Companion",
     description:
-      "Practice real conversations, improve communication skills, and build confidence with Stanect — a solo-built AI voice companion.",
-    url: "https://www.stanect.com/",
+      "Discover the story, mission, and vision behind Stanect, the AI voice companion built by Prince Amanor Kabutey.",
+    url: "https://www.stanect.com/about",
     siteName: "Stanect",
     images: [
       {
-        url: "/og/stanect-og.png",
-        width: 1200,
-        height: 630,
-        alt: "Stanect AI Voice Companion",
+        url: "/avatars/avatar_0.jpg",
+        width: 500,
+        height: 500,
+        alt: "Prince Amanor Kabutey, creator of Stanect AI",
       },
     ],
     locale: "en_US",
@@ -53,16 +49,17 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Stanect – AI Voice Companion",
+    title: "About Stanect – Solo-Built AI Voice Companion",
     description:
-      "An AI-powered voice companion that helps you practice conversations and communicate confidently.",
-    images: ["/og/stanect-og.png"],
+      "Meet Prince Amanor Kabutey, founder of Stanect AI. Learn about the journey, mission, and vision behind this AI-powered voice companion.",
+    images: ["/avatars/avatar_0.jpg"],
   },
 };
 
-export default function Page() {
+export default function AboutPage() {
   return (
     <main className="flex flex-col p-5 overflow-y-auto text-gray-200">
+      {/* Structured Data for About page */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -70,19 +67,15 @@ export default function Page() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             name: "Stanect",
+            url: "https://www.stanect.com",
+            description:
+              "Stanect is a solo-built AI-powered voice companion by Prince Amanor Kabutey, helping people practice conversations and gain confidence.",
             applicationCategory: "CommunicationApplication",
             operatingSystem: "Web",
-            description:
-              "Stanect is an AI-powered voice companion that helps users practice conversations and improve communication confidence.",
-            url: "https://www.stanect.com/",
             creator: {
               "@type": "Person",
               name: "Prince Amanor Kabutey",
-            },
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "USD",
+              sameAs: "https://www.linkedin.com/in/prince-amanor-kabutey",
             },
           }),
         }}
@@ -95,24 +88,23 @@ export default function Page() {
       </header>
 
       <section className="grid grid-cols-1 md:grid-cols-2 place-content-center gap-10 my-10">
+        {/* Main Content */}
         <article>
           <h1 className="text-5xl font-bold max-w-sm">
-            Small Project. Crazy Impact.
+            Small Project. Big Vision.
           </h1>
 
           <p className="max-w-xl text-lg my-10 leading-10">
-            Stanect is a solo-built AI voice companion designed to help people
-            practice real conversations and build confidence in how they
-            communicate. Whether you're preparing to talk to friends, strangers,
-            family, or professional contacts, Stanect creates safe, realistic
-            voice scenarios to help you grow naturally.
+            Stanect is a solo-built AI voice companion created by Prince Amanor
+            Kabutey, designed to help people practice real conversations and
+            gain confidence in communication. This page shares the journey,
+            mission, and vision behind the product.
           </p>
 
           <p className="max-w-xl text-lg leading-10">
-            Built end-to-end by a solo developer, Stanect combines modern
-            frontend engineering, scalable backend systems, and real-time AI
-            voice technology. From idea to deployment, every part of Stanect was
-            crafted with care, performance, and real user impact in mind.
+            From idea to deployment, Stanect was built end-to-end by a solo
+            developer, combining frontend, backend, and AI voice technology to
+            create a meaningful experience for users.
           </p>
 
           <div className="max-w-xl text-lg leading-10 my-6 space-y-3">
