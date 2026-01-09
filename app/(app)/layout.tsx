@@ -1,4 +1,3 @@
-//app/(app)/layout.tsx
 import MobileDock from "@/components/ui/mobileDock";
 import Navbar from "@/components/ui/navbar";
 import Sidebar from "@/components/ui/sidebar";
