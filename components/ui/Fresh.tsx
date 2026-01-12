@@ -30,7 +30,7 @@ export default function Fresh() {
       <Link href="/new">
         <Button
           size="lg"
-          className="h-16 px-10 text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-2xl shadow-amber-500/50 cursor-pointer"
+          className="h-16 px-10 text-xl font-bold bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-2xl shadow-amber-500/50 cursor-pointer"
         >
           <LordIcon
             src="https://cdn.lordicon.com/ueoydrft.json"
