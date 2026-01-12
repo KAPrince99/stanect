@@ -30,7 +30,7 @@ export default function LoginComponent() {
             routing="path"
             path="/login"
             signUpUrl="/sign-up"
-            afterSignInUrl="/dashboard"
+            fallbackRedirectUrl="/dashboard"
           />
         </div>
       </div>

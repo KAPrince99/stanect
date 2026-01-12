@@ -30,7 +30,7 @@ export default function SignupComponent() {
             routing="path"
             path="/sign-up"
             signInUrl="/login"
-            afterSignUpUrl="/dashboard"
+            fallbackRedirectUrl="/dashboard"
           />
           ;
         </div>

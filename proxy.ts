@@ -29,6 +29,11 @@ export default clerkMiddleware(async (auth, req) => {
       https://*.clerk.accounts.dev
     `;
 
+  const cloudflareDomains = `
+    https://challenges.cloudflare.com
+    https://*.cloudflare.com
+  `;
+
   res.headers.set(
     "Content-Security-Policy",
     `
@@ -44,6 +49,7 @@ export default clerkMiddleware(async (auth, req) => {
       blob:
       https://js.paystack.co
       ${clerkDomains}
+      ${cloudflareDomains}
       https://cdn.lordicon.com
       https://va.vercel-scripts.com
       https://*.daily.co;
@@ -55,6 +61,7 @@ export default clerkMiddleware(async (auth, req) => {
       blob:
       https://js.paystack.co
       ${clerkDomains}
+      ${cloudflareDomains}
       https://cdn.lordicon.com
       https://va.vercel-scripts.com
       https://*.daily.co;
@@ -74,6 +81,7 @@ export default clerkMiddleware(async (auth, req) => {
     connect-src
       'self'
       ${clerkDomains}
+      ${cloudflareDomains}
       https://clerk-telemetry.com
       https://api.vapi.ai
       wss://api.vapi.ai
@@ -88,7 +96,8 @@ export default clerkMiddleware(async (auth, req) => {
 
     frame-src
       https://js.paystack.co
-      ${clerkDomains};
+      ${clerkDomains}
+      ${cloudflareDomains};
 
     media-src 'self' blob: https://videos.pexels.com;
     worker-src 'self' blob:;
