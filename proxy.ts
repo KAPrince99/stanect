@@ -19,80 +19,84 @@ export default clerkMiddleware(async (auth, req) => {
   res.headers.set(
     "Content-Security-Policy",
     `
-    default-src 'self' blob:;
-    base-uri 'self';
-    object-src 'none';
-    frame-ancestors 'self';
+  default-src 'self' blob:;
+  base-uri 'self';
+  object-src 'none';
+  frame-ancestors 'self';
 
-    script-src
-      'self'
-      'unsafe-inline'
-      'unsafe-eval'
-      blob:
-      https://js.paystack.co
-      https://*.clerk.com
-      https://*.clerk.accounts.com
-      https://cdn.lordicon.com
-      https://va.vercel-scripts.com
-      https://*.daily.co;
+  script-src
+    'self'
+    'unsafe-inline'
+    'unsafe-eval'
+    blob:
+    https://js.paystack.co
+    https://clerk.stanect.com
+    https://*.clerk.com
+    https://*.clerk.accounts.com
+    https://cdn.lordicon.com
+    https://va.vercel-scripts.com
+    https://*.daily.co;
 
-    script-src-elem
-      'self'
-      'unsafe-inline'
-      'unsafe-eval'
-      blob:
-      https://js.paystack.co
-      https://*.clerk.com
-      https://*.clerk.accounts.com
-      https://cdn.lordicon.com
-      https://va.vercel-scripts.com
-      https://*.daily.co;
+  script-src-elem
+    'self'
+    'unsafe-inline'
+    'unsafe-eval'
+    blob:
+    https://js.paystack.co
+    https://clerk.stanect.com
+    https://*.clerk.com
+    https://*.clerk.accounts.com
+    https://cdn.lordicon.com
+    https://va.vercel-scripts.com
+    https://*.daily.co;
 
-    style-src
-      'self'
-      'unsafe-inline';
+  style-src
+    'self'
+    'unsafe-inline';
 
-    img-src
-      'self'
-      data:
-      blob:
-      https://*.clerk.com
-      https://img.clerk.com
-      https://cdgnwgojnzotbhdzvsnr.supabase.co;
+  img-src
+    'self'
+    data:
+    blob:
+    https://clerk.stanect.com
+    https://*.clerk.com
+    https://img.clerk.com
+    https://cdgnwgojnzotbhdzvsnr.supabase.co;
 
-    font-src
-      'self';
+  font-src 'self';
 
-    connect-src
-      'self'
-      https://api.vapi.ai
-      wss://api.vapi.ai
-      https://*.vapi.ai
-      https://*.daily.co
-      wss://*.daily.co
-      https://api.paystack.co
-      https://*.clerk.com
-      https://*.clerk.accounts.com
-      https://clerk-telemetry.com
-      https://cdn.lordicon.com
-      https://*.ingest.sentry.io
-      https://cdgnwgojnzotbhdzvsnr.supabase.co
-      wss://cdgnwgojnzotbhdzvsnr.supabase.co;
+  connect-src
+    'self'
+    https://clerk.stanect.com
+    https://*.clerk.com
+    https://*.clerk.accounts.com
+    https://clerk-telemetry.com
+    https://api.vapi.ai
+    wss://api.vapi.ai
+    https://*.vapi.ai
+    https://*.daily.co
+    wss://*.daily.co
+    https://api.paystack.co
+    https://cdn.lordicon.com
+    https://*.ingest.sentry.io
+    https://cdgnwgojnzotbhdzvsnr.supabase.co
+    wss://cdgnwgojnzotbhdzvsnr.supabase.co;
 
-    frame-src
-      https://js.paystack.co
-      https://*.clerk.com
-      https://*.clerk.accounts.com;
+  frame-src
+    https://js.paystack.co
+    https://clerk.stanect.com
+    https://*.clerk.com
+    https://*.clerk.accounts.com;
 
-    media-src
-      'self'
-      https://videos.pexels.com
-      blob:;
+  media-src
+    'self'
+    https://videos.pexels.com
+    blob:;
 
-    worker-src
-      'self'
-      blob:;
-  `
+  worker-src
+    'self'
+    blob:;
+`
       .replace(/\s{2,}/g, " ")
       .trim()
   );
