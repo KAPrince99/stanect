@@ -1,7 +1,11 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/new(.*)"]);
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/new(.*)",
+  "/profile(.*)",
+]);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
@@ -16,24 +20,51 @@ export default clerkMiddleware(async (auth, req) => {
     "Content-Security-Policy",
     `
     default-src 'self' blob:;
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:
+    base-uri 'self';
+    object-src 'none';
+    frame-ancestors 'self';
+
+    script-src
+      'self'
+      'unsafe-inline'
+      'unsafe-eval'
+      blob:
       https://js.paystack.co
       https://*.clerk.com
-      https://*.clerk.accounts.dev
-      https://cdn.lordicon.com 
+      https://*.clerk.accounts.com
+      https://cdn.lordicon.com
       https://va.vercel-scripts.com
       https://*.daily.co;
-    script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' blob:
+
+    script-src-elem
+      'self'
+      'unsafe-inline'
+      'unsafe-eval'
+      blob:
       https://js.paystack.co
       https://*.clerk.com
-      https://*.clerk.accounts.dev
-      https://cdn.lordicon.com 
+      https://*.clerk.accounts.com
+      https://cdn.lordicon.com
       https://va.vercel-scripts.com
       https://*.daily.co;
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' data: blob: https://*.clerk.com https://img.clerk.com https://cdgnwgojnzotbhdzvsnr.supabase.co;
-    font-src 'self';
-    connect-src 'self'
+
+    style-src
+      'self'
+      'unsafe-inline';
+
+    img-src
+      'self'
+      data:
+      blob:
+      https://*.clerk.com
+      https://img.clerk.com
+      https://cdgnwgojnzotbhdzvsnr.supabase.co;
+
+    font-src
+      'self';
+
+    connect-src
+      'self'
       https://api.vapi.ai
       wss://api.vapi.ai
       https://*.vapi.ai
@@ -41,15 +72,26 @@ export default clerkMiddleware(async (auth, req) => {
       wss://*.daily.co
       https://api.paystack.co
       https://*.clerk.com
-      https://*.clerk.accounts.dev
+      https://*.clerk.accounts.com
       https://clerk-telemetry.com
       https://cdn.lordicon.com
       https://*.ingest.sentry.io
       https://cdgnwgojnzotbhdzvsnr.supabase.co
       wss://cdgnwgojnzotbhdzvsnr.supabase.co;
-    frame-src https://js.paystack.co;
-    media-src 'self' https://videos.pexels.com blob:; 
-    worker-src 'self' blob:; 
+
+    frame-src
+      https://js.paystack.co
+      https://*.clerk.com
+      https://*.clerk.accounts.com;
+
+    media-src
+      'self'
+      https://videos.pexels.com
+      blob:;
+
+    worker-src
+      'self'
+      blob:;
   `
       .replace(/\s{2,}/g, " ")
       .trim()
