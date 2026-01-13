@@ -1,7 +1,6 @@
-//lib/supa-service.ts
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // For server-side operations
+  process.env.SUPABASE_SECRET_KEY!
 );
