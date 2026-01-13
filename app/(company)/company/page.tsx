@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Stanect",
     images: [
       {
-        url: "/avatars/avatar_0.jpg",
+        url: "/founder_photo.jpg",
         width: 500,
         height: 500,
         alt: "Prince Amanor Kabutey, creator of Stanect AI",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: "About Stanect – Solo-Built AI Voice Companion",
     description:
       "Meet Prince Amanor Kabutey, founder of Stanect AI. Learn about the journey, mission, and vision behind this AI-powered voice companion.",
-    images: ["/avatars/avatar_0.jpg"],
+    images: ["/founder_photo.jpg"],
   },
 };
 
