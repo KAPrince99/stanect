@@ -150,7 +150,9 @@ export async function POST(req: NextRequest) {
             email,
             amount: amount,
             plan: planCode, // Pass plan code to create the subscription after success // ⭐ CRITICAL: The user will return here after payment.
-            callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/callback`, // ⭐ FIX: Pass clerk_user_id at the top-level metadata for easy webhook consumption
+            callback_url: `${
+              process.env.NEXT_PUBLIC_APP_URL || process.env.LOCALHOST_URL
+            }/payment/callback`, // ⭐ FIX: Pass clerk_user_id at the top-level metadata for easy webhook consumption
             metadata: {
               clerk_user_id: clerk_user_id, // Directly accessible by webhook
               custom_fields: [

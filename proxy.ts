@@ -21,14 +21,17 @@ export default clerkMiddleware(async (auth, req) => {
   const res = NextResponse.next();
   const isProd = process.env.NODE_ENV === "production";
 
-  // 2. Clean up the Domain strings (remove backticks/newlines inside the variable)
+  // Configuration for external domains
   const clerkDomains = isProd
     ? "https://clerk.stanect.com https://*.clerk.com https://*.clerk.accounts.com"
     : "https://*.clerk.com https://*.clerk.accounts.dev";
-  const cloudflareDomains = `
-    https://challenges.cloudflare.com
-    https://*.cloudflare.com
-  `;
+
+  const cloudflareDomains =
+    "https://challenges.cloudflare.com https://*.cloudflare.com";
+
+  // Vercel Live / Feedback Toolbar domains
+  const vercelLiveDomains =
+    "https://vercel.live https://vercel.com https://vitals.vercel-insights.com";
 
   res.headers.set(
     "Content-Security-Policy",
@@ -46,6 +49,7 @@ export default clerkMiddleware(async (auth, req) => {
       https://js.paystack.co
       ${clerkDomains}
       ${cloudflareDomains}
+      ${vercelLiveDomains}
       https://cdn.lordicon.com
       https://va.vercel-scripts.com
       https://*.daily.co;
@@ -58,6 +62,7 @@ export default clerkMiddleware(async (auth, req) => {
       https://js.paystack.co
       ${clerkDomains}
       ${cloudflareDomains}
+      ${vercelLiveDomains}
       https://cdn.lordicon.com
       https://va.vercel-scripts.com
       https://*.daily.co;
@@ -78,6 +83,7 @@ export default clerkMiddleware(async (auth, req) => {
       'self'
       ${clerkDomains}
       ${cloudflareDomains}
+      ${vercelLiveDomains}
       https://clerk-telemetry.com
       https://api.vapi.ai
       wss://api.vapi.ai
@@ -93,7 +99,8 @@ export default clerkMiddleware(async (auth, req) => {
     frame-src
       https://js.paystack.co
       ${clerkDomains}
-      ${cloudflareDomains};
+      ${cloudflareDomains}
+      https://vercel.live;
 
     media-src 'self' blob: https://videos.pexels.com;
     worker-src 'self' blob:;
