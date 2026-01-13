@@ -8,6 +8,10 @@ const isProtectedRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  if (!process.env.CLERK_SECRET_KEY) {
+    console.error("Missing CLERK_SECRET_KEY in production!");
+  }
+
   const { userId } = await auth();
 
   if (isProtectedRoute(req) && !userId) {
@@ -15,20 +19,12 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   const res = NextResponse.next();
-
   const isProd = process.env.NODE_ENV === "production";
 
+  // 2. Clean up the Domain strings (remove backticks/newlines inside the variable)
   const clerkDomains = isProd
-    ? `
-      https://clerk.stanect.com
-      https://*.clerk.com
-      https://*.clerk.accounts.com
-    `
-    : `
-      https://*.clerk.com
-      https://*.clerk.accounts.dev
-    `;
-
+    ? "https://clerk.stanect.com https://*.clerk.com https://*.clerk.accounts.com"
+    : "https://*.clerk.com https://*.clerk.accounts.dev";
   const cloudflareDomains = `
     https://challenges.cloudflare.com
     https://*.cloudflare.com
