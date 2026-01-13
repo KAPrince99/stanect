@@ -129,16 +129,20 @@ export default function AboutPage() {
         </article>
 
         {/* Image / Visual */}
-        <aside className="flex items-center justify-center">
+        <aside className="flex flex-col items-center justify-center">
           <Image
-            src="/avatars/avatar_0.jpg"
+            src="/founder_photo.jpg"
             alt="Prince Amanor Kabutey, solo developer and creator of Stanect AI"
-            width={500}
-            height={500}
+            width={300}
+            height={300}
             priority
             sizes="(max-width: 768px) 100vw, 500px"
             className="rounded-lg object-cover"
           />
+          <div className="mt-3">
+            <p>Prince Amanor Kabutey</p>
+            <p className="text-stone-400">Founder & Software Engineer</p>
+          </div>
         </aside>
       </section>
     </main>
