@@ -1,22 +1,10 @@
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supa-service";
 
-// 1. Force this route to be dynamic so Next.js doesn't try to "build" it
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  // 2. Move initialization INSIDE the POST handler
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SECRET_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    console.error("Supabase environment variables are missing!");
-    return new Response("Server configuration error", { status: 500 });
-  }
-
-  const supabase = createClient(supabaseUrl!, supabaseKey!);
-
   const body = await req.text();
   const svix_id = req.headers.get("svix-id");
   const svix_timestamp = req.headers.get("svix-timestamp");

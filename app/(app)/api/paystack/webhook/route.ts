@@ -1,4 +1,3 @@
-// /app/api/paystack/webhook/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { supabase } from "@/lib/supa-service";

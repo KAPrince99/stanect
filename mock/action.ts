@@ -3,14 +3,10 @@
 import { mockAvatars } from "./data";
 import path from "path";
 import fs from "fs";
-import { createClient } from "@supabase/supabase-js";
+
+import { supabase } from "@/lib/supa-service";
 
 export async function setAvatarData() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SECRET_KEY!
-  );
-
   for (const data of mockAvatars) {
     // Read image files from public directory
     const avatarPath = path.join(process.cwd(), "public", data.image_url);
