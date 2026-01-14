@@ -21,9 +21,7 @@ export async function POST(req: NextRequest) {
   // 2. Defensive check for Supabase Client Initialization
   // This prevents the "No suitable key" error from crashing the route blindly
   const hasUrl = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const hasKey = !!(
-    process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SECREY_KEY
-  );
+  const hasKey = !!process.env.SUPABASE_SECRET_KEY;
 
   if (!hasUrl || !hasKey) {
     console.error(
