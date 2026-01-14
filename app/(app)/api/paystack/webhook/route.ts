@@ -1,12 +1,12 @@
 // /app/api/paystack/webhook/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { supabase } from "@/lib/supa-service"; // service role client
+import { supabase } from "@/lib/supa-service";
 
 export async function POST(req: NextRequest) {
   const bodyText = await req.text();
   const signature = req.headers.get("x-paystack-signature") || "";
-  const secret = process.env.PAYSTACK_SECRET_KEY || ""; // 1. Verify Signature
+  const secret = process.env.PAYSTACK_SECRET_KEY || "";
 
   const computed = crypto
     .createHmac("sha512", secret)

@@ -1,9 +1,7 @@
-// app/(marketing)/pricing/page.tsx
 import PricingPage from "@/components/ui/PricingPage";
-import React from "react";
+
 import type { Metadata } from "next";
 
-/* Page-level SEO metadata */
 export const metadata: Metadata = {
   title: "Pricing – Stanect AI Voice Companion Plans",
   description:
