@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     return new Response("Server configuration error", { status: 500 });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabase = createClient(supabaseUrl!, supabaseKey!);
 
   const body = await req.text();
   const svix_id = req.headers.get("svix-id");
