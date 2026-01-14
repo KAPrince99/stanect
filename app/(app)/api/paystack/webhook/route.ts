@@ -7,6 +7,20 @@ export async function POST(req: NextRequest) {
   const signature = req.headers.get("x-paystack-signature") || "";
   const secret = process.env.PAYSTACK_SECRET_KEY || "";
 
+  const key = process.env.SUPABASE_SECRET_KEY;
+
+  // ADD THIS LINE HERE:
+  console.log("--- Supabase Key Debug ---");
+  console.log("Key Found:", !!key);
+  if (key) {
+    console.log(
+      "Key Type Check:",
+      key.startsWith("sb_") ? "Opaque (New 2026 Format)" : "JWT (Legacy Format)"
+    );
+    console.log("Key Length:", key.length);
+  }
+  console.log("--------------------------");
+
   // 1. Verify Paystack Signature
   const computed = crypto
     .createHmac("sha512", secret)
