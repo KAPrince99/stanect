@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.stanect.com
+
+# Sitemaps
+Sitemap: https://www.stanect.com/sitemap.xml
