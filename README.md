@@ -14,7 +14,7 @@ It provides a private, on-demand environment where users can practice speaking, 
   - [Platform Overview](#platform-overview)
   - [Subscription & Billing](#susbcription-&-billing)
   - [Security & Data Protection](#security-&-data-protection)
-- [Product Demo](#product-demo)
+- [Stanect Demo](#product-demo)
 - [Product Status](#product-status)
 - [Founder](#founder)
 
