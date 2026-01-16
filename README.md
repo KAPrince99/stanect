@@ -12,9 +12,9 @@ It provides a private, on-demand environment where users can practice speaking, 
 - [Stanect Features](#stanect-features)
 - [Stanect Architecture](#stanect-architecture)
   - [Platform Overview](#platform-overview)
-  - [Subscription & Billing](#susbcription-&-billing)
-  - [Security & Data Protection](#security-&-data-protection)
-- [Stanect Demo](#product-demo)
+  - [Subscription & Billing](#subscription--billing)
+  - [Security & Data Protection](#security--data-protection)
+- [Stanect Demo](#stanect-demo)
 - [Product Status](#product-status)
 - [Founder](#founder)
 
