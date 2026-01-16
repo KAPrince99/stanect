@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stanect
 
-## Getting Started
+### AI-Powered Voice Companion for Building Communication Confidence
 
-First, run the development server:
+Stanect is a Software-as-a-Service (SaaS) platform that helps people improve their communication skills through realistic, AI-driven voice conversations.
+It provides a private, on-demand environment where users can practice speaking, gain confidence, and improve social fluency without fear of judgment.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Table of Contents
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- [The Problem](#the-problem)
+- [The Solution](#the-solution)
+- [Stanect Features](#stanect-features)
+- [Stanect Architecture](#stanect-architecture)
+  - [Platform Overview](#platform-overview)
+  - [Subscription & Billing](#susbcription-&-billing)
+  - [Security & Data Protection](#security-&-data-protection)
+- [Product Demo](#product-demo)
+- [Product Status](#product-status)
+- [Founder](#founder)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## The Problem
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Many people struggle with real-world conversations — networking, interviews, meeting new people, or speaking confidently in social settings.
 
-## Learn More
+Existing solutions are often:
 
-To learn more about Next.js, take a look at the following resources:
+- Static (courses, videos, articles)
+- Non-interactive
+- Lacking real conversational feedback
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## The Solution
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Stanect delivers **interactive, voice-based conversational practice** powered by AI, allowing users to:
 
-## Deploy on Vercel
+- Practice conversations anytime
+- Build confidence through repetition
+- Improve naturally in a safe environment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This makes Stanect a **scalable, always-available** communication coach.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Stanect Features
+
+- 🔐 User Authentication & Accounts (Clerk)
+- 🤖 AI-powered voice conversations
+- 📊 User dashboard & session tracking
+- 💳 Subscription plans & billing (Paystack)
+- 🧾 User & subscription state management
+- ⚡ Fast, responsive UI
+
+## Stanect Architecture
+
+Stanect is built as a **full-stack SaaS application** using modern, production-ready technologies.
+
+### Platform Overview
+
+**Frontend**: Next.js (App Router)
+**Backend**: Next.js Server Actions & API routes
+**Language**: TypeScript
+**Database**: Supabase (PostgreSQL)
+**Authentication**: Clerk
+**Payments**: Paystack (Subscriptions + Webhooks)
+**Styling**: Tailwind CSS
+**AI Services**: Vapi Voice AI(Eleven Labs and Open AI Compatible)
+**Deployment**: Cloud-ready (Vercel compatible)
+
+### Subscription & Billing Flow
+
+- User signs up via Clerk
+- User selects a subscription plan
+- Payment is processed via Paystack
+- Paystack webhook verifies payment
+- User subscription status is updated in Supabase
+- Platform access is granted or restricted based on plan
+
+All billing logic is handled **securely on the server**.
+
+## Security & Data Protection
+
+- Server-only handling of sensitive operations
+- Strict separation of client and server logic
+- Supabase Row Level Security (RLS) for user data isolation
+- Secure webhook verification for payment events
+- Environment-based configuration for dev and production
+
+## Stanect Demo
+
+Screenshots and demo video coming soon.
+
+## Product Status
+
+Stanect is an **active SaaS product** currently focused on:
+
+- Improving AI conversational quality
+- Enhancing reliability in production
+- Expanding subscription offerings
+- Refining onboarding and user experience
+
+## 👤 Founder
+
+Prince Amanor Kabutey
+Founder & Software Engineer
+GitHub: https://github.com/KAPrince99
