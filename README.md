@@ -5,6 +5,8 @@
 Stanect is a Software-as-a-Service (SaaS) platform that helps people improve their communication skills through realistic, AI-driven voice conversations.
 It provides a private, on-demand environment where users can practice speaking, gain confidence, and improve social fluency without fear of judgment.
 
+### Web App : https://www.stanect.com/
+
 ## Table of Contents
 
 - [The Problem](#the-problem)
