@@ -10,7 +10,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Stanect – AI Voice Companion to Practice Real Conversations",
   description:
-    "Stanect is a full-stack AI-powered voice companion that helps people practice conversations, improve communication skills, and gain confidence. Try Stanect today!",
+    "Stanect is an AI-powered voice companion that helps people practice conversations, improve communication skills, and gain confidence. Try Stanect today!",
   keywords: [
     "AI voice companion",
     "conversation practice AI",
