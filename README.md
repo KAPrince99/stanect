@@ -98,5 +98,7 @@ Stanect is an **active SaaS product** currently focused on:
 ## 👤 Founder
 
 Prince Amanor Kabutey
+
 Founder & Software Engineer
+
 GitHub: https://github.com/KAPrince99
