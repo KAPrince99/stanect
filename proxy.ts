@@ -7,10 +7,21 @@ const isProtectedRoute = createRouteMatcher([
   "/profile(.*)",
 ]);
 
+// const isPublicRoute = createRouteMatcher([
+//   "/",
+//   "/login(.*)",
+//   "/signup(.*)",
+//   "/api/clerk-webhook(.*)",
+// ]);
+
 export default clerkMiddleware(async (auth, req) => {
   if (!process.env.CLERK_SECRET_KEY) {
     console.error("Missing CLERK_SECRET_KEY in production!");
   }
+
+  // if (isPublicRoute(req)) {
+  //   return NextResponse.next();
+  // }
 
   const { userId } = await auth();
 

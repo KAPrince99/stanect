@@ -51,7 +51,6 @@ export const metadata: Metadata = {
 export default function Homepage() {
   return (
     <MarketingLayout>
-      {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -78,7 +77,6 @@ export default function Homepage() {
         }}
       />
 
-      {/* Page content */}
       <Navbar />
       <Hero />
       <ComponentsShowcase />

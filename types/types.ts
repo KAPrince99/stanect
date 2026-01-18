@@ -26,6 +26,16 @@ export interface CompanionProps {
   assistant_id: string;
 }
 
+export interface Userprops {
+  id: string;
+  clerk_user_id: string;
+  name: string;
+  email: string;
+  status: string;
+  profile_picture: string;
+  country: string;
+  plan: string;
+}
 export interface VoiceProps {
   male: string;
   female: string;
