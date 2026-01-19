@@ -163,13 +163,13 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
 
         <AlertDialogFooter className="flex flex-row justify-end">
           {!loading && (
-            <AlertDialogCancel disabled={loading}>
+            <AlertDialogCancel disabled={loading} className="hover:bg-white">
               <LordIcon
-                src="https://cdn.lordicon.com/pilfbsjh.json"
+                src="https://cdn.lordicon.com/ueoydrft.json"
                 trigger="loop"
                 colors="primary:#ffffff,secondary:#e83a30,tertiary:#ffffff"
-                height={35}
-                width={35}
+                height={50}
+                width={50}
               />
             </AlertDialogCancel>
           )}
