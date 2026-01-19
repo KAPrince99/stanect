@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "./button";
-import { Crown } from "lucide-react";
+import LordIcon from "./lordIcon";
 
 export default function UpdatePlan() {
   return (
@@ -9,7 +9,14 @@ export default function UpdatePlan() {
       size="lg"
       className="w-full sm:w-auto px-8 h-12 text-base font-semibold bg-linear-to-r from-amber-500 to-orange-600 text-black"
     >
-      <Crown className="w-5 h-5 mr-2" /> Upgrade Plan
+      <LordIcon
+        src="https://cdn.lordicon.com/wmqqbxlm.json"
+        trigger="loop"
+        colors="primary:#ffffff,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30,quinary:#ffffff"
+        height={20}
+        width={20}
+      />
+      Upgrade Plan
     </Button>
   );
 }

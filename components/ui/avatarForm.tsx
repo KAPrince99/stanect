@@ -31,6 +31,7 @@ import {
   ChoiceboxItemHeader,
   ChoiceboxItemTitle,
 } from "../kibo-ui/choicebox";
+import LordIcon from "./lordIcon";
 
 const formSchema = z.object({
   avatar_id: z.string().min(1, "Please select an avatar"),
@@ -169,7 +170,15 @@ export default function AvatarForm({
             <InputField
               label="Her Name"
               placeholder="Sophia, Alex, Mia..."
-              icon={<User className="w-5 h-5 text-amber-400" />}
+              icon={
+                <LordIcon
+                  src="https://cdn.lordicon.com/hhljfoaj.json"
+                  trigger="loop"
+                  colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30"
+                  height={25}
+                  width={25}
+                />
+              }
               {...form.register("companion_name")}
             />
             {form.formState.errors.companion_name && (
@@ -179,7 +188,15 @@ export default function AvatarForm({
             )}
             <InputField
               label="Where do you meet her?"
-              icon={<MapPin className="w-5 h-5 text-blue-400" />}
+              icon={
+                <LordIcon
+                  src="https://cdn.lordicon.com/dhmavvpz.json"
+                  trigger="loop"
+                  colors="primary:#e88c30,secondary:#e88c30"
+                  height={25}
+                  width={25}
+                />
+              }
               placeholder="Gym • Coffee Shop • Bar • Beach"
               {...form.register("scene")}
             />
@@ -191,7 +208,14 @@ export default function AvatarForm({
 
             <div>
               <div className="flex justify-start items-center gap-2 mb-4">
-                <Mic className="w-5 h-5 text-purple-400" />
+                <LordIcon
+                  src="https://cdn.lordicon.com/ckooqaow.json"
+                  trigger="loop"
+                  colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30,quaternary:#ebe6ef,quinary:#f24c00"
+                  height={25}
+                  width={25}
+                />
+
                 <p className="font-inter ">Voice</p>
               </div>
 
@@ -242,7 +266,15 @@ export default function AvatarForm({
 
             <SelectField
               label="Nationality"
-              icon={<Globe className="w-5 h-5 text-cyan-400" />}
+              icon={
+                <LordIcon
+                  src="https://cdn.lordicon.com/tyntlpjn.json"
+                  trigger="loop"
+                  colors="primary:#ffffff,secondary:#e88c30"
+                  height={25}
+                  width={25}
+                />
+              }
               value={form.watch("country")}
               onChange={(val) =>
                 form.setValue("country", val, { shouldValidate: true })
@@ -267,7 +299,15 @@ export default function AvatarForm({
             )}
             <InputField
               label="Session Length (minutes)"
-              icon={<Clock className="w-5 h-5 text-amber-400" />}
+              icon={
+                <LordIcon
+                  src="https://cdn.lordicon.com/zjuyeglr.json"
+                  trigger="loop"
+                  colors="primary:#e88c30,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30"
+                  height={25}
+                  width={25}
+                />
+              }
               type="number"
               placeholder="15"
               {...form.register("duration")}
@@ -278,17 +318,28 @@ export default function AvatarForm({
               </p>
             )}
 
-            <Button
-              type="submit"
-              disabled={
-                mutation.isPending || !form.formState.isValid || !selectedAvatar
-              }
-              className="w-full h-10 md:h-12 text-md font-bold bg-linear-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-black shadow-2xl shadow-amber-500/50 disabled:opacity-50"
-            >
-              {mutation.isPending
-                ? "Creating her soul..."
-                : "Create My Companion"}
-            </Button>
+            {mutation.isPending ? (
+              <LordIcon
+                src="https://cdn.lordicon.com/opeotjej.json"
+                trigger="loop"
+                colors="primary:#e88c30,secondary:#e88c30,tertiary:#ffffff,quaternary:#e88c30"
+                height={70}
+                width={70}
+                className="flex mx-auto"
+              />
+            ) : (
+              <Button
+                type="submit"
+                disabled={
+                  mutation.isPending ||
+                  !form.formState.isValid ||
+                  !selectedAvatar
+                }
+                className="w-full h-10 md:h-12 text-md font-bold  bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-2xl shadow-amber-500/50 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+              >
+                Create into Existence
+              </Button>
+            )}
           </form>
         </div>
       </div>

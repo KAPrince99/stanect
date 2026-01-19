@@ -135,19 +135,18 @@ function AlertDialogAction({
       return;
     }
 
-    onClick?.(e);
+    if (onClick) {
+      e.preventDefault();
+      onClick(e);
+    }
   };
 
   return (
     <AlertDialogPrimitive.Action
-      className={cn(
-        buttonVariants(),
-        className,
-        isPending && "opacity-70 cursor-not-allowed"
-      )}
+      {...props}
+      className={cn(buttonVariants(), className)}
       onClick={handleClick}
       disabled={isPending}
-      {...props}
     />
   );
 }
@@ -158,7 +157,7 @@ function AlertDialogCancel({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Cancel>) {
   return (
     <AlertDialogPrimitive.Cancel
-      className={cn(buttonVariants({ variant: "outline" }), className)}
+      className={cn(buttonVariants({ variant: "ghost" }), className)}
       {...props}
     />
   );

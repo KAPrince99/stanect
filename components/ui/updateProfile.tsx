@@ -1,6 +1,5 @@
 "use client";
 
-import { Edit3 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,10 +17,14 @@ import Image from "next/image";
 import { updateProfile } from "@/app/(app)/actions/update";
 import { useQueryClient } from "@tanstack/react-query";
 import { Userprops } from "@/types/types";
+import LordIcon from "./lordIcon";
 
 export default function UpdateProfile({ data }: { data: Userprops }) {
   const queryClient = useQueryClient();
   const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const [open, setOpen] = useState(false);
+
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     data?.profile_picture || null
@@ -38,7 +41,9 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
     }
   };
 
-  const handleContinue = async () => {
+  const handleContinue = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
     try {
       setLoading(true);
       const formData = new FormData();
@@ -48,9 +53,11 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
 
       await updateProfile(formData, data?.profile_picture);
 
-      // Sync TanStack Query state
       await queryClient.invalidateQueries({ queryKey: ["users"] });
+
       console.log("✅ Profile updated");
+
+      setOpen(false);
     } catch (err) {
       console.error("❌ Update failed", err);
     } finally {
@@ -59,12 +66,20 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button className="px-8 max-sm:w-full h-12 text-base font-semibold text-white">
-          <Edit3 className="w-5 h-5 mr-2" /> Update Profile
+          <LordIcon
+            src="https://cdn.lordicon.com/cbtlerlm.json"
+            trigger="loop"
+            colors="primary:#ffffff,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30,quinary:#e88c30"
+            height={20}
+            width={20}
+          />
+          Update Profile
         </Button>
       </AlertDialogTrigger>
+
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Update your profile</AlertDialogTitle>
@@ -72,6 +87,7 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
             Changes are saved securely.
           </AlertDialogDescription>
         </AlertDialogHeader>
+
         <div className="flex flex-col space-y-4 py-4">
           <input
             ref={imageInputRef}
@@ -79,6 +95,7 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
             hidden
             accept="image/*"
             onChange={handleImageChange}
+            disabled={loading}
           />
 
           <div className="flex items-center gap-4">
@@ -99,30 +116,88 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
             </div>
             <Button
               type="button"
-              variant="outline"
+              disabled={loading}
+              className="bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8] text-white"
               onClick={() => imageInputRef.current?.click()}
             >
               Change Photo
             </Button>
           </div>
 
-          <input
-            value={updatedName}
-            onChange={(e) => setUpdatedName(e.target.value)}
-            placeholder="Name"
-            className="bg-transparent border border-gray-700 p-2 rounded-md"
-          />
-          <input
-            value={updatedLocation}
-            onChange={(e) => setUpdatedLocation(e.target.value)}
-            placeholder="Location"
-            className="bg-transparent border border-gray-700 p-2 rounded-md"
-          />
+          <div className="flex items-center justify-around md:justify-start gap-8">
+            <LordIcon
+              src="https://cdn.lordicon.com/hhljfoaj.json"
+              trigger="loop"
+              colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30"
+              height={30}
+              width={30}
+              className="md:ml-4"
+            />
+            <input
+              value={updatedName}
+              disabled={loading}
+              onChange={(e) => setUpdatedName(e.target.value)}
+              placeholder="Name"
+              className="bg-transparent border-2 border-bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8] p-2 rounded-md focus:outline-none"
+            />
+          </div>
+
+          <div className="flex items-center justify-around md:justify-start gap-8">
+            <LordIcon
+              src="https://cdn.lordicon.com/tyntlpjn.json"
+              trigger="loop"
+              colors="primary:#ffffff,secondary:#e88c30"
+              height={30}
+              width={30}
+              className="md:ml-4"
+            />
+            <input
+              value={updatedLocation}
+              disabled={loading}
+              onChange={(e) => setUpdatedLocation(e.target.value)}
+              placeholder="Location"
+              className="bg-transparent border-2 border-bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8] p-2 rounded-md focus:outline-none "
+            />
+          </div>
         </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleContinue} disabled={loading}>
-            {loading ? "Saving..." : "Save Changes"}
+
+        <AlertDialogFooter className="flex flex-row justify-end">
+          {!loading && (
+            <AlertDialogCancel disabled={loading}>
+              <LordIcon
+                src="https://cdn.lordicon.com/pilfbsjh.json"
+                trigger="loop"
+                colors="primary:#ffffff,secondary:#e83a30,tertiary:#ffffff"
+                height={35}
+                width={35}
+              />
+            </AlertDialogCancel>
+          )}
+
+          <AlertDialogAction
+            isPending={loading}
+            onClick={handleContinue}
+            className="bg-white flex items-center gap-2 hover:bg-white active:bg-orange-500 text-black px-6"
+          >
+            {loading ? (
+              <LordIcon
+                src="https://cdn.lordicon.com/veoztjjj.json"
+                trigger="loop"
+                colors="primary:#e88c30,secondary:#ffffff"
+                height={35}
+                width={35}
+              />
+            ) : (
+              <>
+                <LordIcon
+                  src="https://cdn.lordicon.com/rnbuzxxk.json"
+                  trigger="loop"
+                  colors="primary:#ffffff,secondary:#2ca58d"
+                  height={35}
+                  width={35}
+                />
+              </>
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

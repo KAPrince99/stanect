@@ -10,6 +10,8 @@ import LoadingSpinner from "./LoadingSpinner";
 import UpdateProfile from "./updateProfile";
 import Image from "next/image";
 import UpdatePlan from "./updatePlan";
+import LordIcon from "./lordIcon";
+import src from "gsap-trial/src/index";
 
 export default function ProfileContainer() {
   const { user } = useUser();
@@ -37,22 +39,54 @@ export default function ProfileContainer() {
 
   const bucket = [
     {
-      icon: <Mail className="w-5 h-5" />,
+      icon: (
+        <LordIcon
+          src="https://cdn.lordicon.com/gtvaxhwv.json"
+          trigger="loop"
+          colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#e88c30,quaternary:#e88c30"
+          height={35}
+          width={35}
+        />
+      ),
       label: "Email",
       value: userEmail,
     },
     {
-      icon: <Globe className="w-5 h-5" />,
+      icon: (
+        <LordIcon
+          src="https://cdn.lordicon.com/tyntlpjn.json"
+          trigger="loop"
+          colors="primary:#ffffff,secondary:#e88c30"
+          height={35}
+          width={35}
+        />
+      ),
       label: "Location",
       value: userCountry,
     },
     {
-      icon: <Calendar className="w-5 h-5" />,
+      icon: (
+        <LordIcon
+          src="https://cdn.lordicon.com/laobovmg.json"
+          trigger="loop"
+          colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#e88c30,quaternary:#e88c30,quinary:#f9c9c0"
+          height={35}
+          width={35}
+        />
+      ),
       label: "Member Since",
       value: joinedDate,
     },
     {
-      icon: <Timer className="w-5 h-5" />,
+      icon: (
+        <LordIcon
+          src="https://cdn.lordicon.com/zjuyeglr.json"
+          trigger="loop"
+          colors="primary:#e88c30,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30"
+          height={35}
+          width={35}
+        />
+      ),
       label: "Total Talk Time",
       value: `1,247 minutes`,
     },
@@ -86,11 +120,19 @@ export default function ProfileContainer() {
                 {userFullName}
               </h1>
               <p className="text-gray-400 text-base md:text-lg font-medium flex items-center justify-center gap-2">
-                {userPlan === "Pro" ? "Pro Member" : "Free Plan"}
-                {userPlan === "Pro" && (
+                {userPlan === "pro" ? "Pro Member" : "Free Plan"}
+                {userPlan === "free" && (
+                  <LordIcon
+                    src="https://cdn.lordicon.com/vgdksfqv.json"
+                    trigger="loop"
+                    colors="primary:#ffffff,secondary:#e88c30,tertiary:#e88c30"
+                    height={40}
+                    width={40}
+                  />
+                )}
+                {userPlan === "pro" && (
                   <Award className="w-4 h-4 text-amber-400 ml-1" />
                 )}
-                <Sparkles className="w-4 h-4 text-amber-400" />
               </p>
             </div>
           </div>
@@ -112,7 +154,6 @@ export default function ProfileContainer() {
               />
             ))}
           </div>
-          <Separator className="my-4 md:my-5 bg-gray-700/50" />
         </div>
       </div>
     </div>
