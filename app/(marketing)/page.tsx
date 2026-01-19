@@ -6,6 +6,8 @@ import ComponentsShowcase from "./components/ComponentsShowcase";
 import { AppleCardsCarouselDemo } from "./components/CardsCarousel";
 import Pricing from "./components/Pricing";
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Stanect – AI Voice Companion to Practice Real Conversations",
@@ -48,7 +50,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Homepage() {
+export default async function Homepage() {
+  const { userId } = await auth();
+  if (userId) {
+    redirect("/app/dashboard");
+  }
   return (
     <MarketingLayout>
       <script
