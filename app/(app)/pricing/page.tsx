@@ -1,5 +1,4 @@
 import PricingPage from "@/components/ui/PricingPage";
-
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,23 +1,15 @@
 "use client";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
 import { InfoItem } from "@/components/ui/InfoItem";
 import { Separator } from "@/components/ui/separator";
-import {
-  Mail,
-  Globe,
-  Calendar,
-  Timer,
-  Crown,
-  Sparkles,
-  Award,
-} from "lucide-react";
+import { Mail, Globe, Calendar, Timer, Sparkles, Award } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/app/(app)/actions/actions";
 import LoadingSpinner from "./LoadingSpinner";
 import UpdateProfile from "./updateProfile";
 import Image from "next/image";
+import UpdatePlan from "./updatePlan";
 
 export default function ProfileContainer() {
   const { user } = useUser();
@@ -43,9 +35,32 @@ export default function ProfileContainer() {
     data?.country || (user?.publicMetadata?.country as string) || "Not Set";
   const userFirstNameInitial = userFullName[0] || "U";
 
+  const bucket = [
+    {
+      icon: <Mail className="w-5 h-5" />,
+      label: "Email",
+      value: userEmail,
+    },
+    {
+      icon: <Globe className="w-5 h-5" />,
+      label: "Location",
+      value: userCountry,
+    },
+    {
+      icon: <Calendar className="w-5 h-5" />,
+      label: "Member Since",
+      value: joinedDate,
+    },
+    {
+      icon: <Timer className="w-5 h-5" />,
+      label: "Total Talk Time",
+      value: `1,247 minutes`,
+    },
+  ];
+
   return (
     <div className="w-full max-w-5xl">
-      <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden mt-5 ">
+      <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden mt-5 md:backdrop-blur-2xl md:bg-white/10 md:border md:border-white/20 md:rounded-3xl md:shadow-2xl">
         <div className="grid relative p-8 md:p-10 text-center border-b border-gray-700/50">
           <div className="grid grid-cols-[1fr_3fr] gap-4 md:place-items-center md:px-10 relative z-10">
             {/* Avatar Section */}
@@ -81,39 +96,21 @@ export default function ProfileContainer() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-10 md:mt-0 items-start justify-center">
-            <Button
-              size="lg"
-              className="w-full sm:w-auto px-8 h-12 text-base font-semibold bg-linear-to-r from-amber-500 to-orange-600 text-black"
-            >
-              <Crown className="w-5 h-5 mr-2" /> Upgrade Plan
-            </Button>
+            <UpdatePlan />
             <UpdateProfile data={data} />
           </div>
         </div>
 
         <div className="p-8 md:p-10">
           <div className="grid grid-cols-1 md:grid-rows-4 gap-6 max-w-3xl mx-auto">
-            <InfoItem
-              icon={<Mail className="w-5 h-5" />}
-              label="Email"
-              value={userEmail}
-            />
-            <InfoItem
-              icon={<Globe className="w-5 h-5" />}
-              label="Location"
-              value={userCountry}
-            />
-            <InfoItem
-              icon={<Calendar className="w-5 h-5" />}
-              label="Member Since"
-              value={joinedDate}
-            />
-            <InfoItem
-              icon={<Timer className="w-5 h-5" />}
-              label="Total Talk Time"
-              value={`1,247 minutes`}
-              highlight
-            />
+            {bucket.map((item) => (
+              <InfoItem
+                key={item.label}
+                icon={item.icon}
+                label={item.label}
+                value={item.value}
+              />
+            ))}
           </div>
           <Separator className="my-4 md:my-5 bg-gray-700/50" />
         </div>

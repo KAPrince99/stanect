@@ -11,14 +11,10 @@ export function InfoItem({
 }) {
   return (
     <div
-      className={`flex items-center gap-4 p-4 md:p-5 rounded-xl transition-all duration-300 ${
-        highlight
-          ? "bg-amber-900/20 border border-amber-600/30"
-          : "bg-gray-700/40 border border-gray-700/50"
-      }`}
+      className={`flex items-center gap-4 p-4 md:p-5 rounded-xl transition-all duration-300  bg-transparent border-2 border-white/20 `}
     >
       <div
-        className={`p-3 rounded-lg bg-gray-800/50 ${
+        className={`p-3 rounded-lg bg-white/10 border-2 border-white/20 ${
           highlight ? "text-amber-400" : "text-gray-400"
         }`}
       >
