@@ -53,7 +53,7 @@ export const metadata: Metadata = {
 export default async function Homepage() {
   const { userId } = await auth();
   if (userId) {
-    redirect("/app/dashboard");
+    redirect("/dashboard");
   }
   return (
     <MarketingLayout>
