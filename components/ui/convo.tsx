@@ -12,6 +12,7 @@ import { Zap, Radio, X, Headset } from "lucide-react";
 import ConvoBlock from "./convoBlock";
 import TranscriptBlock from "./TranscriptBlock";
 import LoadingSpinner from "./LoadingSpinner";
+import LordIcon from "./lordIcon";
 
 export type CallStatus = "INACTIVE" | "CONNECTING" | "ACTIVE" | "ERROR";
 
@@ -42,7 +43,15 @@ const statusConfig = {
   },
   INACTIVE: {
     label: "Ready to initiate call",
-    icon: <Headset className="w-5 h-5 text-orange-400" />,
+    icon: (
+      <LordIcon
+        src="https://cdn.lordicon.com/wjogzler.json"
+        trigger="loop"
+        colors="primary:#e88c30"
+        height={20}
+        width={20}
+      />
+    ),
     color: "bg-white/10 text-white",
   },
 };

@@ -3,12 +3,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { Mic, MicOff, Phone, PhoneOff } from "lucide-react";
+import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
 import { Globe } from "./Globe";
 import TranscriptToggle from "./TranscriptToggle";
 import { CallStatus } from "./convo";
+import LordIcon from "./lordIcon";
 
 interface Props {
   callStatus: CallStatus;
@@ -98,7 +99,14 @@ export default function ConvoBlock({
             onClick={handleCall}
             disabled={callStatus === "CONNECTING"}
           >
-            <Phone className="w-5 h-5 mr-3" /> Start Call
+            <LordIcon
+              src="https://cdn.lordicon.com/wtywrnoz.json"
+              trigger="loop"
+              colors="primary:#ffffff"
+              height={20}
+              width={20}
+            />{" "}
+            Start Call
           </Button>
         ) : (
           <div className="flex items-center gap-4">
