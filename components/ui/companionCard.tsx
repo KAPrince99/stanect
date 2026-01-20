@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CompanionProps } from "@/types/types";
 import { motion } from "framer-motion";
 import { Heart, Mic, Timer } from "lucide-react";
+import LordIcon from "./lordIcon";
 
 export default function CompanionCard({
   companion,
@@ -30,7 +31,13 @@ export default function CompanionCard({
           <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
 
           <div className="absolute top-4 left-4 bg-black/70 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-            <Timer className="w-4 h-4 text-amber-400" />
+            <LordIcon
+              src="https://cdn.lordicon.com/zjuyeglr.json"
+              trigger="loop"
+              colors="primary:#e88c30,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30"
+              height={20}
+              width={20}
+            />
             <span className="text-sm font-medium">
               {companion.duration} min
             </span>
@@ -43,7 +50,13 @@ export default function CompanionCard({
           </div>
 
           <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Heart className="w-7 h-7 text-red-500 fill-red-500" />
+            <LordIcon
+              src="https://cdn.lordicon.com/ewmfucya.json"
+              trigger="loop"
+              colors="primary:#e83a30,secondary:#e83a30,tertiary:#e83a30,quaternary:#e83a30,quinary:#f24c00,senary:#ffffff"
+              height={30}
+              width={30}
+            />
           </div>
         </div>
       </Link>
@@ -58,7 +71,13 @@ export default function CompanionCard({
             size="lg"
             className="w-full h-10 md:h-12 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-display cursor-pointer text-md shadow-lg"
           >
-            <Mic className="w-10 h-5 mr-2" />
+            <LordIcon
+              src="https://cdn.lordicon.com/ckooqaow.json"
+              trigger="loop"
+              colors="primary:#000000,secondary:#000000,tertiary:#000000,quaternary:#000000,quinary:#000000"
+              height={20}
+              width={20}
+            />
             Convo
           </Button>
         </Link>

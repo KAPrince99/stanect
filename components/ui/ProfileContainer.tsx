@@ -1,8 +1,7 @@
 "use client";
 import { format } from "date-fns";
 import { InfoItem } from "@/components/ui/InfoItem";
-import { Separator } from "@/components/ui/separator";
-import { Mail, Globe, Calendar, Timer, Sparkles, Award } from "lucide-react";
+import { Award } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/app/(app)/actions/actions";
@@ -11,7 +10,6 @@ import UpdateProfile from "./updateProfile";
 import Image from "next/image";
 import UpdatePlan from "./updatePlan";
 import LordIcon from "./lordIcon";
-import src from "gsap-trial/src/index";
 
 export default function ProfileContainer() {
   const { user } = useUser();
