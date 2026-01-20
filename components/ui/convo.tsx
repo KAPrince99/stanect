@@ -7,7 +7,7 @@ import throttle from "lodash.throttle";
 import { getSingleCompanion } from "@/app/(app)/actions/actions";
 import { vapiSdk } from "@/lib/vapiSdk";
 
-import { Zap, Radio, X, Headset } from "lucide-react";
+import { Zap, Radio, X } from "lucide-react";
 
 import ConvoBlock from "./convoBlock";
 import TranscriptBlock from "./TranscriptBlock";
