@@ -22,6 +22,7 @@ import {
   AlertDialogOverlay,
   AlertDialogPortal,
 } from "@radix-ui/react-alert-dialog";
+import LordIcon from "./lordIcon";
 
 export default function DeleteCompanionButton({ id }: { id: string }) {
   const [open, setOpen] = React.useState(false);
@@ -89,7 +90,13 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
           variant="outline"
           className="w-16 h-16 rounded-full border-white/20 bg-white/5 backdrop-blur-xl hover:bg-red-500/20 hover:border-red-500/50 transition-all duration-300 group cursor-pointer"
         >
-          <Trash2 className="w-7 h-7 text-red-400 group-hover:text-red-300 transition-colors" />
+          <LordIcon
+            src="https://cdn.lordicon.com/sxhqklqh.json"
+            trigger="loop"
+            colors="primary:#ffffff,secondary:#e83a30,tertiary:#e83a30"
+            height={25}
+            width={25}
+          />
         </Button>
       </AlertDialogTrigger>
 

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
 import React from "react";
 import { Button } from "./button";
+import LordIcon from "./lordIcon";
 
 type Message = {
   role: "assistant" | "user";
@@ -36,9 +37,16 @@ export default function TranscriptBlock({
           transition={{ duration: 0.3 }}
           className="w-full h-full overflow-y-auto lg:w-[300px] xl:w-sm flex flex-col backdrop-blur-lg border-l border-gray-700 shadow-2xl lg:shadow-none"
         >
-          <div className="p-5 border-b border-gray-700 flex items-center justify-between shrink-0 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]">
+          <div className="p-5 md:backdrop-blur-2xl md:bg-white/10 border md:border-white/20 flex items-center justify-between shrink-0 ">
             <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-white" /> Live Transcript
+              <LordIcon
+                src="https://cdn.lordicon.com/zyyejanq.json"
+                trigger="loop"
+                colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30"
+                height={30}
+                width={30}
+              />{" "}
+              Live Transcript
             </h2>
             {!isDesktop && (
               <Button

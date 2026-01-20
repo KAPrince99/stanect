@@ -42,9 +42,8 @@ const statusConfig = {
   },
   INACTIVE: {
     label: "Ready to initiate call",
-    icon: <Headset className="w-4 h-4" />,
-    color:
-      "bg-gradient-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] text-white",
+    icon: <Headset className="w-5 h-5 text-orange-400" />,
+    color: "bg-white/10 text-white",
   },
 };
 
@@ -156,7 +155,7 @@ export default function Convo({ id }: ConvoProps) {
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024;
 
   return (
-    <main className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:border md:border-white/20 md:shadow-2xl md:bg-blue-400/30 md:rounded-2xl">
+    <main className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:backdrop-blur-2xl md:bg-white/10 md:border md:border-white/20 md:rounded-2xl md:shadow-2xl">
       {/* Main Conversation Area */}
       <ConvoBlock
         callStatus={callStatus}

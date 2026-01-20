@@ -94,7 +94,7 @@ export default function ConvoBlock({
 
         {!isCallInProgress ? (
           <Button
-            className="px-8 py-3 text-xl font-bold rounded-full bg-green-500 hover:bg-amber-700 transition-colors flex items-center shadow-lg shadow-indigo-600/50 active:shadow-none cursor-pointer"
+            className="px-8 py-3 text-lg font-bold bg-green-500 hover:bg-[#e88c30] transition-colors flex items-center shadow-lg shadow-indigo-600/50 active:shadow-none cursor-pointer"
             onClick={handleCall}
             disabled={callStatus === "CONNECTING"}
           >
