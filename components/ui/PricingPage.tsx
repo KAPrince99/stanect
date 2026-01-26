@@ -30,6 +30,7 @@ export const TIERS = [
     yearly: 0,
     description: "Perfect to get started",
     features: [
+      "7-day trial",
       "1 Companion max",
       "6-Minute daily total credit",
       "2-Minute max per session",
