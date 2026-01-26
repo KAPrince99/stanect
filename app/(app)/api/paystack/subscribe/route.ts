@@ -64,6 +64,8 @@ export async function POST(req: NextRequest) {
         email: userRow.email,
         amount: amountInPesewas,
         plan: planCode,
+        currency: "GHS",
+        channels: ["card", "mobile_money", "bank", "ussd", "qr"],
         callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/paystack/callback`,
         metadata: {
           clerk_user_id: clerk_user_id,
