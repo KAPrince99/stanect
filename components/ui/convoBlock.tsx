@@ -27,6 +27,7 @@ interface Props {
     color: string;
   };
   setShowTranscript: (value: boolean) => void;
+  timeLeftDisplay: string;
 }
 
 export default function ConvoBlock({
@@ -41,6 +42,7 @@ export default function ConvoBlock({
   id,
   currentStatus,
   setShowTranscript,
+  timeLeftDisplay,
 }: Props) {
   return (
     <div className="flex-1 flex flex-col items-center justify-between relative z-10  h-full px-2 gap-y-15 md:gap-y-0">
@@ -56,18 +58,14 @@ export default function ConvoBlock({
           {currentStatus.icon}{" "}
           <span className="uppercase tracking-wider">
             {currentStatus.label}
+            {/* Display time if active */}
+            {callStatus === "ACTIVE" && ` • ${timeLeftDisplay}`}
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent tracking-tighter">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent tracking-tighter">
           {companionName}
         </h1>
-
-        {/* {callStatus === "ACTIVE" && (
-          <p className="text-white/70 text-base md:text-lg animate-pulse-slow">
-            Speak now... she is processing your voice input.
-          </p>
-        )} */}
       </motion.div>
 
       {/* Globe 3D Canvas */}

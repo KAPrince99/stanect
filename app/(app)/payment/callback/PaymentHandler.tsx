@@ -1,37 +1,56 @@
-// /app/payment/callback/PaymentHandler.tsx
+//@/app/(app)/payment/callback/PaymentHandler.tsx
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 export default function PaymentHandler() {
   const router = useRouter();
-  // This hook is now encapsulated within a component that is wrapped in <Suspense>
   const searchParams = useSearchParams();
+  const hasCalled = useRef(false); // Prevents double-calling in StrictMode
 
   useEffect(() => {
+    if (hasCalled.current) return;
+    hasCalled.current = true;
+
     const reference =
       searchParams.get("reference") || searchParams.get("trxref");
 
     if (!reference) {
-      toast.error(
-        "Payment reference missing. You might need to contact support."
-      );
-      // Optional: redirect home or back to pricing after error toast
+      toast.error("No payment reference found.");
       router.push("/pricing");
       return;
     }
 
-    toast.info("Payment received! Waiting for Paystack confirmation...");
+    // EDGE CASE: Verify status BEFORE redirecting to 'pending'
+    // We call our internal API (the one we created earlier) to check status
+    // Inside your useEffect in PaymentHandler.tsx
+    const verifyPayment = async () => {
+      try {
+        const response = await fetch(
+          `/api/paystack/verify?reference=${reference}`,
+        );
+        const result = await response.json();
 
-    // Redirect to the pricing page (or dashboard) where the Supabase Realtime
-    // listener will catch the 'status' change from 'pending' to 'active'.
-    setTimeout(() => {
-      router.push("/pricing?status=pending");
-    }, 500);
+        if (result.data.status === "success") {
+          toast.success("Payment confirmed!");
+          // Redirect to your custom success page
+          router.push(
+            `/payment/status?status=success&plan=${result.data.metadata.plan}`,
+          );
+        } else {
+          // Redirect to your custom error page
+          router.push("/payment/status?status=failed");
+        }
+      } catch (error) {
+        // If verification hits a network error, we fallback to the pending state
+        router.push("/payment/status?status=pending");
+      }
+    };
+
+    verifyPayment();
   }, [searchParams, router]);
 
-  // This component renders nothing itself; it just runs the side effect/redirect
   return null;
 }

@@ -37,7 +37,7 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
         "companions",
       ]);
       queryClient.setQueryData(["companions"], (old?: CompanionProps[]) =>
-        old?.filter((c) => c.id !== id)
+        old?.filter((c) => c.id !== id),
       );
       return { previousData };
     },

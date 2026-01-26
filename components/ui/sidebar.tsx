@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import LordIcon from "./lordIcon";
 import { Home, Sparkles, Plus } from "lucide-react";
+import { UserButton } from "@clerk/nextjs"; // Ensure this is imported
 
 const navItems = [
   {
@@ -35,13 +36,13 @@ export default function Sidebar() {
       <div className="flex flex-col items-center justify-start py-50 h-full">
         {/* Main Orb */}
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-500/20 to-pink-500/20 blur-xl rounded-full scale-125 animate-pulse" />
-          <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-4 shadow-2xl flex flex-col gap-8">
-            {navItems.map((item, i) => (
+          <div className="absolute inset-0 bg-linear-to-r from-amber-400/20 via-orange-500/20 to-pink-500/20 blur-xl rounded-full scale-125 animate-pulse" />
+          <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-4 shadow-2xl flex flex-col gap-8 items-center">
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative block p-4 rounded-full bg-white/5 hover:bg-white/20 transition-transform duration-300 transform hover:scale-110"
+                className="relative block p-4 rounded-full bg-white/5 hover:bg-white/20 transition-transform duration-300 transform hover:scale-110 group"
               >
                 <div className="relative flex justify-center items-center">
                   {item.lordIcon && (
@@ -63,6 +64,29 @@ export default function Sidebar() {
                 </div>
               </Link>
             ))}
+
+            {/* Integrated Profile Button */}
+            {/* <motion.div
+              initial={{ scale: 1.2 }}
+              whileHover={{ scale: 1.4 }}
+              transition={{ duration: 0.05 }}
+              className="relative flex items-center justify-center p-3 bg-white/5 hover:bg-white/20 rounded-full transition-all duration-300"
+            >
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox:
+                      "w-10 h-10 border border-white/20 shadow-xl",
+                  },
+                }} />
+              
+              {/* Online Indicator */}
+            {/* <motion.div
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ repeat: Infinity, duration: 3 }}
+                className="absolute -bottom-0 -right-0 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#121212] shadow-lg"
+              />
+            </motion.div> */}
           </div>
 
           {/* Floating Particles */}

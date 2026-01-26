@@ -1,7 +1,6 @@
 "use client";
 import { format } from "date-fns";
 import { InfoItem } from "@/components/ui/InfoItem";
-import { Award } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/app/(app)/actions/actions";
@@ -118,7 +117,11 @@ export default function ProfileContainer() {
                 {userFullName}
               </h1>
               <p className="text-gray-400 text-base md:text-lg font-medium flex items-center justify-center gap-2">
-                {userPlan === "pro" ? "Pro Member" : "Free Plan"}
+                {userPlan === "pro"
+                  ? "Pro Member"
+                  : userPlan === "king"
+                    ? "King Member"
+                    : "Free Plan"}
                 {userPlan === "free" && (
                   <LordIcon
                     src="https://cdn.lordicon.com/vgdksfqv.json"
@@ -129,7 +132,22 @@ export default function ProfileContainer() {
                   />
                 )}
                 {userPlan === "pro" && (
-                  <Award className="w-4 h-4 text-amber-400 ml-1" />
+                  <LordIcon
+                    src="https://cdn.lordicon.com/ypilrraw.json"
+                    trigger="loop"
+                    colors="primary:#e88c30,secondary:#ffc738"
+                    height={40}
+                    width={40}
+                  />
+                )}
+                {userPlan === "king" && (
+                  <LordIcon
+                    src="https://cdn.lordicon.com/qwghwbtk.json"
+                    trigger="loop"
+                    colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#ffc738,quaternary:#646e78"
+                    height={40}
+                    width={40}
+                  />
                 )}
               </p>
             </div>

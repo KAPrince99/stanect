@@ -1,4 +1,5 @@
 "use server";
+import { fetchSubscriptionStatus } from "./subs";
 import { buildAssistant } from "@/lib/buildAssistant";
 import { createSupabaseClient } from "@/lib/supabase";
 import { AvatarProps, CreateCompanionProps } from "@/types/types";
@@ -53,23 +54,47 @@ export async function getCompanions(id: string) {
 
   return data ?? [];
 }
+
 export async function createCompanion(formData: CreateCompanionProps) {
   const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
   const user = await currentUser();
   const supabase = createSupabaseClient();
+
+  const sub = await fetchSubscriptionStatus(userId);
+  const userPlan = sub?.plan || "free";
+
+  const limits: Record<string, number> = {
+    free: 2,
+    pro: 15,
+    king: 60,
+  };
+
+  const maxAllowed = limits[userPlan] || 2;
+
+  const requestedDuration = Number(formData.duration);
+
+  const validatedDuration =
+    requestedDuration > maxAllowed ? maxAllowed : requestedDuration;
+
+  formData.duration = String(validatedDuration) as any;
+
   const { data, error } = await supabase
     .from("companions")
-    .insert({ ...formData, owner_id: userId, username: user?.firstName })
+    .insert({
+      ...formData,
+      owner_id: userId,
+      username: user?.firstName,
+    })
     .select();
 
   if (error || !data)
     throw new Error(error?.message || "Failed to create a companion");
-  console.log("DATA HERE:", data);
 
   const companion = data[0];
 
   const assistantConfig = buildAssistant(companion);
-  console.log("ASSISTANT CONFIG:", assistantConfig);
 
   const vapiRes = await fetch("https://api.vapi.ai/assistant", {
     method: "POST",
@@ -81,7 +106,6 @@ export async function createCompanion(formData: CreateCompanionProps) {
   });
 
   const vapiData = await vapiRes.json();
-  console.log("VAPI RESPONSE:", vapiData);
 
   await supabase
     .from("companions")
@@ -104,4 +128,27 @@ export async function deleteCompanion(id: string) {
     success: true,
     message: "Companion deleted successfully🎉",
   };
+}
+
+export async function updateUserSeconds(secondsUsed: number) {
+  const { userId } = await auth();
+  const supabase = createSupabaseClient();
+
+  if (!userId) return { error: "No user found" };
+
+  const { data, error } = await supabase.rpc("increment_user_stats", {
+    user_id: userId,
+    seconds_to_add: secondsUsed,
+  });
+
+  if (error) {
+    console.error("Supabase RPC Error:", error);
+    return { error: error.message };
+  }
+
+  if (data?.success === false) {
+    return { error: data.error };
+  }
+
+  return { success: true };
 }

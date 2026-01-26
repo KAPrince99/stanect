@@ -2,9 +2,13 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import throttle from "lodash.throttle";
+import { useUser } from "@clerk/nextjs";
 
-import { getSingleCompanion } from "@/app/(app)/actions/actions";
+import {
+  getSingleCompanion,
+  updateUserSeconds,
+} from "@/app/(app)/actions/actions";
+import { fetchSubscriptionStatus } from "@/app/(app)/actions/subs";
 import { vapiSdk } from "@/lib/vapiSdk";
 
 import { Zap, Radio, X } from "lucide-react";
@@ -13,10 +17,12 @@ import ConvoBlock from "./convoBlock";
 import TranscriptBlock from "./TranscriptBlock";
 import LoadingSpinner from "./LoadingSpinner";
 import LordIcon from "./lordIcon";
+import SessionEndedModal from "./sessionEndedModal";
 
 export type CallStatus = "INACTIVE" | "CONNECTING" | "ACTIVE" | "ERROR";
 
 export type Message = {
+  id: string;
   role: "assistant" | "user";
   content: string;
 };
@@ -57,137 +63,195 @@ const statusConfig = {
 };
 
 export default function Convo({ id }: ConvoProps) {
+  const { user } = useUser();
   const [callStatus, setCallStatus] = useState<CallStatus>("INACTIVE");
   const [isMuted, setIsMuted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [showTranscript, setShowTranscript] = useState(false);
-  const transcriptRef = useRef<HTMLDivElement>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  const { data: companion, isLoading } = useQuery({
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [showEndModal, setShowEndModal] = useState(false);
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const transcriptRef = useRef<HTMLDivElement>(null);
+  const sessionStartTimeRef = useRef<number | null>(null);
+  const popSoundRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    popSoundRef.current = new Audio("/sounds/bubble-pop.mp3");
+    popSoundRef.current.volume = 0.4;
+  }, []);
+
+  const playPop = useCallback(() => {
+    if (popSoundRef.current) {
+      popSoundRef.current.currentTime = 0;
+      popSoundRef.current.play().catch(() => {});
+    }
+  }, []);
+
+  const { data: companion, isLoading: companionLoading } = useQuery({
     queryKey: ["companions", id],
     queryFn: async () => getSingleCompanion(id),
   });
 
-  const throttledMessage = useRef(
-    throttle((msg: any) => {
+  const { data: subData, isLoading: subLoading } = useQuery({
+    queryKey: ["userPlan", user?.id],
+    queryFn: () => fetchSubscriptionStatus(user?.id || ""),
+    enabled: !!user?.id,
+  });
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (callStatus === "ACTIVE") {
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev === null) return null;
+          if (prev <= 1) {
+            stopTimer();
+            vapiSdk.stop();
+            setShowEndModal(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      stopTimer();
+    }
+    return () => stopTimer();
+  }, [callStatus, stopTimer]);
+
+  const handleMessage = useCallback(
+    (msg: any) => {
       if (
         (msg.type === "transcript" || msg.type === "speech") &&
         msg.transcriptType === "final" &&
         msg.transcript
       ) {
-        setMessages((prev) => [
-          { role: msg.role, content: msg.transcript },
-          ...prev,
-        ]);
+        setMessages((prev) => {
+          const newContent = msg.transcript.trim();
+          const isDuplicate = prev
+            .slice(0, 5)
+            .some((m) => m.content === newContent && m.role === msg.role);
+          if (isDuplicate) return prev;
+          playPop();
+          return [
+            {
+              id: msg.id || `${Date.now()}`,
+              role: msg.role,
+              content: newContent,
+            },
+            ...prev,
+          ];
+        });
       }
-    }, 200)
+    },
+    [playPop],
   );
-
-  const handleVapiMessage = useCallback((msg: any) => {
-    throttledMessage.current(msg);
-  }, []);
 
   useEffect(() => {
     const onCallStart = () => {
       setCallStatus("ACTIVE");
       setShowTranscript(true);
+      sessionStartTimeRef.current = Date.now();
     };
-    const onCallEnd = () => {
+
+    const onCallEnd = async () => {
       setCallStatus("INACTIVE");
       setIsMuted(false);
-    };
-    const onError = (e: any) => {
-      console.error("VAPI Error:", e);
-      setCallStatus("ERROR");
-      setTimeout(() => setCallStatus("INACTIVE"), 5000);
+      stopTimer();
+      if (sessionStartTimeRef.current) {
+        const durationSeconds = Math.floor(
+          (Date.now() - sessionStartTimeRef.current) / 1000,
+        );
+        if (durationSeconds > 0) await updateUserSeconds(durationSeconds);
+        sessionStartTimeRef.current = null;
+      }
     };
 
     vapiSdk.on("call-start", onCallStart);
     vapiSdk.on("call-end", onCallEnd);
-    vapiSdk.on("error", onError);
-    vapiSdk.on("message", handleVapiMessage);
+    vapiSdk.on("message", handleMessage);
+    vapiSdk.on("error", () => setCallStatus("ERROR"));
 
     return () => {
       vapiSdk.off("call-start", onCallStart);
       vapiSdk.off("call-end", onCallEnd);
-      vapiSdk.off("error", onError);
-      vapiSdk.off("message", handleVapiMessage);
-      if (callStatus === "ACTIVE") vapiSdk.stop();
+      vapiSdk.off("message", handleMessage);
     };
-  }, [handleVapiMessage, callStatus]);
-
-  useEffect(() => {
-    if (transcriptRef.current) transcriptRef.current.scrollTop = 0;
-  }, [messages]);
+  }, [handleMessage, stopTimer]);
 
   const handleCall = async () => {
     if (callStatus !== "INACTIVE" || !companion?.assistant_id) return;
+    const initialSeconds = (companion.duration || 2) * 60;
     setMessages([]);
     setCallStatus("CONNECTING");
-
+    setTimeLeft(initialSeconds);
     try {
-      await vapiSdk.start(companion.assistant_id);
+      await vapiSdk.start(companion.assistant_id, {
+        maxDurationSeconds: initialSeconds,
+      });
     } catch (e) {
-      console.error("Failed to start VAPI call:", e);
       setCallStatus("ERROR");
-      setTimeout(() => setCallStatus("INACTIVE"), 3000);
     }
   };
 
-  const handleEnd = () => {
-    if (callStatus === "ACTIVE" || callStatus === "CONNECTING") {
-      vapiSdk.stop();
-    }
-  };
+  if (companionLoading || subLoading) return <LoadingSpinner />;
+  if (!companion) return null;
 
-  const toggleMute = () => {
-    if (callStatus === "ACTIVE") {
-      vapiSdk.setMuted(!isMuted);
-      setIsMuted((prev) => !prev);
-    }
-  };
-
-  if (isLoading) return <LoadingSpinner />;
-  if (!companion)
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-900 text-white p-10">
-        <div className="text-center p-8 bg-gray-800 rounded-xl shadow-2xl">
-          <X className="w-8 h-8 mx-auto mb-4 text-red-500" />
-          <p className="text-xl font-semibold">Companion not found</p>
-        </div>
-      </div>
-    );
-
-  const currentStatus = statusConfig[callStatus];
-  const isCallInProgress =
-    callStatus === "ACTIVE" || callStatus === "CONNECTING";
-  const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024;
+  const currentPlan = (subData?.plan as "free" | "pro" | "king") || "free";
 
   return (
     <main className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:backdrop-blur-2xl md:bg-white/10 md:border md:border-white/20 md:rounded-2xl md:shadow-2xl">
-      {/* Main Conversation Area */}
       <ConvoBlock
         callStatus={callStatus}
         isMuted={isMuted}
-        toggleMute={toggleMute}
+        toggleMute={() => {
+          vapiSdk.setMuted(!isMuted);
+          setIsMuted(!isMuted);
+        }}
         handleCall={handleCall}
-        handleEnd={handleEnd}
-        isCallInProgress={isCallInProgress}
+        handleEnd={async () => vapiSdk.stop()}
+        isCallInProgress={
+          callStatus === "ACTIVE" || callStatus === "CONNECTING"
+        }
         isDesktop={isDesktop}
-        companionName={companion.companion_name || "AI Companion"}
+        companionName={companion.companion_name || "AI"}
         id={id}
-        currentStatus={currentStatus}
+        currentStatus={statusConfig[callStatus]}
         setShowTranscript={setShowTranscript}
+        timeLeftDisplay={
+          timeLeft !== null
+            ? `${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, "0")}`
+            : ""
+        }
       />
-
-      {/* Transcript */}
       <TranscriptBlock
         showTranscript={showTranscript}
         setShowTranscript={setShowTranscript}
         isDesktop={isDesktop}
         transcriptRef={transcriptRef}
         messages={messages}
-        companionName={companion.companion_name || "AI Companion"}
+        companionName={companion.companion_name || "AI"}
+      />
+      <SessionEndedModal
+        showEndModal={showEndModal}
+        setShowEndModal={setShowEndModal}
+        userPlan={currentPlan}
       />
     </main>
   );

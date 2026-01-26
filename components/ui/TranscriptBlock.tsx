@@ -6,6 +6,7 @@ import { Button } from "./button";
 import LordIcon from "./lordIcon";
 
 type Message = {
+  id: string;
   role: "assistant" | "user";
   content: string;
 };
@@ -70,12 +71,12 @@ export default function TranscriptBlock({
                 <p className="text-sm mt-1">Ready to talk when you are.</p>
               </div>
             ) : (
-              messages.map((msg, index) => (
+              messages.map((msg) => (
                 <motion.div
-                  key={index}
+                  key={msg.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                  transition={{ duration: 0.2 }}
                   className={`flex ${
                     msg.role === "user" ? "justify-end" : "justify-start"
                   }`}

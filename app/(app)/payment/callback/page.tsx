@@ -1,38 +1,39 @@
-// /app/payment/callback/page.tsx
-// This file does not need "use client" if it only wraps other client components in Suspense
-// If you want to keep the "use client" directive for the styling/Loader2 component, that's fine too.
+//@/app/(app)/payment/callback/page.tsx
 "use client";
 
 import { Suspense } from "react";
-import { Loader2 } from "lucide-react";
-import PaymentHandler from "./PaymentHandler"; // Import the new component
+import { Loader2, ShieldCheck } from "lucide-react";
+import PaymentHandler from "./PaymentHandler";
 
-// Define a loading fallback for the suspense boundary
 const SuspenseFallback = () => (
-  <div className="flex flex-col items-center justify-center min-h-screen">
-    <Loader2 className="w-8 h-8 animate-spin text-white mb-4" />
-    <p className="text-white text-lg font-medium">
-      Loading confirmation details...
-    </p>
+  <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-white">
+    <Loader2 className="w-10 h-10 animate-spin text-indigo-500 mb-4" />
+    <p className="text-lg font-medium">Initializing secure verification...</p>
   </div>
 );
 
 export default function PaymentCallbackPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      {/* The static parts of your UI */}
-      <Loader2 className="w-8 h-8 animate-spin text-white mb-4" />
-      <p className="text-white text-lg font-medium">
-        Finalizing payment... Do not close this window.
-      </p>
-      <p className="text-white/70 text-sm mt-2">
-        We are waiting for Paystack to confirm your subscription.
-      </p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] text-white p-6">
+      <div className="flex flex-col items-center max-w-sm text-center">
+        <div className="relative mb-6">
+          <Loader2 className="w-16 h-16 animate-spin text-indigo-500" />
+          <ShieldCheck className="w-6 h-6 text-indigo-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+        </div>
 
-      {/* Wrap the component that uses useSearchParams in Suspense */}
-      <Suspense fallback={<SuspenseFallback />}>
-        <PaymentHandler />
-      </Suspense>
+        <h1 className="text-2xl font-bold mb-2">Verifying Transaction</h1>
+        <p className="text-slate-400 text-sm leading-relaxed">
+          We're communicating with Paystack to secure your subscription.
+          <span className="block mt-1 font-semibold text-indigo-400">
+            Please do not refresh or close this tab.
+          </span>
+        </p>
+
+        {/* Hidden logic handler */}
+        <Suspense fallback={<SuspenseFallback />}>
+          <PaymentHandler />
+        </Suspense>
+      </div>
     </div>
   );
 }

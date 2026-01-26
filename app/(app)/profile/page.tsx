@@ -6,6 +6,8 @@ import { Suspense } from "react";
 
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Profile – Stanect AI",
   description: "Manage your Stanect AI profile and account settings.",

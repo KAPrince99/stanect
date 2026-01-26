@@ -5,45 +5,49 @@ import { useCallback, useEffect, useState } from "react";
 import DesktopAvatarSelection from "./desktopAvatarSelection";
 import AvatarForm from "./avatarForm";
 import { getAvatars } from "@/app/(app)/actions/actions";
+import { fetchSubscriptionStatus } from "@/app/(app)/actions/subs"; // Added this
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { useUser } from "@clerk/nextjs"; // Added this
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function CreateCompanion() {
+  const { user } = useUser();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Fetch Avatars
   const {
     data: avatars,
-    isLoading,
+    isLoading: avatarsLoading,
     error,
   } = useQuery({
     queryKey: ["avatars"],
     queryFn: getAvatars,
   });
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  // Fetch User Subscription Plan
+  const { data: subData, isLoading: subLoading } = useQuery({
+    queryKey: ["userPlan", user?.id],
+    queryFn: () => fetchSubscriptionStatus(user?.id || ""),
+    enabled: !!user?.id,
+  });
 
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(
-    () => {
-      return searchParams.get("avatarId") || null;
-    }
+    () => searchParams.get("avatarId") || null,
   );
 
-  // Update URL when avatar changes
   const handleSelectAvatar = useCallback(
     (id: string) => {
       setSelectedAvatarId(id);
-
       const params = new URLSearchParams(searchParams.toString());
       params.set("avatarId", id);
-
       router.replace(`?${params.toString()}`);
     },
-    [router, searchParams]
+    [router, searchParams],
   );
 
   useEffect(() => {
     if (selectedAvatarId) return;
-
     if (avatars && avatars.length > 0) {
       const firstId = avatars[0].id;
       setSelectedAvatarId(firstId);
@@ -51,7 +55,7 @@ export default function CreateCompanion() {
     }
   }, [avatars, selectedAvatarId, handleSelectAvatar]);
 
-  if (isLoading) return <LoadingSpinner />;
+  if (avatarsLoading || subLoading) return <LoadingSpinner />;
 
   if (error || !avatars)
     return (
@@ -59,6 +63,9 @@ export default function CreateCompanion() {
         <p className="text-white/70 text-xl">Failed to load avatars...</p>
       </div>
     );
+
+  // Extract the plan safely, default to free
+  const currentPlan = (subData?.plan as "free" | "pro" | "king") || "free";
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-transparent rounded-xl">
@@ -68,8 +75,12 @@ export default function CreateCompanion() {
           selected={selectedAvatarId}
           onSelect={handleSelectAvatar}
         />
-        <div className="flex items-center justify-center  md:p-5 lg:p-16">
-          <AvatarForm avatars={avatars} selectedAvatarId={selectedAvatarId} />
+        <div className="flex items-center justify-center md:p-5 lg:p-16">
+          <AvatarForm
+            avatars={avatars}
+            selectedAvatarId={selectedAvatarId}
+            userPlan={currentPlan}
+          />
         </div>
       </div>
     </div>
