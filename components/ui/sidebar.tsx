@@ -57,8 +57,17 @@ export default function Sidebar() {
                 </div>
 
                 {/* Tooltip */}
-                <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
-                  <div className="bg-black/80 backdrop-blur text-white text-sm px-4 py-2 rounded-full whitespace-nowrap shadow-2xl">
+                <div
+                  className="absolute left-full -ml-2 top-1/2 -translate-y-1/2 
+                opacity-0 group-hover:opacity-100 
+                pointer-events-none transition-opacity duration-200"
+                >
+                  <div
+                    className="bg-white/10 backdrop-blur 
+                  text-white text-[12px] px-2 py-1 
+                  rounded-full whitespace-nowrap 
+                  shadow-2xl "
+                  >
                     {item.label}
                   </div>
                 </div>
