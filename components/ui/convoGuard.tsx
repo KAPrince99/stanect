@@ -11,7 +11,7 @@ export default function ConvoGuard({ reason, plan }: ConvoGuardProps) {
   const isTrial = reason === "trial_expired";
 
   return (
-    <main className="flex items-center justify-center min-h-[70vh] p-4 md:-ml-30">
+    <main className="flex items-center justify-center min-h-[70vh] p-4 md:-ml-30 mt-10 md:mt-20">
       <div className="backdrop-blur-2xl bg-white/10 border border-white/20 p-8 md:p-12 rounded-3xl shadow-2xl max-w-lg w-full text-center">
         <div className="bg-amber-500/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border border-amber-500/50">
           {isTrial ? (
