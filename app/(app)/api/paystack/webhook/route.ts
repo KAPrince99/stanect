@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const bodyText = await req.text();
   const signature = req.headers.get("x-paystack-signature") || "";
 
-  // 1. Verify Signature
+  // Verify Signature
   const hash = crypto
     .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY!)
     .update(bodyText)
@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
   const payload = JSON.parse(bodyText);
   const { event, data } = payload;
 
-  // 2. Extract User ID (Check both metadata locations)
   const clerk_user_id =
     data.metadata?.clerk_user_id || data.customer?.metadata?.clerk_user_id;
   const response = NextResponse.json({ status: "accepted" }, { status: 200 });
@@ -34,7 +33,7 @@ export async function POST(req: NextRequest) {
       const subMetadata = {
         interval: data.metadata?.interval || "monthly",
         paystack_customer_code: data.customer?.customer_code,
-        // For subscriptions, Paystack puts the code here:
+
         paystack_sub_code: data.subscription_code ?? null,
         paystack_auth_code: data.authorization?.authorization_code,
         last_payment: data.paid_at,
@@ -45,7 +44,7 @@ export async function POST(req: NextRequest) {
         .update({
           plan: plan,
           status: "active",
-          metadata: subMetadata, // Storing all tech details here
+          metadata: subMetadata,
           updated_at: new Date().toISOString(),
         })
         .eq("clerk_user_id", clerk_user_id);
@@ -56,8 +55,8 @@ export async function POST(req: NextRequest) {
       await supabase
         .from("users")
         .update({
-          plan: "free", // Reset to free
-          status: "active", // User is active, but plan is free
+          plan: "free",
+          status: "active",
           updated_at: new Date().toISOString(),
         })
         .eq("clerk_user_id", clerk_user_id);
@@ -66,6 +65,6 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error) {
     console.error("Webhook Logic Error:", error);
-    return response; // Still return 200 to Paystack to stop retries
+    return response;
   }
 }

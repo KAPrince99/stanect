@@ -8,7 +8,7 @@ export async function POST() {
     if (!user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // 1. Fetch user metadata to get codes
+    // Fetch user metadata to get codes
     const { data: dbUser } = await supabase
       .from("users")
       .select("metadata")
@@ -17,7 +17,7 @@ export async function POST() {
 
     const subCode = dbUser?.metadata?.paystack_sub_code;
 
-    // 2. If a Paystack subscription exists, disable it
+    // If a Paystack subscription exists, disable it
     if (subCode) {
       const paystackRes = await fetch(
         `https://api.paystack.co/subscription/disable`,
@@ -38,7 +38,7 @@ export async function POST() {
       console.log("Paystack Cancellation:", resData.message);
     }
 
-    // 3. Update database to Free plan and clear technical sub codes
+    //  Update database to Free plan and clear technical sub codes
     await supabase
       .from("users")
       .update({
@@ -47,7 +47,7 @@ export async function POST() {
         updated_at: new Date().toISOString(),
         metadata: {
           ...dbUser?.metadata,
-          paystack_sub_code: null, // Clear active sub
+          paystack_sub_code: null,
           cancelled_at: new Date().toISOString(),
         },
       })

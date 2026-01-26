@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       .update({ status: "pending" })
       .eq("clerk_user_id", clerk_user_id);
 
-    // Amounts in GHS (Must match your Paystack Dashboard EXACTLY)
+    // Amounts in GHS
     let price = 0;
     if (plan === "pro") {
       price = interval === "monthly" ? 135 : 1396;

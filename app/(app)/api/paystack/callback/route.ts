@@ -4,7 +4,6 @@ import axios from "axios";
 export async function GET(req: NextRequest) {
   const reference = req.nextUrl.searchParams.get("reference");
 
-  // Use URL object for redirection to avoid issues with Next.js 'redirect' in try/catch
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   if (!reference) {
@@ -22,7 +21,6 @@ export async function GET(req: NextRequest) {
     const { status } = verifyRes.data.data;
 
     if (status === "success") {
-      // Send them to the pretty success page we built!
       return NextResponse.redirect(`${baseUrl}/pricing/success`);
     } else {
       return NextResponse.redirect(`${baseUrl}/pricing?status=failed`);
