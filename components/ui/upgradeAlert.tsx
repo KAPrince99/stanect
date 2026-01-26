@@ -13,7 +13,7 @@ export default function UpgradeAlert({
   maxAllowed: number;
 }) {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-6 text-center md:-ml-30">
+    <main className="flex flex-col items-center justify-center min-h-screen p-6 text-center lg:-ml-30">
       <div className="backdrop-blur-2xl bg-white/10 border border-white/20 p-10 rounded-3xl shadow-2xl max-w-md">
         <LordIcon
           src="https://cdn.lordicon.com/wdbwxkvh.json"
