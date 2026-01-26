@@ -33,6 +33,17 @@ export default function ProfileContainer() {
   const userCountry =
     data?.country || (user?.publicMetadata?.country as string) || "Not Set";
   const userFirstNameInitial = userFullName[0] || "U";
+  const totalSeconds = data?.total_lifetime_seconds || 0;
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const hDisplay =
+    hours > 0 ? `${new Intl.NumberFormat().format(hours)} hrs ` : "";
+  const mDisplay = `${minutes} min `;
+  const sDisplay = `${seconds} secs`;
+
+  const displayTime = `${hDisplay}${mDisplay}${sDisplay}`;
 
   const bucket = [
     {
@@ -85,7 +96,7 @@ export default function ProfileContainer() {
         />
       ),
       label: "Total Talk Time",
-      value: `1,247 minutes`,
+      value: `${displayTime}`,
     },
   ];
 
