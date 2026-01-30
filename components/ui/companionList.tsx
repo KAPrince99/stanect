@@ -50,8 +50,10 @@ export default function CompanionList({ userId }: { userId: string }) {
             {companions.map((companion, i) => (
               <motion.div
                 key={companion.id}
+                layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
                 transition={{ delay: i * 0.05 }}
               >
                 <CompanionCard companion={companion} />
