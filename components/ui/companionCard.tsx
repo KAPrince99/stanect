@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CompanionProps } from "@/types/types";
 import { motion } from "framer-motion";
-import { Heart, Mic, Timer } from "lucide-react";
 import LordIcon from "./lordIcon";
 
 export default function CompanionCard({

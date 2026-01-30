@@ -9,58 +9,57 @@ import Fresh from "./Fresh";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function CompanionList({ userId }: { userId: string }) {
-  const { user } = useUser();
+  const { user, isLoaded: userLoaded } = useUser();
 
   const { data: companions = [], isLoading } = useQuery({
     queryKey: ["companions", userId],
     queryFn: () => getCompanions(userId),
-    enabled: !!user,
+    enabled: !!userId && userLoaded,
+    staleTime: 1000 * 60 * 5,
   });
 
-  if (isLoading) return <LoadingSpinner />;
+  if (!userLoaded || isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="relative px-6 py-25 md:px-10 lg:px-16">
-      {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-5 md:mb-10"
+        className="text-center mb-10"
       >
-        <h1 className="text-3xl md:text-5xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent lg:-ml-35 ">
+        <h1 className="text-3xl md:text-5xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent lg:-ml-35">
           Welcome back, {user?.firstName || "King"}.
         </h1>
-        <p className="mt-4 text-white/70 text-md md:text-lg font-inter lg:-ml-35">
+        <p className="mt-4 text-white/70 text-md md:text-lg lg:-ml-35">
           {companions.length === 0
             ? "Your confidence journey starts now"
-            : `You have ${companions.length} ${
-                companions.length === 1 ? "companion" : "companions"
-              } waiting`}
+            : `You have ${companions.length} ${companions.length === 1 ? "companion" : "companions"} waiting`}
         </p>
       </motion.div>
 
-      {/* Empty State */}
-      {companions.length === 0 && <Fresh />}
-
-      {/* Companions Grid */}
-      <AnimatePresence>
+      {companions.length === 0 ? (
+        <Fresh />
+      ) : (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto"
+          layout
+          className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto"
         >
-          {companions.map((companion, i) => (
-            <motion.div
-              key={companion.id}
-              initial={{ opacity: 0, y: 60 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <CompanionCard companion={companion} />
-            </motion.div>
-          ))}
+          <AnimatePresence mode="popLayout">
+            {companions.map((companion, i) => (
+              <motion.div
+                key={companion.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <CompanionCard companion={companion} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </motion.div>
-      </AnimatePresence>
+      )}
     </div>
   );
 }
