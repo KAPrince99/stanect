@@ -200,7 +200,7 @@ export default function PricingPage() {
           animate="animate"
           className="text-center mb-12"
         >
-          <h1 className="text-3xl md:text-5xl bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent font-extrabold">
+          <h1 className="text-3xl md:text-6xl lg:text-7xl bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent font-extrabold">
             Choose Your Power
           </h1>
           <p className="text-md md:text-xl text-white/70 mt-4 max-w-2xl mx-auto">
