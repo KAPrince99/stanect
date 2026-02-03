@@ -51,8 +51,8 @@ const ComponentsShowcase = () => {
 text-2xl        
     sm:text-2xl     
     md:text-3xl  
-    lg:text-4xl       
-    2xl:text-5xl    
+    lg:text-5xl       
+    2xl:text-7xl    
 
     max-w-7xl       
     mx-auto         

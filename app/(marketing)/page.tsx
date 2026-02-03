@@ -3,11 +3,11 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Footer from "./components/Footer";
 import ComponentsShowcase from "./components/ComponentsShowcase";
-import { AppleCardsCarouselDemo } from "./components/CardsCarousel";
 import Pricing from "./components/Pricing";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import ScenarioList from "./components/ScenarioList";
 
 export const metadata: Metadata = {
   title: "Stanect – AI Voice Companion to Practice Real Conversations",
@@ -86,7 +86,7 @@ export default async function Homepage() {
       <Navbar />
       <Hero />
       <ComponentsShowcase />
-      <AppleCardsCarouselDemo />
+      <ScenarioList />
       <Pricing />
       <Footer />
     </MarketingLayout>
