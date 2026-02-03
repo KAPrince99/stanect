@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import LordIcon from "@/components/ui/lordIcon";
+import { MoveRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,7 +35,7 @@ export default function Scenario({ scenario }: ScenarioProps) {
         `}
       >
         <section className="w-full lg:w-1/2 flex justify-center">
-          <div className="relative w-full aspect-[4/3] max-w-2xl overflow-hidden shadow-2xl">
+          <div className="relative w-full aspect-4/3 max-w-2xl overflow-hidden shadow-2xl">
             <Image
               src={imageUrl || "/avatars/avatar_0.jpg"}
               alt={title}
@@ -67,17 +69,32 @@ export default function Scenario({ scenario }: ScenarioProps) {
             } justify-center md:justify-start`}
           >
             <Button
-              asChild
               size="lg"
               className={`shadow-lg transition-all duration-300 hover:scale-105
               ${
                 iseven
-                  ? "bg-amber-500 text-white hover:bg-amber-600"
-                  : "bg-white text-amber-600 hover:bg-slate-100"
+                  ? "bg-amber-500 text-black hover:bg-amber-600"
+                  : "bg-black text-white hover:bg-slate-600"
               }
             `}
             >
               <Link href="/dashboard">Get Started</Link>
+              {iseven ? (
+                <LordIcon
+                  src="https://cdn.lordicon.com/jarmuava.json"
+                  trigger="loop"
+                  height={20}
+                  width={20}
+                />
+              ) : (
+                <LordIcon
+                  src="https://cdn.lordicon.com/jarmuava.json"
+                  trigger="loop"
+                  colors="primary:#ffffff"
+                  height={20}
+                  width={20}
+                />
+              )}
             </Button>
           </div>
         </section>

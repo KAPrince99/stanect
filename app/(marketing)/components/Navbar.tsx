@@ -34,7 +34,10 @@ export default function Navbar() {
                      rounded-full px-6 md:px-8 shadow-2xl shadow-black/20"
         >
           {/* Logo */}
-          <Link href="/" className="flex items-center justify-center -ml-2 ">
+          <Link
+            href="/"
+            className="flex items-center justify-center -ml-2 focus:outline-transparent focus:ring-transparent active:outline-transparent select-none"
+          >
             <Image
               src="/logo/logo.svg"
               alt="Stanect"
@@ -43,10 +46,10 @@ export default function Navbar() {
               className="object-contain"
             />
             <span
-              className="md:hidden text-xl font-display tracking-tighter 
-                         bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent -ml-2"
+              className=" text-xl font-display tracking-tighter 
+                         bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent"
             >
-              tanect
+              stanect
             </span>
           </Link>
 
