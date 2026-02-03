@@ -40,10 +40,7 @@ const scenarios = [
 
 export default function ScenarioList() {
   return (
-    <main
-      className="min-h-screen w-full h-full mt-1 md:mt-10  text-center "
-      id="scenarios"
-    >
+    <main className="min-h-screen w-full h-full mt-1 md:mt-10" id="scenarios">
       <h2
         className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight 
                  bg-gradient-to-r from-white via-white/90 to-white/40 
