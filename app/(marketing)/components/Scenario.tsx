@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import LordIcon from "@/components/ui/lordIcon";
-import { MoveRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -35,7 +34,7 @@ export default function Scenario({ scenario }: ScenarioProps) {
         `}
       >
         <section className="w-full lg:w-1/2 flex justify-center">
-          <div className="relative w-full aspect-4/3 max-w-2xl overflow-hidden shadow-2xl">
+          <div className="relative w-full aspect-3/3 max-w-2xl overflow-hidden shadow-2xl">
             <Image
               src={imageUrl || "/avatars/avatar_0.jpg"}
               alt={title}
