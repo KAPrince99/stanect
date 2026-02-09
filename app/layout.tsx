@@ -87,7 +87,7 @@ export default function RootLayout({
 
       <body>
         <ClerkProvider>
-          <ScrollToTop />
+          {/* <ScrollToTop /> */}
           <QueryProvider>{children}</QueryProvider>
         </ClerkProvider>
       </body>

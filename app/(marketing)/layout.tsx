@@ -5,7 +5,7 @@ import { LenisProvider } from "../providers/lenisProvider";
 
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="relative flex flex-col min-h-screen bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8] text-white overflow-hidden">
+    <div className="relative flex flex-col min-h-screen bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8] text-white overflow-x-hidden">
       {/* Global glowing blob theme */}
       <div
         className="absolute inset-0 overflow-hidden pointer-events-none z-0"
@@ -22,11 +22,9 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
       <div className="relative z-10">
         <ScrollToTop />
         <Suspense fallback={null}>
-          <SmoothScroll>
-            <LenisProvider>
-              <main>{children}</main>
-            </LenisProvider>
-          </SmoothScroll>
+          <LenisProvider>
+            <main>{children}</main>
+          </LenisProvider>
         </Suspense>
       </div>
     </div>
