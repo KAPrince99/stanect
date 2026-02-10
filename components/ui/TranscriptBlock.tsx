@@ -1,22 +1,15 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Button } from "./button";
 import LordIcon from "./lordIcon";
-
-type Message = {
-  id: string;
-  role: "assistant" | "user";
-  content: string;
-};
+import { useConvoStore } from "@/store/use-convo-store";
 
 interface Props {
   showTranscript: boolean;
   setShowTranscript: (value: boolean) => void;
   isDesktop: boolean;
-  transcriptRef: React.RefObject<HTMLDivElement | null>;
-  messages: Message[];
   companionName: string;
 }
 
@@ -24,10 +17,11 @@ export default function TranscriptBlock({
   showTranscript,
   setShowTranscript,
   isDesktop,
-  transcriptRef,
-  messages,
   companionName,
 }: Props) {
+  const { messages } = useConvoStore();
+  const transcriptRef = useRef<HTMLDivElement>(null);
+
   return (
     <AnimatePresence>
       {(showTranscript || isDesktop) && (
@@ -35,7 +29,6 @@ export default function TranscriptBlock({
           initial={isDesktop ? false : { opacity: 0, x: "100%" }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: "100%" }}
-          transition={{ duration: 0.3 }}
           className="w-full h-full overflow-y-auto lg:w-[300px] xl:w-sm flex flex-col backdrop-blur-lg border-l border-gray-700 shadow-2xl lg:shadow-none"
         >
           <div className="p-5 md:backdrop-blur-2xl md:bg-white/10 border md:border-white/20 flex items-center justify-between shrink-0 ">
@@ -46,7 +39,7 @@ export default function TranscriptBlock({
                 colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30"
                 height={30}
                 width={30}
-              />{" "}
+              />
               Live Transcript
             </h2>
             {!isDesktop && (
@@ -76,17 +69,10 @@ export default function TranscriptBlock({
                   key={msg.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className={`flex ${
-                    msg.role === "user" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-md transition-all duration-300 ${
-                      msg.role === "user"
-                        ? "bg-indigo-600 text-white rounded-br-none font-medium"
-                        : "bg-gray-700 text-gray-100 rounded-tl-none font-normal"
-                    }`}
+                    className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-md ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-none" : "bg-gray-700 text-gray-100 rounded-tl-none"}`}
                   >
                     <div className="text-xs font-semibold mb-1 opacity-70">
                       {msg.role === "user" ? "You" : companionName}
