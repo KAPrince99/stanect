@@ -53,7 +53,7 @@ export default function Convo({ id }: { id: string }) {
   const { user } = useUser();
   const [isDesktop, setIsDesktop] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
-  const [hasHydrated, setHasHydrated] = useState(false); // Hydration fix
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   const popSoundRef = useRef<HTMLAudioElement | null>(null);
   const sessionStartTimeRef = useRef<number | null>(null);
@@ -69,7 +69,6 @@ export default function Convo({ id }: { id: string }) {
     setShowEndModal,
   } = useConvoStore();
 
-  // Fix hydration mismatch by waiting for useEffect
   useEffect(() => {
     setHasHydrated(true);
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);

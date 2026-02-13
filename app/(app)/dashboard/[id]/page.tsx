@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import ConvoWrapper from "@/components/ui/ConvoWrapper";
 import { Metadata } from "next";
 import { createSupabaseClient } from "@/lib/supabase";
-import { isTrialExpired } from "@/lib/plan-utils"; // The helper we discussed
+import { isTrialExpired } from "@/lib/plan-utils";
 import ConvoGuard from "@/components/ui/convoGuard";
 
 export const metadata: Metadata = {
