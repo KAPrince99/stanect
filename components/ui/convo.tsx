@@ -11,6 +11,7 @@ import { fetchSubscriptionStatus } from "@/app/(app)/actions/subs";
 import { vapiSdk } from "@/lib/vapiSdk";
 import { Zap, Radio, X } from "lucide-react";
 import { useConvoStore } from "@/store/use-convo-store";
+import useSound from "use-sound";
 
 import ConvoBlock from "./convoBlock";
 import TranscriptBlock from "./TranscriptBlock";
@@ -55,12 +56,11 @@ export default function Convo({ id }: { id: string }) {
   const [showTranscript, setShowTranscript] = useState(false);
   const [hasHydrated, setHasHydrated] = useState(false);
 
-  const popSoundRef = useRef<HTMLAudioElement | null>(null);
+  // UseRef for start time stays, but popSoundRef is removed
   const sessionStartTimeRef = useRef<number | null>(null);
 
   const {
     callStatus,
-    timeLeft,
     showEndModal,
     setCallStatus,
     addMessage,
@@ -69,17 +69,18 @@ export default function Convo({ id }: { id: string }) {
     setShowEndModal,
   } = useConvoStore();
 
+  // Initialize sound with interrupt to handle rapid messages
+  const [playPop] = useSound("/sounds/bubble-pop.mp3", {
+    volume: 0.1,
+    interrupt: true,
+  });
+
   useEffect(() => {
     setHasHydrated(true);
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    popSoundRef.current = new Audio("/sounds/bubble-pop.mp3");
-    popSoundRef.current.volume = 0.4;
   }, []);
 
   const { data: companion, isLoading: companionLoading } = useQuery({
@@ -124,9 +125,9 @@ export default function Convo({ id }: { id: string }) {
 
     const handleVapiMessage = (msg: any) => {
       const wasAdded = addMessage(msg);
-      if (wasAdded && popSoundRef.current) {
-        popSoundRef.current.currentTime = 0;
-        popSoundRef.current.play().catch(() => {});
+      // Play sound only if a new message was successfully added to the store
+      if (wasAdded) {
+        playPop();
       }
     };
 
@@ -140,9 +141,9 @@ export default function Convo({ id }: { id: string }) {
       vapiSdk.off("call-end", onCallEnd);
       vapiSdk.off("message", handleVapiMessage);
     };
-  }, [setCallStatus, setMuted, addMessage]);
+    // playPop added to dependency array to ensure the listener uses the latest function reference
+  }, [setCallStatus, setMuted, addMessage, playPop]);
 
-  // Prevent rendering until local storage is loaded
   if (!hasHydrated || companionLoading || subLoading) return <LoadingSpinner />;
   if (!companion) return null;
 
