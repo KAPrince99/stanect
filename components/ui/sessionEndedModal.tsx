@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Crown, LayoutDashboard, Zap, RefreshCw } from "lucide-react";
+import { memo } from "react";
 
 interface SessionEndedModalProps {
   showEndModal: boolean;
@@ -17,7 +18,7 @@ interface SessionEndedModalProps {
   userPlan: "free" | "pro" | "king";
 }
 
-export default function SessionEndedModal({
+function SessionEndedModal({
   showEndModal,
   setShowEndModal,
   userPlan,
@@ -94,3 +95,4 @@ export default function SessionEndedModal({
     </Dialog>
   );
 }
+export default memo(SessionEndedModal);

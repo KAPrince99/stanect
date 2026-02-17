@@ -4,12 +4,9 @@ import { Button } from "@/components/ui/button";
 import { CompanionProps } from "@/types/types";
 import { motion } from "framer-motion";
 import LordIcon from "./lordIcon";
+import { memo } from "react";
 
-export default function CompanionCard({
-  companion,
-}: {
-  companion: CompanionProps;
-}) {
+function CompanionCard({ companion }: { companion: CompanionProps }) {
   return (
     <motion.article
       whileHover={{ y: -6 }}
@@ -84,3 +81,4 @@ export default function CompanionCard({
     </motion.article>
   );
 }
+export default memo(CompanionCard);

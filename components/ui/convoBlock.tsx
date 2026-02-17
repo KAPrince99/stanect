@@ -1,41 +1,40 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
-import { Globe } from "./Globe";
+
 import TranscriptToggle from "./TranscriptToggle";
 import LordIcon from "./lordIcon";
 import { useConvoStore } from "@/store/use-convo-store";
 import { vapiSdk } from "@/lib/vapiSdk";
-import { getSingleCompanion } from "@/app/(app)/actions/actions";
-import { useQuery } from "@tanstack/react-query";
+import { memo } from "react";
+import { CompanionProps } from "@/types/types";
+import dynamic from "next/dynamic";
+
+const GlobeCanvas = dynamic(() => import("./GlobeCanvas"), {
+  ssr: false,
+});
 
 interface Props {
   isDesktop: boolean;
-  companionName: string;
+  companion: CompanionProps;
   id: string;
   currentStatus: { label: string; icon: JSX.Element; color: string };
   setShowTranscript: (value: boolean) => void;
 }
 
-export default function ConvoBlock({
+function ConvoBlock({
   isDesktop,
-  companionName,
+  companion,
   id,
   currentStatus,
   setShowTranscript,
 }: Props) {
   const { callStatus, isMuted, setMuted, timeLeft, startCall, endCall } =
     useConvoStore();
-
-  const { data: companion } = useQuery({
-    queryKey: ["companions", id],
-    queryFn: () => getSingleCompanion(id),
-  });
 
   const isCallInProgress =
     callStatus === "ACTIVE" || callStatus === "CONNECTING";
@@ -62,7 +61,7 @@ export default function ConvoBlock({
           </span>
         </div>
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent tracking-tighter">
-          {companionName}
+          {companion.companion_name || "Your AI Companion"}
         </h1>
       </motion.div>
 
@@ -70,18 +69,10 @@ export default function ConvoBlock({
         className="w-full max-w-2xl mx-auto rounded-3xl overflow-hidden my-4"
         style={{ height: "300px" }}
       >
-        <Canvas camera={{ position: [8, 8, 8], fov: 50 }} className="h-full">
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[5, 5, 5]} />
-          <Globe isActive={callStatus === "ACTIVE"} />
-          <OrbitControls
-            enableZoom={false}
-            autoRotate={!isCallInProgress}
-            autoRotateSpeed={0.5}
-            enableDamping
-            dampingFactor={0.1}
-          />
-        </Canvas>
+        <GlobeCanvas
+          callStatus={callStatus}
+          isCallInProgress={isCallInProgress}
+        />
       </div>
 
       <div className="flex justify-center items-center gap-6 py-8 z-20 shrink-0">
@@ -92,7 +83,7 @@ export default function ConvoBlock({
             className="px-8 py-3 text-lg font-bold bg-green-500 hover:bg-[#e88c30] transition-colors flex items-center shadow-lg shadow-indigo-600/50 cursor-pointer"
             onClick={() =>
               companion?.assistant_id &&
-              startCall(companion.assistant_id, companion.duration || 2)
+              startCall(companion.assistant_id, Number(companion.duration) || 2)
             }
             disabled={callStatus === "CONNECTING"}
           >
@@ -140,3 +131,4 @@ export default function ConvoBlock({
     </div>
   );
 }
+export default memo(ConvoBlock);

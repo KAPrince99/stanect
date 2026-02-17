@@ -1,7 +1,7 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, memo } from "react";
 import { Button } from "./button";
 import LordIcon from "./lordIcon";
 import { useConvoStore } from "@/store/use-convo-store";
@@ -13,7 +13,7 @@ interface Props {
   companionName: string;
 }
 
-export default function TranscriptBlock({
+function TranscriptBlock({
   showTranscript,
   setShowTranscript,
   isDesktop,
@@ -88,3 +88,4 @@ export default function TranscriptBlock({
     </AnimatePresence>
   );
 }
+export default memo(TranscriptBlock);

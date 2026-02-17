@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -50,7 +50,7 @@ const statusConfig = {
   },
 };
 
-export default function Convo({ id }: { id: string }) {
+function Convo({ id }: { id: string }) {
   const { user } = useUser();
   const [isDesktop, setIsDesktop] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
@@ -86,6 +86,7 @@ export default function Convo({ id }: { id: string }) {
   const { data: companion, isLoading: companionLoading } = useQuery({
     queryKey: ["companions", id],
     queryFn: () => getSingleCompanion(id),
+    staleTime: Infinity,
   });
 
   const { data: subData, isLoading: subLoading } = useQuery({
@@ -150,7 +151,7 @@ export default function Convo({ id }: { id: string }) {
   return (
     <main className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:backdrop-blur-2xl md:bg-white/10 md:border md:border-white/20 md:rounded-2xl md:shadow-2xl">
       <ConvoBlock
-        companionName={companion.companion_name || "AI"}
+        companion={companion}
         id={id}
         currentStatus={statusConfig[callStatus]}
         setShowTranscript={setShowTranscript}
@@ -170,3 +171,4 @@ export default function Convo({ id }: { id: string }) {
     </main>
   );
 }
+export default memo(Convo);

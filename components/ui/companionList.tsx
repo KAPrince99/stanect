@@ -7,8 +7,9 @@ import { useUser } from "@clerk/nextjs";
 import CompanionCard from "./companionCard";
 import Fresh from "./Fresh";
 import LoadingSpinner from "./LoadingSpinner";
+import { memo, useMemo } from "react";
 
-export default function CompanionList({ userId }: { userId: string }) {
+function CompanionList({ userId }: { userId: string }) {
   const { user, isLoaded: userLoaded } = useUser();
 
   const { data: companions = [], isLoading } = useQuery({
@@ -17,6 +18,11 @@ export default function CompanionList({ userId }: { userId: string }) {
     enabled: !!userId && userLoaded,
     staleTime: 1000 * 60 * 5,
   });
+
+  const welcomeUser = useMemo(
+    () => user?.firstName || "King",
+    [user?.firstName],
+  );
 
   if (!userLoaded || isLoading) {
     return <LoadingSpinner />;
@@ -30,7 +36,7 @@ export default function CompanionList({ userId }: { userId: string }) {
         className="text-center mb-10"
       >
         <h1 className="text-3xl md:text-5xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent lg:-ml-35">
-          Welcome back, {user?.firstName || "King"}.
+          Welcome back, {welcomeUser}.
         </h1>
         <p className="mt-4 text-white/70 text-md md:text-lg lg:-ml-35">
           {companions.length === 0
@@ -65,3 +71,5 @@ export default function CompanionList({ userId }: { userId: string }) {
     </div>
   );
 }
+
+export default memo(CompanionList);

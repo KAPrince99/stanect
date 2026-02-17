@@ -152,3 +152,14 @@ export async function updateUserSeconds(secondsUsed: number) {
 
   return { success: true };
 }
+
+export async function fetchUserNecessities(userId: string) {
+  const supabase = createSupabaseClient();
+  const { data: userNeccesities, error } = await supabase
+    .from("users")
+    .select("plan, created_at, daily_seconds_used")
+    .eq("clerk_user_id", userId)
+    .single();
+  if (error) throw new Error(error.message);
+  return userNeccesities;
+}
