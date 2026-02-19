@@ -9,113 +9,162 @@ import UpdateProfile from "./updateProfile";
 import Image from "next/image";
 import UpdatePlan from "./updatePlan";
 import LordIcon from "./lordIcon";
+import { memo, useMemo, useState, useEffect } from "react";
 
-export default function ProfileContainer() {
-  const { user } = useUser();
+function ProfileContainer() {
+  const { user, isLoaded } = useUser();
+  const userId = user?.id;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["users", user?.id],
-    queryFn: () => getUser(user?.id as string),
-    enabled: !!user?.id,
+    queryKey: ["users", userId],
+    queryFn: () => getUser(userId as string),
+    enabled: !!userId && isLoaded,
+    staleTime: Infinity,
   });
 
-  if (isLoading) return <LoadingSpinner />;
+  /* ---------------- Avatar Source of Truth ---------------- */
 
-  const plan = data?.plan ?? "free";
-  const joinedDate = user?.createdAt
-    ? format(new Date(user.createdAt), "dd MMMM yyyy")
-    : "Unknown";
-  const userPlan = plan?.trim().split(" ")[0];
+  const avatar = useMemo(() => {
+    if (data?.profile_picture) return data.profile_picture;
+    if (user?.imageUrl) return user.imageUrl;
+    return "/avatars/avatar_0.jpg";
+  }, [data?.profile_picture, user?.imageUrl]);
 
-  const userFullName = data?.name || user?.fullName || "User";
-  const userEmail =
-    data?.email || user?.emailAddresses[0]?.emailAddress || "N/A";
-  const userCountry =
-    data?.country || (user?.publicMetadata?.country as string) || "Not Set";
-  const userFirstNameInitial = userFullName[0] || "U";
-  const totalSeconds = data?.total_lifetime_seconds || 0;
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
+  const [imgSrc, setImgSrc] = useState(avatar);
 
-  const hDisplay =
-    hours > 0 ? `${new Intl.NumberFormat().format(hours)} hrs ` : "";
-  const mDisplay = `${minutes} min `;
-  const sDisplay = `${seconds} secs`;
+  /* SAFE sync */
+  useEffect(() => {
+    setImgSrc(avatar);
+  }, [avatar]);
 
-  const displayTime = `${hDisplay}${mDisplay}${sDisplay}`;
+  /* ---------------- Derived Values ---------------- */
 
-  const bucket = [
-    {
-      icon: (
-        <LordIcon
-          src="https://cdn.lordicon.com/gtvaxhwv.json"
-          trigger="loop"
-          colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#e88c30,quaternary:#e88c30"
-          height={35}
-          width={35}
-        />
-      ),
-      label: "Email",
-      value: userEmail,
-    },
-    {
-      icon: (
-        <LordIcon
-          src="https://cdn.lordicon.com/tyntlpjn.json"
-          trigger="loop"
-          colors="primary:#ffffff,secondary:#e88c30"
-          height={35}
-          width={35}
-        />
-      ),
-      label: "Location",
-      value: userCountry,
-    },
-    {
-      icon: (
-        <LordIcon
-          src="https://cdn.lordicon.com/laobovmg.json"
-          trigger="loop"
-          colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#e88c30,quaternary:#e88c30,quinary:#f9c9c0"
-          height={35}
-          width={35}
-        />
-      ),
-      label: "Member Since",
-      value: joinedDate,
-    },
-    {
-      icon: (
-        <LordIcon
-          src="https://cdn.lordicon.com/zjuyeglr.json"
-          trigger="loop"
-          colors="primary:#e88c30,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30"
-          height={35}
-          width={35}
-        />
-      ),
-      label: "Total Talk Time",
-      value: `${displayTime}`,
-    },
-  ];
+  const joinedDate = useMemo(() => {
+    if (!user?.createdAt) return "Unknown";
+    return format(new Date(user.createdAt), "dd MMMM yyyy");
+  }, [user?.createdAt]);
+
+  const clerkEmail = user?.primaryEmailAddress?.emailAddress;
+
+  const userEmail = useMemo(
+    () => data?.email || clerkEmail || "N/A",
+    [data?.email, clerkEmail],
+  );
+
+  const userFullName = useMemo(
+    () => data?.name || user?.fullName || "User",
+    [data?.name, user?.fullName],
+  );
+
+  const userCountry = useMemo(
+    () =>
+      data?.country || (user?.publicMetadata?.country as string) || "Not Set",
+    [data?.country, user?.publicMetadata?.country],
+  );
+
+  const userFirstNameInitial = userFullName.charAt(0);
+
+  const userPlan = useMemo(
+    () => (data?.plan ?? "free").trim().split(" ")[0],
+    [data?.plan],
+  );
+
+  const planLabel = useMemo(() => {
+    if (userPlan === "pro") return "Pro Member";
+    if (userPlan === "king") return "King Member";
+    return "Free Plan";
+  }, [userPlan]);
+
+  const displayTime = useMemo(() => {
+    const totalSeconds = data?.total_lifetime_seconds || 0;
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const hDisplay =
+      hours > 0 ? `${new Intl.NumberFormat().format(hours)} hrs ` : "";
+
+    return `${hDisplay}${minutes} min ${seconds} secs`;
+  }, [data?.total_lifetime_seconds]);
+
+  const bucket = useMemo(
+    () => [
+      {
+        icon: (
+          <LordIcon
+            src="https://cdn.lordicon.com/gtvaxhwv.json"
+            trigger="loop"
+            colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#e88c30,quaternary:#e88c30"
+            height={35}
+            width={35}
+          />
+        ),
+        label: "Email",
+        value: userEmail,
+      },
+      {
+        icon: (
+          <LordIcon
+            src="https://cdn.lordicon.com/tyntlpjn.json"
+            trigger="loop"
+            colors="primary:#ffffff,secondary:#e88c30"
+            height={35}
+            width={35}
+          />
+        ),
+        label: "Location",
+        value: userCountry,
+      },
+      {
+        icon: (
+          <LordIcon
+            src="https://cdn.lordicon.com/laobovmg.json"
+            trigger="loop"
+            colors="primary:#e88c30"
+            height={35}
+            width={35}
+          />
+        ),
+        label: "Member Since",
+        value: joinedDate,
+      },
+      {
+        icon: (
+          <LordIcon
+            src="https://cdn.lordicon.com/zjuyeglr.json"
+            trigger="loop"
+            colors="primary:#e88c30"
+            height={35}
+            width={35}
+          />
+        ),
+        label: "Total Talk Time",
+        value: displayTime,
+      },
+    ],
+    [userEmail, userCountry, joinedDate, displayTime],
+  );
+
+  if (!isLoaded || isLoading) return <LoadingSpinner />;
 
   return (
     <div className="w-full max-w-5xl">
       <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden mt-5 md:backdrop-blur-2xl md:bg-white/10 md:border md:border-white/20 md:rounded-3xl md:shadow-2xl">
+        {/* LEFT */}
         <div className="grid relative p-8 md:p-10 text-center border-b border-gray-700/50">
           <div className="grid grid-cols-[1fr_3fr] gap-4 md:place-items-center md:px-10 relative z-10">
-            {/* Avatar Section */}
-            <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-linear-to-br from-amber-400 to-orange-600 p-1 shadow-xl mb-4 md:mb-6">
-              <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center text-white text-4xl md:text-5xl font-bold overflow-hidden relative">
-                {data?.profile_picture ? (
+            {/* Avatar */}
+            <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-linear-to-br from-amber-400 to-orange-600 p-1 shadow-xl">
+              <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center text-white text-4xl font-bold overflow-hidden relative">
+                {imgSrc ? (
                   <Image
-                    src={data.profile_picture}
+                    src={imgSrc}
                     alt={userFullName}
                     fill
-                    sizes="(max-width: 768px) 112px, 128px"
+                    sizes="128px"
                     className="object-cover"
-                    priority
+                    onError={() => setImgSrc("/avatars/avatar_0.jpg")}
                   />
                 ) : (
                   <span>{userFirstNameInitial}</span>
@@ -123,16 +172,14 @@ export default function ProfileContainer() {
               </div>
             </div>
 
-            <div className="flex flex-col items-start w-full space-y-2 lg:space-y-4">
-              <h1 className="text-xl md:text-2xl font-extrabold text-white mb-2">
+            {/* Info */}
+            <div className="flex flex-col items-start space-y-2">
+              <h1 className="text-xl md:text-2xl font-extrabold text-white">
                 {userFullName}
               </h1>
-              <p className="text-gray-400 text-base md:text-lg font-medium flex items-center justify-center gap-2">
-                {userPlan === "pro"
-                  ? "Pro Member"
-                  : userPlan === "king"
-                    ? "King Member"
-                    : "Free Plan"}
+
+              <p className="text-gray-400 text-base md:text-lg font-medium flex items-center gap-2">
+                {planLabel}
                 {userPlan === "free" && (
                   <LordIcon
                     src="https://cdn.lordicon.com/vgdksfqv.json"
@@ -164,21 +211,17 @@ export default function ProfileContainer() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 mt-10 md:mt-0 items-start justify-center">
+          <div className="flex gap-4 mt-10 justify-center">
             <UpdatePlan />
             <UpdateProfile data={data} />
           </div>
         </div>
 
+        {/* RIGHT */}
         <div className="p-8 md:p-10">
-          <div className="grid grid-cols-1 md:grid-rows-4 gap-6 max-w-3xl mx-auto">
+          <div className="grid gap-6 max-w-3xl mx-auto">
             {bucket.map((item) => (
-              <InfoItem
-                key={item.label}
-                icon={item.icon}
-                label={item.label}
-                value={item.value}
-              />
+              <InfoItem key={item.label} {...item} />
             ))}
           </div>
         </div>
@@ -186,3 +229,5 @@ export default function ProfileContainer() {
     </div>
   );
 }
+
+export default memo(ProfileContainer);

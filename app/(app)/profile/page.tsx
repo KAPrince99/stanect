@@ -1,11 +1,10 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import ProfileContainer from "@/components/ui/ProfileContainer";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
 
 import type { Metadata } from "next";
-
+import ProfileContainer from "@/components/ui/ProfileContainer";
+import { Suspense } from "react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -19,9 +18,7 @@ export const metadata: Metadata = {
 
 export default async function ProfilePage() {
   const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
-  }
+  if (!user) redirect("/sign-in");
 
   return (
     <main className="min-h-screen  overflow-hidden relative mb-30 md:mb-0">

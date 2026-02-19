@@ -4,23 +4,39 @@ import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/app/(app)/actions/actions";
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 export default function UserImageContainer() {
   const { user, isLoaded } = useUser();
+
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const [imgSrc, setImgSrc] = useState<string>("/avatars/avatar_0.jpg");
+
+  const userId = user?.id;
 
   const { data: supabaseUser, isFetching } = useQuery({
-    queryKey: ["users", user?.id],
-    queryFn: () => getUser(user?.id as string),
-    enabled: !!user?.id,
+    queryKey: ["users", userId],
+    queryFn: () => getUser(userId!),
+    enabled: !!userId && isLoaded,
+    staleTime: Infinity,
   });
 
-  if (!isLoaded)
-    return <div className="h-8 w-8 rounded-full bg-gray-800 animate-pulse" />;
+  const avatar = useMemo(() => {
+    if (supabaseUser?.profile_picture) return supabaseUser.profile_picture;
+    if (user?.imageUrl) return user.imageUrl;
+    return "/avatars/avatar_0.jpg";
+  }, [supabaseUser?.profile_picture, user?.imageUrl]);
 
-  const avatar =
-    supabaseUser?.profile_picture || user?.imageUrl || "/avatars/avatar_0.jpg";
+  useEffect(() => {
+    setIsImageLoading(true);
+    setImgSrc(avatar);
+  }, [avatar]);
+
+  if (!isLoaded) {
+    return (
+      <div className="h-8 w-8 rounded-full bg-gray-800 animate-pulse shrink-0" />
+    );
+  }
 
   return (
     <div
@@ -31,21 +47,23 @@ export default function UserImageContainer() {
       `}
     >
       <Image
-        key={avatar}
-        src={avatar}
+        src={imgSrc}
         alt="User avatar"
         fill
+        sizes="32px"
         className={`
-          object-cover transition-all duration-500 ease-in-out
+          object-cover transition-all duration-500 ease-out
           ${
             isImageLoading
               ? "scale-110 blur-sm grayscale"
               : "scale-100 blur-0 grayscale-0"
           }
         `}
-        sizes="32px"
-        onLoad={() => setIsImageLoading(false)}
         onLoadingComplete={() => setIsImageLoading(false)}
+        onError={() => {
+          setImgSrc("/avatars/avatar_0.jpg");
+          setIsImageLoading(false);
+        }}
         priority
       />
 

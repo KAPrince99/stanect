@@ -12,33 +12,66 @@ import {
   AlertDialogFooter,
 } from "./alert-dialog";
 import { Button } from "./button";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, memo, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { updateProfile } from "@/app/(app)/actions/update";
 import { useQueryClient } from "@tanstack/react-query";
 import { Userprops } from "@/types/types";
 import LordIcon from "./lordIcon";
+import { useUser } from "@clerk/nextjs";
+import LoadingSpinner from "./LoadingSpinner";
+import { Loader2 } from "lucide-react";
 
-export default function UpdateProfile({ data }: { data: Userprops }) {
+function UpdateProfile({ data }: { data: Userprops }) {
   const queryClient = useQueryClient();
+  const { user } = useUser();
+
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const previewBlobRef = useRef<string | null>(null);
 
   const [open, setOpen] = useState(false);
-
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    data?.profile_picture || null
+    data?.profile_picture || null,
   );
   const [updatedName, setUpdatedName] = useState(data?.name || "");
   const [updatedLocation, setUpdatedLocation] = useState(data?.country || "");
   const [loading, setLoading] = useState(false);
 
+  /* ---------------- Sync state when dialog opens ---------------- */
+
+  useEffect(() => {
+    if (open) {
+      setUpdatedName(data?.name || "");
+      setUpdatedLocation(data?.country || "");
+      setPreviewUrl(data?.profile_picture || null);
+      setImageFile(null);
+    }
+  }, [open, data]);
+
+  /* ---------------- Cleanup blob preview ---------------- */
+
+  useEffect(() => {
+    return () => {
+      if (previewBlobRef.current) {
+        URL.revokeObjectURL(previewBlobRef.current);
+      }
+    };
+  }, []);
+
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+    if (!file) return;
+
+    if (previewBlobRef.current) {
+      URL.revokeObjectURL(previewBlobRef.current);
     }
+
+    const blob = URL.createObjectURL(file);
+    previewBlobRef.current = blob;
+
+    setImageFile(file);
+    setPreviewUrl(blob);
   };
 
   const handleContinue = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -46,6 +79,7 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
 
     try {
       setLoading(true);
+
       const formData = new FormData();
       formData.append("name", updatedName);
       formData.append("country", updatedLocation);
@@ -53,9 +87,10 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
 
       await updateProfile(formData, data?.profile_picture);
 
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
-
-      console.log("✅ Profile updated");
+      /* precise invalidation */
+      await queryClient.invalidateQueries({
+        queryKey: ["users", user?.id],
+      });
 
       setOpen(false);
     } catch (err) {
@@ -72,7 +107,7 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
           <LordIcon
             src="https://cdn.lordicon.com/cbtlerlm.json"
             trigger="loop"
-            colors="primary:#ffffff,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30,quinary:#e88c30"
+            colors="primary:#ffffff,secondary:#e88c30"
             height={20}
             width={20}
           />
@@ -98,6 +133,7 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
             disabled={loading}
           />
 
+          {/* Avatar */}
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-800 relative">
               {previewUrl ? (
@@ -114,93 +150,66 @@ export default function UpdateProfile({ data }: { data: Userprops }) {
                 </div>
               )}
             </div>
+
             <Button
               type="button"
               disabled={loading}
-              className="bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8] text-white"
               onClick={() => imageInputRef.current?.click()}
             >
               Change Photo
             </Button>
           </div>
 
-          <div className="flex items-center justify-around md:justify-start gap-8">
+          {/* Name */}
+          <div className="flex items-center gap-4">
             <LordIcon
               src="https://cdn.lordicon.com/hhljfoaj.json"
               trigger="loop"
-              colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30"
-              height={30}
-              width={30}
-              className="md:ml-4"
+              colors="primary:#e88c30"
+              height={28}
+              width={28}
             />
             <input
               value={updatedName}
               disabled={loading}
               onChange={(e) => setUpdatedName(e.target.value)}
               placeholder="Name"
-              className="bg-transparent border-2 border-bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8] p-2 rounded-md focus:outline-none"
+              className="bg-transparent border border-white/20 p-2 rounded-md focus:outline-none"
             />
           </div>
 
-          <div className="flex items-center justify-around md:justify-start gap-8">
+          {/* Location */}
+          <div className="flex items-center gap-4">
             <LordIcon
               src="https://cdn.lordicon.com/tyntlpjn.json"
               trigger="loop"
               colors="primary:#ffffff,secondary:#e88c30"
-              height={30}
-              width={30}
-              className="md:ml-4"
+              height={28}
+              width={28}
             />
             <input
               value={updatedLocation}
               disabled={loading}
               onChange={(e) => setUpdatedLocation(e.target.value)}
               placeholder="Location"
-              className="bg-transparent border-2 border-bg-linear-to-br from-[#0b1a36] via-[#0f2a5c] to-[#1e4ea8] p-2 rounded-md focus:outline-none "
+              className="bg-transparent border border-white/20 p-2 rounded-md focus:outline-none"
             />
           </div>
         </div>
 
-        <AlertDialogFooter className="flex flex-row justify-end">
-          {!loading && (
-            <AlertDialogCancel disabled={loading} className="hover:bg-white">
-              <LordIcon
-                src="https://cdn.lordicon.com/ueoydrft.json"
-                trigger="loop"
-                colors="primary:#ffffff,secondary:#e83a30,tertiary:#ffffff"
-                height={50}
-                width={50}
-              />
-            </AlertDialogCancel>
-          )}
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
 
           <AlertDialogAction
-            isPending={loading}
             onClick={handleContinue}
-            className="bg-white flex items-center gap-2 hover:bg-white active:bg-orange-500 text-black px-6"
+            className="bg-black text-white px-6"
           >
-            {loading ? (
-              <LordIcon
-                src="https://cdn.lordicon.com/veoztjjj.json"
-                trigger="loop"
-                colors="primary:#e88c30,secondary:#ffffff"
-                height={35}
-                width={35}
-              />
-            ) : (
-              <>
-                <LordIcon
-                  src="https://cdn.lordicon.com/rnbuzxxk.json"
-                  trigger="loop"
-                  colors="primary:#ffffff,secondary:#2ca58d"
-                  height={35}
-                  width={35}
-                />
-              </>
-            )}
+            {loading ? <Loader2 className="animate-spin" /> : "Save"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
+
+export default memo(UpdateProfile);
