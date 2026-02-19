@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, memo } from "react";
+import { useEffect, useState, useRef, memo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -8,16 +8,18 @@ import {
   updateUserSeconds,
 } from "@/app/(app)/actions/actions";
 import { fetchSubscriptionStatus } from "@/app/(app)/actions/subs";
-import { vapiSdk } from "@/lib/vapiSdk";
+import { getVapiSdk } from "@/lib/vapiSdk";
 import { Zap, Radio, X } from "lucide-react";
 import { useConvoStore } from "@/store/use-convo-store";
 import useSound from "use-sound";
+import throttle from "lodash.throttle";
 
 import ConvoBlock from "./convoBlock";
 import TranscriptBlock from "./TranscriptBlock";
 import LoadingSpinner from "./LoadingSpinner";
 import LordIcon from "./lordIcon";
 import SessionEndedModal from "./sessionEndedModal";
+import { isCallOwner } from "@/lib/tabCallLock";
 
 const statusConfig = {
   CONNECTING: {
@@ -56,8 +58,9 @@ function Convo({ id }: { id: string }) {
   const [showTranscript, setShowTranscript] = useState(false);
   const [hasHydrated, setHasHydrated] = useState(false);
 
-  // UseRef for start time stays, but popSoundRef is removed
   const sessionStartTimeRef = useRef<number | null>(null);
+
+  const vapiRef = useRef<any>(null);
 
   const {
     callStatus,
@@ -69,11 +72,26 @@ function Convo({ id }: { id: string }) {
     setShowEndModal,
   } = useConvoStore();
 
-  // Initialize sound with interrupt to handle rapid messages
-  const [playPop] = useSound("/sounds/bubble-pop.mp3", {
+  const [playSound] = useSound("/sounds/bubble-pop.mp3", {
     volume: 0.1,
     interrupt: true,
   });
+
+  const playPop = useCallback(
+    throttle(() => playSound(), 300),
+    [playSound],
+  );
+
+  useEffect(() => {
+    const handler = () => {
+      if (!isCallOwner()) {
+        useConvoStore.setState({ callStatus: "INACTIVE" });
+      }
+    };
+
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
 
   useEffect(() => {
     setHasHydrated(true);
@@ -104,8 +122,10 @@ function Convo({ id }: { id: string }) {
     return () => clearInterval(interval);
   }, [callStatus, tickTimer]);
 
-  // Vapi Event Sync
+  // Lazy-loaded Vapi event sync
   useEffect(() => {
+    let vapi: any;
+
     const onCallStart = () => {
       setCallStatus("ACTIVE");
       setShowTranscript(true);
@@ -115,35 +135,46 @@ function Convo({ id }: { id: string }) {
     const onCallEnd = async () => {
       setCallStatus("INACTIVE");
       setMuted(false);
+
       if (sessionStartTimeRef.current) {
         const durationSeconds = Math.floor(
           (Date.now() - sessionStartTimeRef.current) / 1000,
         );
-        if (durationSeconds > 0) await updateUserSeconds(durationSeconds);
+
+        if (durationSeconds > 0) {
+          await updateUserSeconds(durationSeconds);
+        }
+
         sessionStartTimeRef.current = null;
       }
     };
 
     const handleVapiMessage = (msg: any) => {
       const wasAdded = addMessage(msg);
-      // Play sound only if a new message was successfully added to the store
-      if (wasAdded) {
-        playPop();
-      }
+      if (wasAdded) playPop();
     };
 
-    vapiSdk.on("call-start", onCallStart);
-    vapiSdk.on("call-end", onCallEnd);
-    vapiSdk.on("message", handleVapiMessage);
-    vapiSdk.on("error", () => setCallStatus("ERROR"));
+    const setup = async () => {
+      const vapi = await getVapiSdk();
+      vapiRef.current = vapi;
+
+      vapi.on("call-start", onCallStart);
+      vapi.on("call-end", onCallEnd);
+      vapi.on("message", handleVapiMessage);
+      vapi.on("error", () => setCallStatus("ERROR"));
+    };
+
+    setup();
 
     return () => {
-      vapiSdk.off("call-start", onCallStart);
-      vapiSdk.off("call-end", onCallEnd);
-      vapiSdk.off("message", handleVapiMessage);
+      const vapi = vapiRef.current;
+      if (!vapi) return;
+
+      vapi.off("call-start", onCallStart);
+      vapi.off("call-end", onCallEnd);
+      vapi.off("message", handleVapiMessage);
     };
-    // playPop added to dependency array to ensure the listener uses the latest function reference
-  }, [setCallStatus, setMuted, addMessage, playPop]);
+  }, [addMessage, playPop, setCallStatus, setMuted]);
 
   if (!hasHydrated || companionLoading || subLoading) return <LoadingSpinner />;
   if (!companion) return null;
@@ -171,4 +202,5 @@ function Convo({ id }: { id: string }) {
     </main>
   );
 }
+
 export default memo(Convo);
