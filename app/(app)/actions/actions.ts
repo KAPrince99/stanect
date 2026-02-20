@@ -159,7 +159,7 @@ export async function fetchUserNecessities(userId: string) {
     .from("users")
     .select("plan, created_at, daily_seconds_used")
     .eq("clerk_user_id", userId)
-    .single();
+    .maybeSingle();
   if (error) throw new Error(error.message);
   return userNeccesities;
 }
