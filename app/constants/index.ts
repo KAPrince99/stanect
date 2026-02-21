@@ -1,3 +1,58 @@
+export const TIERS = [
+  {
+    key: "free",
+    name: "Free",
+    monthly: 0,
+    yearly: 0,
+    description: "Perfect to get started",
+    features: [
+      "7-day trial",
+      "1 Companion max",
+      "6-Minute daily total credit",
+      "2-Minute max per session",
+      "Daily reset at midnight",
+      "Standard response speed",
+      "Watermarked sessions",
+    ],
+    cta: "Stay Free",
+    popular: false,
+  },
+  {
+    key: "pro",
+    name: "Pro",
+    monthly: 9,
+    yearly: 90,
+    description: "For users who want more",
+    features: [
+      "Unlimited companions",
+      "15-Minute session length",
+      "Unlimited daily sessions",
+      "Fast AI response speed",
+      "Extended conversation memory",
+      "Premium avatars (No watermarks)",
+    ],
+    cta: "Go Pro",
+    popular: true,
+  },
+  {
+    key: "king",
+    name: "King",
+    monthly: 49,
+    yearly: 490,
+    description: "Rule the conversation",
+    features: [
+      "Everything in Pro",
+      "60-Minute session length",
+      "Ultra-low latency (Instant AI)",
+      "Infinite context memory",
+      "Exclusive ultra-realistic avatars",
+      "VIP personal onboarding",
+    ],
+    cta: "Claim Your Throne",
+    crown: true,
+  },
+];
+
 export const voices = {
   male: { casual: "2BJW5coyhAzSr8STdHbE", formal: "c6SfcYrb2t09NHXiT80T" },
   female: { casual: "ZIlrSGI4jZqobxRKprJz", formal: "sarah" },

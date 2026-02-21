@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Check, Zap, Crown, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -21,68 +21,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-export const TIERS = [
-  {
-    key: "free",
-    name: "Free",
-    monthly: 0,
-    yearly: 0,
-    description: "Perfect to get started",
-    features: [
-      "7-day trial",
-      "1 Companion max",
-      "6-Minute daily total credit",
-      "2-Minute max per session",
-      "Daily reset at midnight",
-      "Standard response speed",
-      "Watermarked sessions",
-    ],
-    cta: "Stay Free",
-    popular: false,
-  },
-  {
-    key: "pro",
-    name: "Pro",
-    monthly: 9,
-    yearly: 90,
-    description: "For users who want more",
-    features: [
-      "Unlimited companions",
-      "15-Minute session length",
-      "Unlimited daily sessions",
-      "Fast AI response speed",
-      "Extended conversation memory",
-      "Premium avatars (No watermarks)",
-    ],
-    cta: "Go Pro",
-    popular: true,
-  },
-  {
-    key: "king",
-    name: "King",
-    monthly: 49,
-    yearly: 490,
-    description: "Rule the conversation",
-    features: [
-      "Everything in Pro",
-      "60-Minute session length",
-      "Ultra-low latency (Instant AI)",
-      "Infinite context memory",
-      "Exclusive ultra-realistic avatars",
-      "VIP personal onboarding",
-    ],
-    cta: "Claim Your Throne",
-    crown: true,
-  },
-];
+import { TIERS } from "@/app/constants";
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
   animate: { opacity: 1, y: 0 },
 };
 
-export default function PricingPage() {
+function PricingPage() {
   const { user: clerk_user, isLoaded: isClerkLoaded } = useUser();
   const clerk_user_id = clerk_user?.id;
   const router = useRouter();
@@ -320,3 +266,4 @@ export default function PricingPage() {
     </div>
   );
 }
+export default memo(PricingPage);
