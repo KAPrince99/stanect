@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,7 +38,7 @@ interface AvatarFormProps {
   userPlan?: "free" | "pro" | "king"; // Made optional with default
 }
 
-export default function AvatarForm({
+function AvatarForm({
   avatars,
   selectedAvatarId,
   userPlan = "free",
@@ -59,19 +59,43 @@ export default function AvatarForm({
     return 2;
   }, [userPlan]);
 
-  const formSchema = z.object({
-    avatar_id: z.string().min(1, "Please select an avatar"),
-    companion_name: z.string().min(2, "Name must be at least 2 characters"),
-    scene: z.string().min(2, "Scene is required"),
-    voice: z.enum(["male", "female"]),
-    country: z.string().min(1, "Please select a country"),
-    duration: z.coerce
-      .number()
-      .int("Please enter a whole number")
-      .min(1, "Min 1 minute")
-      .max(maxMinutes, `Your ${userPlan} plan limit is ${maxMinutes} mins`),
-  });
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        avatar_id: z.string().min(1, "Please select an avatar"),
 
+        companion_name: z
+          .string()
+          .trim()
+          .min(2, "Name must be at least 2 characters")
+          .max(40, "Name too long"),
+
+        scene: z
+          .string()
+          .trim()
+          .min(2, "Scene is required")
+          .max(120, "Scene too long"),
+
+        voice: z.enum(["male", "female"], {
+          required_error: "Select a voice",
+        }),
+
+        country: z.string().min(1, "Please select a country"),
+
+        duration: z.preprocess(
+          (val) => (val === "" ? undefined : Number(val)),
+          z
+            .number({ invalid_type_error: "Enter a number" })
+            .int("Please enter a whole number")
+            .min(1, "Min 1 minute")
+            .max(
+              maxMinutes,
+              `Your ${userPlan} plan limit is ${maxMinutes} mins`,
+            ),
+        ),
+      }),
+    [maxMinutes, userPlan],
+  );
   type FormData = z.infer<typeof formSchema>;
 
   const form = useForm<FormData>({
@@ -346,3 +370,4 @@ function SelectField({ label, icon, value, onChange, children }: any) {
     </div>
   );
 }
+export default memo(AvatarForm);

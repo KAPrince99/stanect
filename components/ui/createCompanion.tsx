@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import DesktopAvatarSelection from "./desktopAvatarSelection";
 import AvatarForm from "./avatarForm";
 import { getAvatars } from "@/app/(app)/actions/actions";
@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs"; // Added this
 import LoadingSpinner from "./LoadingSpinner";
 
-export default function CreateCompanion() {
+function CreateCompanion() {
   const { user } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,6 +23,7 @@ export default function CreateCompanion() {
   } = useQuery({
     queryKey: ["avatars"],
     queryFn: getAvatars,
+    staleTime: Infinity,
   });
 
   // Fetch User Subscription Plan
@@ -30,6 +31,7 @@ export default function CreateCompanion() {
     queryKey: ["userPlan", user?.id],
     queryFn: () => fetchSubscriptionStatus(user?.id || ""),
     enabled: !!user?.id,
+    staleTime: Infinity,
   });
 
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(
@@ -86,3 +88,4 @@ export default function CreateCompanion() {
     </div>
   );
 }
+export default memo(CreateCompanion);
