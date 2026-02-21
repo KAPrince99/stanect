@@ -57,8 +57,7 @@ function ProfileContainer() {
   );
 
   const userCountry = useMemo(
-    () =>
-      data?.country || (user?.publicMetadata?.country as string) || "Not Set",
+    () => data?.country || (user?.publicMetadata?.country as string) || "Earth",
     [data?.country, user?.publicMetadata?.country],
   );
 
@@ -213,7 +212,10 @@ function ProfileContainer() {
 
           <div className="flex gap-4 mt-10 justify-center">
             <UpdatePlan />
-            <UpdateProfile data={data} />
+            <UpdateProfile
+              data={data}
+              userFirstNameInitial={userFirstNameInitial}
+            />
           </div>
         </div>
 

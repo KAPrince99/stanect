@@ -19,10 +19,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Userprops } from "@/types/types";
 import LordIcon from "./lordIcon";
 import { useUser } from "@clerk/nextjs";
-import LoadingSpinner from "./LoadingSpinner";
 import { Loader2 } from "lucide-react";
 
-function UpdateProfile({ data }: { data: Userprops }) {
+function UpdateProfile({
+  data,
+  userFirstNameInitial,
+}: {
+  data: Userprops;
+  userFirstNameInitial: string;
+}) {
   const queryClient = useQueryClient();
   const { user } = useUser();
 
@@ -146,7 +151,7 @@ function UpdateProfile({ data }: { data: Userprops }) {
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-gray-500">
-                  No Image
+                  {userFirstNameInitial || "?"}
                 </div>
               )}
             </div>
