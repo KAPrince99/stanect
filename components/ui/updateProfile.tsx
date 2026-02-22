@@ -18,18 +18,19 @@ import { updateProfile } from "@/app/(app)/actions/update";
 import { useQueryClient } from "@tanstack/react-query";
 import { Userprops } from "@/types/types";
 import LordIcon from "./lordIcon";
-import { useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 function UpdateProfile({
   data,
   userFirstNameInitial,
+  user,
 }: {
   data: Userprops;
   userFirstNameInitial: string;
+  user: ReturnType<typeof useUser>["user"];
 }) {
   const queryClient = useQueryClient();
-  const { user } = useUser();
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const previewBlobRef = useRef<string | null>(null);
@@ -150,7 +151,7 @@ function UpdateProfile({
                   unoptimized={previewUrl.startsWith("blob:")}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-gray-500">
+                <div className="flex h-full w-full items-center justify-center text-white text-xl font-bold">
                   {userFirstNameInitial || "?"}
                 </div>
               )}

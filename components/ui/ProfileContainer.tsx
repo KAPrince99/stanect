@@ -214,6 +214,7 @@ function ProfileContainer() {
             <UpdatePlan />
             <UpdateProfile
               data={data}
+              user={user}
               userFirstNameInitial={userFirstNameInitial}
             />
           </div>
