@@ -77,6 +77,7 @@ export default function Navbar() {
                 onClick={() => {
                   setIsLoading(true);
                 }}
+                disabled={isLoading}
                 size="lg"
                 className="hidden md:flex bg-linear-to-r from-amber-400 to-amber-500 
                          hover:from-amber-500 hover:to-amber-600 
@@ -84,13 +85,8 @@ export default function Navbar() {
                          transition-all duration-300 hover:scale-105"
               >
                 <Link href={isSignedIn ? "/dashboard" : "/login"}>
-                  {isLoading ? (
-                    <Loader2 className="animate-spin" />
-                  ) : isSignedIn ? (
-                    "Dashboard"
-                  ) : (
-                    "Start For Free"
-                  )}
+                  {isLoading && <Loader2 className="animate-spin" />}
+                  {isSignedIn ? "Dashboard" : "Start For Free"}
                 </Link>
               </Button>
               <SignedIn>
