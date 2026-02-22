@@ -40,8 +40,12 @@ function UpdateProfile({
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     data?.profile_picture || null,
   );
-  const [updatedName, setUpdatedName] = useState(data?.name || "");
-  const [updatedLocation, setUpdatedLocation] = useState(data?.country || "");
+  const [updatedName, setUpdatedName] = useState(
+    data?.name || user?.fullName || "",
+  );
+  const [updatedLocation, setUpdatedLocation] = useState(
+    data?.country || user?.publicMetadata?.country || "Earth",
+  );
   const [loading, setLoading] = useState(false);
 
   /* ---------------- Sync state when dialog opens ---------------- */
