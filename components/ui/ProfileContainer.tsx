@@ -23,9 +23,13 @@ function ProfileContainer() {
   });
 
   /* ---------------- Avatar Source of Truth ---------------- */
-
   const avatar = useMemo(() => {
-    if (data?.profile_picture) return data.profile_picture;
+    if (data?.profile_picture) {
+      // If it's not a local blob, add a timestamp to bypass browser cache
+      return data.profile_picture.startsWith("blob:")
+        ? data.profile_picture
+        : `${data.profile_picture}?t=${new Date().getTime()}`;
+    }
     if (user?.imageUrl) return user.imageUrl;
     return "/avatars/avatar_0.jpg";
   }, [data?.profile_picture, user?.imageUrl]);
