@@ -2,8 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { Button } from "./button";
-import LordIcon from "./lordIcon";
+import LordIcon from "../lordIcon";
+import { Button } from "../button";
 
 export default function Fresh() {
   return (

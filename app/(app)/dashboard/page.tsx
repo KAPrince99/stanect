@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 
 import { getCompanions } from "@/app/(app)/actions/actions";
-import CompanionList from "@/components/ui/companionList";
+import CompanionList from "@/components/ui/HomeDashboard/companionList";
 
 export default async function Dashboard() {
   const { userId } = await auth();

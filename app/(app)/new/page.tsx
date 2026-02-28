@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { createSupabaseClient } from "@/lib/supabase";
 import UpgradeAlert from "@/components/ui/upgradeAlert";
+import { hasReachedCompanionLimit, getMaxCompanions } from "@/lib/plan-utils";
+import type { PlanType } from "@/lib/plan-limits";
 
 export const metadata: Metadata = {
   title: "Create New Companion – Stanect AI",
@@ -19,7 +21,6 @@ export default async function Page() {
 
   const supabase = createSupabaseClient();
 
-  // Fetch User Plan & Current Count
   const { data: userData } = await supabase
     .from("users")
     .select("plan")
@@ -31,11 +32,10 @@ export default async function Page() {
     .select("*", { count: "exact", head: true })
     .eq("owner_id", userId);
 
-  const plan = (userData?.plan || "free") as "free" | "pro" | "king";
-  const maxAllowed = plan === "free" ? 1 : plan === "pro" ? 10 : 50;
+  const plan = (userData?.plan || "free") as PlanType;
+  const maxAllowed = getMaxCompanions(plan);
 
-  // Check if limit is reached
-  if (count !== null && count >= maxAllowed) {
+  if (count !== null && hasReachedCompanionLimit(count, plan)) {
     return <UpgradeAlert plan={plan} maxAllowed={maxAllowed} />;
   }
 

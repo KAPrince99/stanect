@@ -1,3 +1,5 @@
+import { PLAN_LIMITS, PlanType } from "./plan-limits";
+
 export function isTrialExpired(createdAt: string) {
   const signupDate = new Date(createdAt);
   const now = new Date();
@@ -20,4 +22,15 @@ export function canUserCall(userData: any) {
   }
 
   return { allowed: true };
+}
+
+export function getMaxCompanions(plan: PlanType): number {
+  return PLAN_LIMITS[plan].maxCompanions;
+}
+
+export function hasReachedCompanionLimit(
+  currentCount: number,
+  plan: PlanType
+): boolean {
+  return currentCount >= getMaxCompanions(plan);
 }

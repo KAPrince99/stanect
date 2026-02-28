@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CompanionProps } from "@/types/types";
 import { motion } from "framer-motion";
-import LordIcon from "./lordIcon";
+import LordIcon from "../lordIcon";
 import { memo } from "react";
 
 function CompanionCard({ companion }: { companion: CompanionProps }) {

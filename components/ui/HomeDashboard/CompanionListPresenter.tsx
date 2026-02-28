@@ -1,29 +1,24 @@
 "use client";
-
-import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCompanions } from "@/app/(app)/actions/actions";
-import { useUser } from "@clerk/nextjs";
-import CompanionCard from "./companionCard";
+
+import { CompanionProps } from "@/types/types";
+import LoadingSpinner from "../LoadingSpinner";
+import { memo } from "react";
 import Fresh from "./Fresh";
-import LoadingSpinner from "./LoadingSpinner";
-import { memo, useMemo } from "react";
+import CompanionCard from "./companionCard";
+interface CompanionListPresenterProps {
+  companions: CompanionProps[];
+  welcomeUser: string;
+  userLoaded: boolean;
+  isLoading: boolean;
+}
 
-function CompanionList({ userId }: { userId: string }) {
-  const { user, isLoaded: userLoaded } = useUser();
-
-  const { data: companions = [], isLoading } = useQuery({
-    queryKey: ["companions", userId],
-    queryFn: () => getCompanions(userId),
-    enabled: !!userId && userLoaded,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const welcomeUser = useMemo(
-    () => user?.firstName || "King",
-    [user?.firstName],
-  );
-
+function CompanionListPresenter({
+  companions,
+  welcomeUser,
+  userLoaded,
+  isLoading,
+}: CompanionListPresenterProps) {
   if (!userLoaded || isLoading) {
     return <LoadingSpinner />;
   }
@@ -71,5 +66,4 @@ function CompanionList({ userId }: { userId: string }) {
     </div>
   );
 }
-
-export default memo(CompanionList);
+export default memo(CompanionListPresenter);
