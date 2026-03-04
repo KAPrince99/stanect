@@ -1,4 +1,3 @@
-import CreateCompanion from "@/components/ui/createCompanion";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
@@ -8,6 +7,7 @@ import { createSupabaseClient } from "@/lib/supabase";
 import UpgradeAlert from "@/components/ui/upgradeAlert";
 import { hasReachedCompanionLimit, getMaxCompanions } from "@/lib/plan-utils";
 import type { PlanType } from "@/lib/plan-limits";
+import TabForm from "@/components/ui/NewTabForm/TabForm";
 
 export const metadata: Metadata = {
   title: "Create New Companion – Stanect AI",
@@ -40,9 +40,10 @@ export default async function Page() {
   }
 
   return (
-    <main className="py-20 px-2 md:px-6 lg:px-8 bg-transparent min-h-screen mb-30 md:mb-15">
+    <main className="flex flex-col mt-25  bg-transparent min-h-screen md:h-screen mb-30 md:mb-15">
       <Suspense fallback={<LoadingSpinner />}>
-        <CreateCompanion />
+        {/* <CreateCompanion /> */}
+        <TabForm />
       </Suspense>
     </main>
   );
