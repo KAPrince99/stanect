@@ -1,27 +1,30 @@
 "use client";
-import React, { useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import Person from "./Person";
 import Voice from "./Voice";
 import Preview from "./Preview";
 import Avatar from "./Avatar";
 import { MoveLeft, MoveRight } from "lucide-react";
 
-export default function TabForm() {
+function TabForm() {
   const [isActive, setIsActive] = useState(0);
-  const tabs = [
-    { name: "Avatar", component: Avatar },
-    { name: "Person", component: Person },
-    { name: "Voice", component: Voice },
-    { name: "Preview", component: Preview },
-  ];
+  const tabs = useMemo(
+    () => [
+      { name: "Avatar", component: Avatar },
+      { name: "Person", component: Person },
+      { name: "Voice", component: Voice },
+      { name: "Preview", component: Preview },
+    ],
+    [],
+  );
 
-  const handlePrevClick = () => {
+  const handlePrevClick = useCallback(() => {
     setIsActive((prev) => Math.max(prev - 1, 0));
-  };
+  }, []);
 
-  const handleNextClick = () => {
+  const handleNextClick = useCallback(() => {
     setIsActive((prev) => Math.min(prev + 1, tabs.length - 1));
-  };
+  }, [tabs.length]);
 
   const ActiveTabComponent = tabs[isActive].component;
   return (
@@ -51,3 +54,4 @@ export default function TabForm() {
     </main>
   );
 }
+export default memo(TabForm);
