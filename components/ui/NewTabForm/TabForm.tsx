@@ -10,10 +10,10 @@ function TabForm() {
   const [isActive, setIsActive] = useState(0);
   const tabs = useMemo(
     () => [
-      { name: "Avatar", component: Avatar },
-      { name: "Person", component: Person },
-      { name: "Voice", component: Voice },
-      { name: "Preview", component: Preview },
+      { name: "Avatar" },
+      { name: "Person" },
+      { name: "Voice" },
+      { name: "Preview" },
     ],
     [],
   );
@@ -26,7 +26,18 @@ function TabForm() {
     setIsActive((prev) => Math.min(prev + 1, tabs.length - 1));
   }, [tabs.length]);
 
-  const ActiveTabComponent = tabs[isActive].component;
+  const renderActiveTab = useCallback(() => {
+    if (isActive === 0) return <Avatar />;
+    if (isActive === 1) return <Person />;
+    if (isActive === 2) return <Voice />;
+    return <Preview onEditStep={setIsActive} />;
+  }, [isActive]);
+
+  const isLastTab = useMemo(
+    () => isActive === tabs.length - 1,
+    [isActive, tabs.length],
+  );
+
   return (
     <main className="-ml-30">
       <div className="flex items-center justify-between min-w-[400px] max-w-[600px] mx-auto mb-5 rounded-lg bg-white/10 p-2">
@@ -40,17 +51,17 @@ function TabForm() {
           </div>
         ))}
       </div>
-      <div className="max-h-screen lg:mx-50">
-        <ActiveTabComponent />
-      </div>
-      <section className="flex justify-end gap-20 mx-50 min-w-[400px] max-w-[870px] my-8">
-        <div className="cursor-pointer" onClick={handlePrevClick}>
-          <MoveLeft className="h-5 w-5" />
-        </div>
-        <div className="cursor-pointer" onClick={handleNextClick}>
-          <MoveRight className="h-5 w-5" />
-        </div>
-      </section>
+      <div className="max-h-screen lg:mx-50">{renderActiveTab()}</div>
+      {!isLastTab && (
+        <section className="flex justify-end gap-20 mx-50 min-w-[400px] max-w-[870px] my-8">
+          <div className="cursor-pointer" onClick={handlePrevClick}>
+            <MoveLeft className="h-5 w-5" />
+          </div>
+          <div className="cursor-pointer" onClick={handleNextClick}>
+            <MoveRight className="h-5 w-5" />
+          </div>
+        </section>
+      )}
     </main>
   );
 }

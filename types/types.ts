@@ -26,6 +26,15 @@ export interface CompanionProps {
   assistant_id: string;
 }
 
+export interface AssistantCompanionContext {
+  companion_name: string;
+  voice: string;
+  country?: string | null;
+  scene: string;
+  username?: string | null;
+  duration: string;
+}
+
 export interface Userprops {
   id: string;
   clerk_user_id: string;
