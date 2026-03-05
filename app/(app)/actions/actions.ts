@@ -31,6 +31,33 @@ export async function getAvatars(): Promise<AvatarProps[]> {
   return (data ?? []) as AvatarProps[];
 }
 
+export async function getSingleAvatar(
+  id?: string,
+): Promise<AvatarProps | null> {
+  const supabase = createSupabaseClient();
+
+  if (id) {
+    const { data, error } = await supabase
+      .from("avatars")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    if (data) return data as AvatarProps;
+  }
+
+  const { data, error } = await supabase
+    .from("avatars")
+    .select("*")
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return (data as AvatarProps | null) ?? null;
+}
+
 export async function getSingleCompanion(id: string) {
   const supabase = createSupabaseClient();
   const { data, error } = await supabase
@@ -78,7 +105,26 @@ export async function createCompanion(formData: CreateCompanionProps) {
   const validatedDuration =
     requestedDuration > maxAllowed ? maxAllowed : requestedDuration;
 
-  formData.duration = String(validatedDuration) as any;
+  formData.duration = String(validatedDuration);
+
+  if (!formData.avatar_id) {
+    const { data: avatars, error: avatarsError } = await supabase
+      .from("avatars")
+      .select("id")
+      .order("created_at", { ascending: true })
+      .limit(1);
+
+    if (avatarsError) {
+      throw new Error("Failed to resolve default avatar");
+    }
+
+    const defaultAvatarId = avatars?.[0]?.id;
+    if (!defaultAvatarId) {
+      throw new Error("No avatars available for companion creation");
+    }
+
+    formData.avatar_id = defaultAvatarId;
+  }
 
   const { data, error } = await supabase
     .from("companions")

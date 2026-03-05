@@ -32,7 +32,7 @@ function TabForm() {
       <div className="flex items-center justify-between min-w-[400px] max-w-[600px] mx-auto mb-5 rounded-lg bg-white/10 p-2">
         {tabs.map((tab, index) => (
           <div
-            className={`px-2 cursor-pointer ${isActive === index ? "bg-white/20" : ""}`}
+            className={`px-2.5 py-1 cursor-pointer ${isActive === index ? "bg-white/20 rounded-sm" : ""}`}
             key={tab.name}
             onClick={() => setIsActive(index)}
           >
