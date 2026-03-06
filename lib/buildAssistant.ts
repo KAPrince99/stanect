@@ -1,5 +1,5 @@
 // buildAssistant.ts
-import { CompanionProps } from "@/types/types";
+import { AssistantCompanionContext } from "@/types/types";
 import { buildPrompt } from "./buildPompt";
 
 const voiceMapping = {
@@ -12,7 +12,7 @@ const voiceMapping = {
     voiceId: process.env.FEMALE_VOICE_ID,
   },
 };
-export function buildAssistant(companion: CompanionProps) {
+export function buildAssistant(companion: AssistantCompanionContext) {
   const voiceKey = companion.voice?.toLowerCase() as keyof typeof voiceMapping;
 
   // Fallback to female voice if invalid value

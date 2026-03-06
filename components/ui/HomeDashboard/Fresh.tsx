@@ -1,6 +1,6 @@
-import React from "react";
+"use client";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import Link from "next/link";
 import LordIcon from "../lordIcon";
 import { Button } from "../button";
@@ -21,32 +21,33 @@ export default function Fresh() {
           src="https://cdn.lordicon.com/opeotjej.json"
           trigger="loop"
           colors="primary:#e88c30,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30"
-          height={150}
-          width={150}
+          height={130}
+          width={130}
         />
       </motion.div>
 
-      <h2 className="text-2xl md:text-4xl font-bold text-white mb-6">
+      {/* <h2 className="text-2xl md:text-4xl font-bold text-white mb-6">
         No companions yet.
-      </h2>
-      <p className="text-white/70 text-lg mb-10 max-w-md text-center">
+      </h2> */}
+      {/* <p className="text-white/70 text-lg mb-10 max-w-md text-center">
         Time to create someone who makes your heart race
-      </p>
+      </p> */}
 
       <Link href="/new">
         <Button
           size="lg"
-          className="h-12 px-10 text-xl font-bold bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-2xl shadow-amber-500/50 cursor-pointer"
+          className="h-10 md:h-12 px-8 md:px-10 text-sm md:text-lg font-bold bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-2xl shadow-amber-500/50 cursor-pointer"
         >
-          <LordIcon
+          {/* <LordIcon
             src="https://cdn.lordicon.com/ueoydrft.json"
             trigger="loop"
             colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
             width={35}
             height={35}
-          />
-          Create Your First
-          <Sparkles className="w-6 h-6 ml-3" />
+          /> */}
+          Let&apos;s get you started
+          <MoveRight className="w-10 h-10 ml-3" />
+          {/* <Sparkles className="w-6 h-6 ml-3" /> */}
         </Button>
       </Link>
     </motion.div>
