@@ -1,5 +1,3 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
@@ -41,10 +39,7 @@ export default async function Page() {
 
   return (
     <main className="flex flex-col mt-25  bg-transparent min-h-screen md:h-screen mb-30 md:mb-15">
-      <Suspense fallback={<LoadingSpinner />}>
-        {/* <CreateCompanion /> */}
-        <TabForm userPlan={plan} />
-      </Suspense>
+      <TabForm userPlan={plan} />
     </main>
   );
 }

@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { memo, useMemo } from "react";
 import { toast } from "sonner";
+import { Loader2, MoveRight } from "lucide-react";
 import CompanionCard from "../HomeDashboard/companionCard";
 import LoadingSpinner from "../LoadingSpinner";
 import { Button } from "../button";
@@ -214,7 +215,12 @@ function Preview({ onEditStep }: PreviewProps) {
               disabled={mutation.isPending || validationIssues.length > 0}
               onClick={handleCreateCompanion}
             >
-              {mutation.isPending ? "Creating..." : "Create Companion "}
+              Create Companion
+              {mutation.isPending ? (
+                <Loader2 className="w-5 h-5 ml-2 animate-spin" />
+              ) : (
+                <MoveRight className="w-5 h-5 ml-2" />
+              )}
             </Button>
 
             <p className="text-xs text-white/60 text-center">
