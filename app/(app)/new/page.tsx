@@ -1,5 +1,3 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
