@@ -1,13 +1,25 @@
 "use client";
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import Person from "./Person";
 import Voice from "./Voice";
 import Preview from "./Preview";
 import Avatar from "./Avatar";
 import { MoveLeft, MoveRight } from "lucide-react";
+import type { PlanType } from "@/lib/plan-limits";
+import { useTabFormStore } from "@/store/useTabFormStore";
 
-function TabForm() {
+interface TabFormProps {
+  userPlan?: PlanType;
+}
+
+function TabForm({ userPlan = "free" }: TabFormProps) {
   const [isActive, setIsActive] = useState(0);
+  const setUserPlan = useTabFormStore((s) => s.setUserPlan);
+
+  useEffect(() => {
+    setUserPlan(userPlan);
+  }, [setUserPlan, userPlan]);
+
   const tabs = useMemo(
     () => [
       { name: "Avatar" },
