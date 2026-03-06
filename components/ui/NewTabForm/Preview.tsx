@@ -129,10 +129,10 @@ function Preview({ onEditStep }: PreviewProps) {
         </div>
         <div className="w-full max-w-md mx-auto space-y-10">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 space-y-5">
-            <h3 className="text-xl md:text-2xl font-display text-white">
-              Review your companion
+            <h3 className="text-3xl md:text-4xl font-display tracking-tight text-center bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+              Review companion
             </h3>
-            <p className="text-sm text-white/70">
+            <p className="text-base text-white/70 text-center">
               Confirm the details below before creating your companion.
             </p>
 
@@ -210,7 +210,7 @@ function Preview({ onEditStep }: PreviewProps) {
             )}
 
             <Button
-              className="w-full cursor-pointer"
+              className="w-full h-12 bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold shadow-xl shadow-amber-500/20 transition-all"
               disabled={mutation.isPending || validationIssues.length > 0}
               onClick={handleCreateCompanion}
             >

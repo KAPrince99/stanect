@@ -1,0 +1,46 @@
+"use client";
+import React, { memo } from "react";
+import TabCard from "./TabCard";
+
+interface TabItem {
+  name: string;
+}
+
+interface TabGridProps {
+  tabs: TabItem[];
+  completedTabs: boolean[];
+  isActive: number;
+  onTabClick: (index: number) => void;
+}
+
+function TabGrid({ tabs, completedTabs, isActive, onTabClick }: TabGridProps) {
+  return (
+    <div className="flex items-center min-w-[400px] max-w-[600px] mx-auto mb-5 rounded-lg bg-white/10 p-2">
+      {tabs.map((tab, index) => {
+        const isCompleted = Boolean(completedTabs[index]);
+        const isLastTab = index === tabs.length - 1;
+
+        return (
+          <React.Fragment key={tab.name}>
+            <TabCard
+              name={tab.name}
+              index={index}
+              isActive={isActive === index}
+              isCompleted={isCompleted}
+              onTabClick={onTabClick}
+            />
+
+            {!isLastTab && (
+              <div
+                aria-hidden="true"
+                className={`mx-1 h-px flex-1 rounded-full transition-colors ${isCompleted ? "bg-amber-400/60" : "bg-white/20"}`}
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+export default memo(TabGrid);

@@ -68,8 +68,8 @@ function Voice() {
   return (
     <div className="max-w-2xl mx-auto px-8 ">
       <div className="flex items-center justify-center">
-        <h2 className="text-5xl md:text-4xl font-display tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
-          Choose Your Preferred Voice
+        <h2 className="text-4xl md:text-5xl font-display tracking-tight text-center bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+          Voice and Session Length
         </h2>
       </div>
       <div className="my-10">
@@ -81,7 +81,7 @@ function Voice() {
             height={25}
             width={25}
           />
-          <p className="font-inter">Voice</p>
+          <p className="text-white/90 text-lg font-medium">Voice</p>
         </div>
         <section className="my-5 flex items-center gap-4 bg-white/10 p-2 rounded-xl">
           <div
