@@ -41,10 +41,7 @@ export default async function Page() {
 
   return (
     <main className="flex flex-col mt-25  bg-transparent min-h-screen md:h-screen mb-30 md:mb-15">
-      <Suspense fallback={<LoadingSpinner />}>
-        {/* <CreateCompanion /> */}
-        <TabForm userPlan={plan} />
-      </Suspense>
+      <TabForm userPlan={plan} />
     </main>
   );
 }

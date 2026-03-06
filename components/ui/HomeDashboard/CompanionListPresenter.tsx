@@ -29,22 +29,25 @@ function CompanionListPresenter({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-10"
+        className={`text-center ${hasCompanions ? "mb-10" : "mb-8"}`}
       >
         <h1 className="text-3xl md:text-5xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent lg:-ml-35">
           {hasCompanions
             ? `Welcome back, ${welcomeUser}.`
             : `Welcome to Stanect`}
         </h1>
-        <p className="mt-4 text-white/70 text-md md:text-lg lg:-ml-35">
-          {!hasCompanions
-            ? "Your AI companion to help you speak confidently and connect better."
-            : `You have ${companions.length} ${companions.length === 1 ? "companion" : "companions"} waiting`}
-        </p>
+
+        {hasCompanions && (
+          <p className="mt-4 text-white/70 text-md md:text-lg lg:-ml-35">
+            {`You have ${companions.length} ${companions.length === 1 ? "companion" : "companions"} waiting`}
+          </p>
+        )}
       </motion.div>
 
       {companions.length === 0 ? (
-        <Fresh />
+        <div className="max-w-5xl mx-auto">
+          <Fresh />
+        </div>
       ) : (
         <motion.div
           layout
