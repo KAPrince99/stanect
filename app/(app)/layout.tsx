@@ -47,17 +47,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <Toaster
           position="top-right"
           closeButton
-          richColors
           toastOptions={{
-            style: {
-              background: "rgba(15, 23, 42, 0.85)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              color: "white",
-              borderRadius: "1.5rem",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
-              fontWeight: "600",
-              backdropFilter: "blur(6px)",
-            },
             duration: 4000,
           }}
         />

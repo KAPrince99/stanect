@@ -82,11 +82,16 @@ function Preview({ onEditStep }: PreviewProps) {
 
   const mutation = useMutation({
     mutationFn: (payload: CreateCompanionProps) => createCompanion(payload),
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["companions"] });
       toast.success("Companion created successfully 🎉");
+      const createdCompanionId = result?.data?.id;
       reset();
-      router.replace("/dashboard");
+      router.replace(
+        createdCompanionId
+          ? `/dashboard/${createdCompanionId}`
+          : "/dashboard",
+      );
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to create companion ⚠️");
