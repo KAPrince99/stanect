@@ -15,6 +15,7 @@ interface TabFormProps {
 
 function TabForm({ userPlan = "free" }: TabFormProps) {
   const [isActive, setIsActive] = useState(0);
+  const [transitionDirection, setTransitionDirection] = useState<1 | -1>(1);
   const setUserPlan = useTabFormStore((s) => s.setUserPlan);
   const selectedAvatarId = useTabFormStore((s) => s.selectedAvatarId);
   const companionName = useTabFormStore((s) => s.companionName);
@@ -76,6 +77,7 @@ function TabForm({ userPlan = "free" }: TabFormProps) {
   }, [isAvatarStepValid, isPersonStepValid, isVoiceStepValid]);
 
   const handlePrevClick = useCallback(() => {
+    setTransitionDirection(-1);
     setIsActive((prev) => Math.max(prev - 1, 0));
   }, []);
 
@@ -85,12 +87,16 @@ function TabForm({ userPlan = "free" }: TabFormProps) {
       return;
     }
 
+    setTransitionDirection(1);
     setIsActive((prev) => Math.min(prev + 1, tabs.length - 1));
   }, [isCurrentStepValid, tabs.length]);
 
   const handleTabClick = useCallback(
     (targetIndex: number) => {
       if (targetIndex <= isActive || targetIndex <= furthestUnlockedIndex) {
+        if (targetIndex !== isActive) {
+          setTransitionDirection(targetIndex > isActive ? 1 : -1);
+        }
         setIsActive(targetIndex);
         return;
       }
@@ -125,6 +131,8 @@ function TabForm({ userPlan = "free" }: TabFormProps) {
       tabs={tabs}
       completedTabs={completedTabs}
       isActive={isActive}
+      activeTabKey={isActive}
+      transitionDirection={transitionDirection}
       onTabClick={handleTabClick}
       activeTabContent={activeTabContent}
       showNavigation={!isLastTab}

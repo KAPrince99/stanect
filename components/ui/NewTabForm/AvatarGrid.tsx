@@ -2,7 +2,6 @@
 import { AvatarProps } from "@/types/types";
 import { memo } from "react";
 import AvatarCard from "./AvatarCard";
-import { sl } from "zod/v4/locales";
 
 interface AvatarGridProps {
   avatars: AvatarProps[] | undefined;

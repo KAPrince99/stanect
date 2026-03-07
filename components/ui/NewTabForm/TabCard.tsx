@@ -1,5 +1,7 @@
 "use client";
 import React, { memo } from "react";
+import { motion } from "framer-motion";
+import { motionTransition } from "@/lib/motion";
 
 interface TabCardProps {
   name: string;
@@ -16,21 +18,35 @@ function TabCard({
   isCompleted,
   onTabClick,
 }: TabCardProps) {
-  const tabClassName = isActive
-    ? isCompleted
-      ? "bg-white/15 text-amber-300 border border-amber-400/40 rounded-sm"
-      : "bg-white/20 rounded-sm text-white border border-transparent"
+  const textClassName = isActive
+    ? "text-white"
     : isCompleted
-      ? "bg-amber-400/10 text-amber-300 border border-amber-400/30 rounded-sm"
-      : "text-white/80 border border-transparent hover:text-white";
+      ? "text-amber-300"
+      : "text-white/80 hover:text-white";
 
   return (
-    <div
-      className={`px-2.5 py-1 cursor-pointer transition-all ${tabClassName}`}
+    <button
+      type="button"
+      className={`relative px-3 py-1.5 rounded-md cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${textClassName}`}
       onClick={() => onTabClick(index)}
     >
-      {name}
-    </div>
+      {isCompleted && !isActive && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 rounded-md border border-amber-400/30 bg-amber-400/10"
+        />
+      )}
+
+      {isActive && (
+        <motion.span
+          layoutId="tab-active-pill"
+          transition={motionTransition.smooth}
+          className="absolute inset-0 rounded-md border border-white/20 bg-white/15"
+        />
+      )}
+
+      <span className="relative z-10">{name}</span>
+    </button>
   );
 }
 

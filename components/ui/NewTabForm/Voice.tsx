@@ -3,6 +3,8 @@ import LordIcon from "../lordIcon";
 import InputField from "./InputField";
 import { useTabFormStore } from "@/store/useTabFormStore";
 import { Crown, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
+import { motionTransition } from "@/lib/motion";
 
 function Voice() {
   const voice = useTabFormStore((s) => s.voice);
@@ -84,22 +86,33 @@ function Voice() {
           <p className="text-white/90 text-lg font-medium">Voice</p>
         </div>
         <section className="my-5 flex items-center gap-4 bg-white/10 p-2 rounded-xl">
-          <div
-            className={`flex-1 py-3 text-center rounded-lg cursor-pointer font-medium ${
-              voice === "male" ? "bg-white/10" : ""
-            }`}
-            onClick={() => setVoice("male")}
-          >
-            Male
-          </div>
-          <div
-            className={`flex-1 py-3 text-center rounded-lg cursor-pointer font-medium ${
-              voice === "female" ? "bg-white/10" : ""
-            }`}
-            onClick={() => setVoice("female")}
-          >
-            Female
-          </div>
+          {(["male", "female"] as const).map((value) => {
+            const isActive = voice === value;
+
+            return (
+              <motion.button
+                key={value}
+                type="button"
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.98 }}
+                transition={motionTransition.soft}
+                className={`relative flex-1 py-3 text-center rounded-lg cursor-pointer font-medium capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${
+                  isActive ? "text-white" : "text-white/80 hover:text-white"
+                }`}
+                onClick={() => setVoice(value)}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="voice-active-pill"
+                    transition={motionTransition.smooth}
+                    className="absolute inset-0 rounded-lg border border-white/20 bg-white/12"
+                  />
+                )}
+
+                <span className="relative z-10">{value}</span>
+              </motion.button>
+            );
+          })}
         </section>
       </div>
 

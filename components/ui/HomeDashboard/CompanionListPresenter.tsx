@@ -6,6 +6,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import { memo } from "react";
 import Fresh from "./Fresh";
 import CompanionCard from "./companionCard";
+import { motionTransition, motionVariants } from "@/lib/motion";
 interface CompanionListPresenterProps {
   companions: CompanionProps[];
   welcomeUser: string;
@@ -27,8 +28,10 @@ function CompanionListPresenter({
   return (
     <div className="relative px-6 py-25 md:px-10 lg:px-16">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        variants={motionVariants.fadeUp}
+        initial="hidden"
+        animate="visible"
+        transition={motionTransition.soft}
         className={`text-center ${hasCompanions ? "mb-10" : "mb-8"}`}
       >
         <h1 className="text-3xl md:text-5xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent lg:-ml-35">
@@ -58,10 +61,11 @@ function CompanionListPresenter({
               <motion.div
                 key={companion.id}
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
-                transition={{ delay: i * 0.05 }}
+                variants={motionVariants.cardPop}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ ...motionTransition.soft, delay: i * 0.04 }}
               >
                 <CompanionCard companion={companion} />
               </motion.div>

@@ -8,9 +8,11 @@ import { useRouter } from "next/navigation";
 import { memo, useMemo } from "react";
 import { toast } from "sonner";
 import { Loader2, MoveRight } from "lucide-react";
+import { motion } from "framer-motion";
 import CompanionCard from "../HomeDashboard/companionCard";
 import LoadingSpinner from "../LoadingSpinner";
 import { Button } from "../button";
+import { motionTransition, motionVariants } from "@/lib/motion";
 
 interface PreviewProps {
   onEditStep?: (index: number) => void;
@@ -120,15 +122,27 @@ function Preview({ onEditStep }: PreviewProps) {
   return (
     <main className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-4xl mx-auto px-4">
-        <div className="w-full max-w-[320px] mx-auto">
+        <motion.div
+          className="w-full max-w-[320px] mx-auto"
+          variants={motionVariants.cardPop}
+          initial="initial"
+          animate="animate"
+          transition={motionTransition.soft}
+        >
           <CompanionCard
             companion={previewCompanion}
             showConvoButton={false}
             enableNavigation={false}
             enableHoverLift={false}
           />
-        </div>
-        <div className="w-full max-w-md mx-auto space-y-10">
+        </motion.div>
+        <motion.div
+          className="w-full max-w-md mx-auto space-y-10"
+          variants={motionVariants.fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={motionTransition.soft}
+        >
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 space-y-5">
             <h3 className="text-3xl md:text-4xl font-display tracking-tight text-center bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
               Review companion
@@ -227,7 +241,7 @@ function Preview({ onEditStep }: PreviewProps) {
               You can edit these details later in your dashboard.
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </main>
   );

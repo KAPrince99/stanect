@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Loader2, MoveRight, Sparkles } from "lucide-react";
 import LordIcon from "../lordIcon";
 import { Button } from "../button";
+import { motionTransition, motionVariants } from "@/lib/motion";
 
 export default function Fresh() {
   const router = useRouter();
@@ -18,8 +19,10 @@ export default function Fresh() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
+      variants={motionVariants.fadeUp}
+      initial="hidden"
+      animate="visible"
+      transition={motionTransition.soft}
       className="flex flex-col items-center justify-center py-1 lg:-ml-35"
     >
       <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl px-6 py-10 md:px-10 md:py-12 text-center shadow-xl">
@@ -30,7 +33,7 @@ export default function Fresh() {
 
         <motion.div
           animate={{ y: [0, -12, 0] }}
-          transition={{ repeat: Infinity, duration: 4 }}
+          transition={{ repeat: Infinity, duration: 3.6, ease: "easeInOut" }}
           className="mb-4"
         >
           <LordIcon
