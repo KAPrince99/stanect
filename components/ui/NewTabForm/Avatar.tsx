@@ -6,6 +6,7 @@ import React, { memo, useEffect } from "react";
 import LoadingSpinner from "../LoadingSpinner";
 import AvatarGrid from "./AvatarGrid";
 import { useTabFormStore } from "@/store/useTabFormStore";
+import TabContentHeader from "./TabContentHeader";
 
 function Avatar() {
   const selectedAvatarId = useTabFormStore((state) => state.selectedAvatarId);
@@ -43,11 +44,7 @@ function Avatar() {
 
   return (
     <div>
-      <div className="flex items-center justify-center my-4">
-        <h2 className="text-4xl md:text-5xl font-display tracking-tight text-center bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
-          Choose Your Muse
-        </h2>
-      </div>
+      <TabContentHeader title="Choose Your Muse" />
 
       <AvatarGrid
         avatars={avatars}

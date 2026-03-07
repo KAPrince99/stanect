@@ -13,6 +13,9 @@ import CompanionCard from "../HomeDashboard/companionCard";
 import LoadingSpinner from "../LoadingSpinner";
 import { Button } from "../button";
 import { motionTransition, motionVariants } from "@/lib/motion";
+import PreviewSummary from "./PreviewSummary";
+import PreviewEditSteps from "./PreviewEditSteps";
+import PreviewValidationIssues from "./PreviewValidationIssues";
 
 interface PreviewProps {
   onEditStep?: (index: number) => void;
@@ -88,9 +91,7 @@ function Preview({ onEditStep }: PreviewProps) {
       const createdCompanionId = result?.data?.id;
       reset();
       router.replace(
-        createdCompanionId
-          ? `/dashboard/${createdCompanionId}`
-          : "/dashboard",
+        createdCompanionId ? `/dashboard/${createdCompanionId}` : "/dashboard",
       );
     },
     onError: (error: Error) => {
@@ -156,78 +157,11 @@ function Preview({ onEditStep }: PreviewProps) {
               Confirm the details below before creating your companion.
             </p>
 
-            <div className="space-y-2 rounded-xl bg-white/5 border border-white/10 p-4 text-sm text-white/80">
-              <div className="flex items-center justify-between">
-                <span>Name</span>
-                <span className="text-white">
-                  {previewCompanion.companion_name}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Voice</span>
-                <span className="text-white capitalize">
-                  {previewCompanion.voice}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Duration</span>
-                <span className="text-white">
-                  {previewCompanion.duration} min
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span>Scene</span>
-                <span className="text-white text-right truncate max-w-[200px]">
-                  {previewCompanion.scene}
-                </span>
-              </div>
-            </div>
+            <PreviewSummary companion={previewCompanion} />
 
-            <div className="space-y-5 text-sm text-white/80">
-              <div className="flex items-center justify-between">
-                <span>Avatar</span>
-                <Button
-                  variant="ghost"
-                  className="h-auto p-0"
-                  onClick={() => onEditStep?.(0)}
-                >
-                  Edit
-                </Button>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Name & Scene</span>
-                <Button
-                  variant="ghost"
-                  className="h-auto p-0"
-                  onClick={() => onEditStep?.(1)}
-                >
-                  Edit
-                </Button>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Voice & Duration</span>
-                <Button
-                  variant="ghost"
-                  className="h-auto p-0"
-                  onClick={() => onEditStep?.(2)}
-                >
-                  Edit
-                </Button>
-              </div>
-            </div>
+            <PreviewEditSteps onEditStep={onEditStep} />
 
-            {validationIssues.length > 0 && (
-              <div className="rounded-lg border border-red-300/40 bg-red-500/10 p-3">
-                <p className="text-sm text-red-200 font-medium">
-                  A few details still need attention:
-                </p>
-                <ul className="mt-2 text-xs text-red-100 list-disc pl-4 space-y-1">
-                  {validationIssues.map((issue) => (
-                    <li key={issue}>{issue}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <PreviewValidationIssues issues={validationIssues} />
 
             <Button
               className="w-full h-12 bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold shadow-xl shadow-amber-500/20 transition-all"

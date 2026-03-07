@@ -5,6 +5,7 @@ import LordIcon from "../lordIcon";
 import InputField from "./InputField";
 import { useTabFormStore } from "@/store/useTabFormStore";
 import { companionNameSchema, sceneSchema } from "@/schemas/newCompanionSchema";
+import TabContentHeader from "./TabContentHeader";
 
 function Person() {
   const companionName = useTabFormStore((s) => s.companionName);
@@ -40,11 +41,7 @@ function Person() {
 
   return (
     <div>
-      <div className="flex items-center justify-center my-4">
-        <h2 className="text-4xl md:text-5xl font-display tracking-tight text-center bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
-          Create Your Character
-        </h2>
-      </div>
+      <TabContentHeader title="Create Your Character" />
 
       <div className="max-w-2xl mx-auto px-8 my-10 space-y-6">
         <InputField

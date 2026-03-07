@@ -2,9 +2,9 @@ import React, { memo, useCallback, useMemo, useState } from "react";
 import LordIcon from "../lordIcon";
 import InputField from "./InputField";
 import { useTabFormStore } from "@/store/useTabFormStore";
-import { Crown, ShieldCheck } from "lucide-react";
-import { motion } from "framer-motion";
-import { motionTransition } from "@/lib/motion";
+import TabContentHeader from "./TabContentHeader";
+import VoiceSelector from "./VoiceSelector";
+import PlanLimitHint from "./PlanLimitHint";
 
 function Voice() {
   const voice = useTabFormStore((s) => s.voice);
@@ -69,52 +69,8 @@ function Voice() {
 
   return (
     <div className="max-w-2xl mx-auto px-8 ">
-      <div className="flex items-center justify-center">
-        <h2 className="text-4xl md:text-5xl font-display tracking-tight text-center bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
-          Voice and Session Length
-        </h2>
-      </div>
-      <div className="my-10">
-        <div className="flex justify-start items-center gap-2 mb-4">
-          <LordIcon
-            src="https://cdn.lordicon.com/ckooqaow.json"
-            trigger="hover"
-            colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30,quaternary:#ebe6ef,quinary:#f24c00"
-            height={25}
-            width={25}
-          />
-          <p className="text-white/90 text-lg font-medium">Voice</p>
-        </div>
-        <section className="my-5 flex items-center gap-4 bg-white/10 p-2 rounded-xl">
-          {(["male", "female"] as const).map((value) => {
-            const isActive = voice === value;
-
-            return (
-              <motion.button
-                key={value}
-                type="button"
-                whileHover={{ y: -1 }}
-                whileTap={{ scale: 0.98 }}
-                transition={motionTransition.soft}
-                className={`relative flex-1 py-3 text-center rounded-lg cursor-pointer font-medium capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${
-                  isActive ? "text-white" : "text-white/80 hover:text-white"
-                }`}
-                onClick={() => setVoice(value)}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="voice-active-pill"
-                    transition={motionTransition.smooth}
-                    className="absolute inset-0 rounded-lg border border-white/20 bg-white/12"
-                  />
-                )}
-
-                <span className="relative z-10">{value}</span>
-              </motion.button>
-            );
-          })}
-        </section>
-      </div>
+      <TabContentHeader title="Voice and Session Length" className="my-0" />
+      <VoiceSelector voice={voice} onSelectVoice={setVoice} />
 
       <section className="my-10">
         <InputField
@@ -138,18 +94,7 @@ function Voice() {
             />
           }
         />
-        <div className="flex items-center gap-2 px-1 mt-2">
-          {userPlan === "free" ? (
-            <ShieldCheck className="w-3 h-3 text-amber-500" />
-          ) : (
-            <Crown className="w-3 h-3 text-emerald-400 animate-pulse" />
-          )}
-          <p
-            className={`text-[10px] uppercase tracking-widest font-bold ${userPlan === "free" ? "text-white/50" : "text-emerald-400"}`}
-          >
-            {userPlan.toUpperCase()} Plan: Max {maxMinutes} Mins
-          </p>
-        </div>
+        <PlanLimitHint userPlan={userPlan} maxMinutes={maxMinutes} />
       </section>
     </div>
   );
