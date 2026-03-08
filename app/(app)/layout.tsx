@@ -18,7 +18,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/*  Content Wrapper */}
-        <div className="flex h-screen overflow-hidden">
+        <div className="flex h-screen overflow-hidden lg:mx-auto lg:w-full lg:max-w-[1600px]">
           {/* Sidebar */}
           <div className="hidden lg:flex shrink-0">
             <Sidebar />

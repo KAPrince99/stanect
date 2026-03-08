@@ -13,7 +13,7 @@ export default function UpdatePlan() {
       >
         <LordIcon
           src="https://cdn.lordicon.com/wmqqbxlm.json"
-          trigger="loop"
+          trigger="hover"
           colors="primary:#ffffff,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30,quinary:#ffffff"
           height={20}
           width={20}

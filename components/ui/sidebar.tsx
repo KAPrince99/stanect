@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import LordIcon from "./lordIcon";
 import { Home, Sparkles, Plus } from "lucide-react";
+import UserImageContainer from "./UserImageContainer";
 
 const navItems = [
   {
@@ -30,7 +31,7 @@ export default function Sidebar() {
   return (
     <aside
       className="flex flex-col items-center w-24 h-full py-10 
-                 pointer-events-auto ml-7"
+                 pointer-events-auto ml-10"
     >
       <div className="flex flex-col items-center justify-start py-50 h-full">
         {/* Main Orb */}
@@ -72,6 +73,30 @@ export default function Sidebar() {
                 </div>
               </Link>
             ))}
+
+            <Link
+              href="/profile"
+              className="relative block p-4 rounded-full bg-white/5 hover:bg-white/20 transition-transform duration-300 transform hover:scale-110 group"
+            >
+              <div className="relative flex justify-center items-center">
+                <UserImageContainer />
+              </div>
+
+              <div
+                className="absolute left-full -ml-2 top-1/2 -translate-y-1/2 
+                opacity-0 group-hover:opacity-100 
+                pointer-events-none transition-opacity duration-200"
+              >
+                <div
+                  className="bg-white/10 backdrop-blur 
+                  text-white text-[12px] px-2 py-1 
+                  rounded-full whitespace-nowrap 
+                  shadow-2xl "
+                >
+                  Profile
+                </div>
+              </div>
+            </Link>
           </div>
 
           {/* Floating Particles */}

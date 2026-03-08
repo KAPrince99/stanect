@@ -36,7 +36,7 @@ function CompanionCard({
       <div className="absolute top-4 left-4 bg-black/70 px-3 py-1.5 rounded-full flex items-center gap-1.5">
         <LordIcon
           src="https://cdn.lordicon.com/zjuyeglr.json"
-          trigger="loop"
+          trigger="hover"
           colors="primary:#e88c30,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30"
           height={20}
           width={20}
@@ -53,7 +53,7 @@ function CompanionCard({
       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <LordIcon
           src="https://cdn.lordicon.com/ewmfucya.json"
-          trigger="loop"
+          trigger="hover"
           colors="primary:#e83a30,secondary:#e83a30,tertiary:#e83a30,quaternary:#e83a30,quinary:#f24c00,senary:#ffffff"
           height={30}
           width={30}
@@ -89,7 +89,7 @@ function CompanionCard({
               >
                 <LordIcon
                   src="https://cdn.lordicon.com/ckooqaow.json"
-                  trigger="loop"
+                  trigger="hover"
                   colors="primary:#000000,secondary:#000000,tertiary:#000000,quaternary:#000000,quinary:#000000"
                   height={20}
                   width={20}

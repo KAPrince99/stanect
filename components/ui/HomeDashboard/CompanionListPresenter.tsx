@@ -48,9 +48,7 @@ function CompanionListPresenter({
       </motion.div>
 
       {companions.length === 0 ? (
-        <div className="max-w-5xl mx-auto">
-          <Fresh />
-        </div>
+        <Fresh />
       ) : (
         <motion.div
           layout
