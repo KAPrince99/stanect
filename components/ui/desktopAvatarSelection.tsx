@@ -30,7 +30,7 @@ function DesktopAvatarSelection({
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-10"
       >
-        <h2 className="text-5xl md:text-6xl font-display tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+        <h2 className="text-5xl md:text-6xl font-display tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
           Choose Your Muse
         </h2>
         <p className="mt-4 text-white/70 text-md md:text-lg font-inter">
@@ -69,7 +69,7 @@ function DesktopAvatarSelection({
                 />
 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* Selected badge */}
                 <AnimatePresence>
@@ -80,7 +80,7 @@ function DesktopAvatarSelection({
                       exit={{ scale: 0, rotate: 180 }}
                       className="absolute top-4 right-4 z-10"
                     >
-                      <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-black font-bold px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
+                      <div className="bg-linear-to-r from-amber-400 to-orange-500 text-black font-bold px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
                         <Heart className="w-5 h-5 fill-current" /> Chosen
                       </div>
                     </motion.div>
@@ -120,7 +120,7 @@ function DesktopAvatarSelection({
             exit={{ opacity: 0, scale: 0.8, y: 80 }}
             className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 pointer-events-none will-change-transform"
           >
-            <div className="bg-gradient-to-r from-amber-400/20 to-orange-500/20 backdrop-blur-xl border border-white/30 rounded-3xl px-8 py-5 shadow-2xl flex items-center gap-4">
+            <div className="bg-linear-to-r from-amber-400/20 to-orange-500/20 backdrop-blur-xl border border-white/30 rounded-3xl px-8 py-5 shadow-2xl flex items-center gap-4">
               <div className="relative w-20 h-20 rounded-full overflow-hidden ring-4 ring-amber-400 shadow-lg">
                 <Image
                   src={selectedAvatar.image_url}

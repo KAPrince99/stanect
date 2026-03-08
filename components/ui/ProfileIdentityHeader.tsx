@@ -1,6 +1,8 @@
 import Image from "next/image";
-import { memo } from "react";
+import { memo, useState } from "react";
 import ProfilePlanBadge from "./ProfilePlanBadge";
+
+const FALLBACK_AVATAR = "/avatars/avatar_0.jpg";
 
 interface ProfileIdentityHeaderProps {
   imgSrc: string;
@@ -8,7 +10,6 @@ interface ProfileIdentityHeaderProps {
   userFirstNameInitial: string;
   planLabel: string;
   userPlan: string;
-  onAvatarError: () => void;
 }
 
 function ProfileIdentityHeader({
@@ -17,20 +18,22 @@ function ProfileIdentityHeader({
   userFirstNameInitial,
   planLabel,
   userPlan,
-  onAvatarError,
 }: ProfileIdentityHeaderProps) {
+  const [hasImageError, setHasImageError] = useState(false);
+  const displaySrc = hasImageError ? FALLBACK_AVATAR : imgSrc;
+
   return (
     <div className="grid grid-cols-[1fr_3fr] gap-4 md:place-items-center md:px-10 relative z-10">
       <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-linear-to-br from-amber-400 to-orange-600 p-1 shadow-xl">
         <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center text-white text-4xl font-bold overflow-hidden relative">
           {imgSrc ? (
             <Image
-              src={imgSrc}
+              src={displaySrc}
               alt={userFullName}
               fill
               sizes="128px"
               className="object-cover"
-              onError={onAvatarError}
+              onError={() => setHasImageError(true)}
             />
           ) : (
             <span>{userFirstNameInitial}</span>

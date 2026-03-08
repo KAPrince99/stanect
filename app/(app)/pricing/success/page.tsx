@@ -50,7 +50,7 @@ export default function SuccessPage() {
         <div className="space-y-4">
           <Button
             onClick={() => router.push("/dashboard")}
-            className="w-full h-12 bg-gradient-to-r from-amber-400 to-orange-500 text-black font-bold rounded-full hover:scale-105 transition-transform flex items-center justify-center gap-2"
+            className="w-full h-12 bg-linear-to-r from-amber-400 to-orange-500 text-black font-bold rounded-full hover:scale-105 transition-transform flex items-center justify-center gap-2"
           >
             Go to Dashboard <ArrowRight className="w-5 h-5" />
           </Button>

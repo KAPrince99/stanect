@@ -30,7 +30,7 @@ export default function Pill() {
       "
     >
       {/* Floating Glow Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 blur-3xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      <div className="absolute inset-0 bg-linear-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 blur-3xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
       <Link
         href="/"
@@ -40,12 +40,12 @@ export default function Pill() {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -inset-4 bg-gradient-to-r from-amber-400/20 to-pink-500/20 rounded-full blur-xl"
+            className="absolute -inset-4 bg-linear-to-r from-amber-400/20 to-pink-500/20 rounded-full blur-xl"
           />
         </div>
 
         <div className="text-xl font-extrabold tracking-tight">
-          <span className="bg-gradient-to-r from-white via-white/90 to-white/50 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-white via-white/90 to-white/50 bg-clip-text text-transparent">
             Stanect
           </span>
         </div>
@@ -63,7 +63,7 @@ export default function Pill() {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-black font-bold rounded-full shadow-xl hover:shadow-amber-500/50 transition-all"
+              className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-amber-400 to-orange-500 text-black font-bold rounded-full shadow-xl hover:shadow-amber-500/50 transition-all"
             >
               <LogIn className="w-5 h-5" />
               <span className="hidden sm:inline">Sign In</span>

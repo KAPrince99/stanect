@@ -20,31 +20,47 @@ import { Userprops } from "@/types/types";
 import LordIcon from "./lordIcon";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
+
+interface UpdateProfileProps {
+  data: Userprops;
+  userFirstNameInitial: string;
+  user: ReturnType<typeof useUser>["user"];
+}
+
+function getInitialValues(
+  data: Userprops,
+  user: ReturnType<typeof useUser>["user"],
+) {
+  return {
+    name: data?.name || user?.fullName || "",
+    location: (data?.country ||
+      (user?.publicMetadata?.country as string) ||
+      "Earth") as string,
+    previewUrl: data?.profile_picture || null,
+  };
+}
 
 function UpdateProfile({
   data,
   userFirstNameInitial,
   user,
-}: {
-  data: Userprops;
-  userFirstNameInitial: string;
-  user: ReturnType<typeof useUser>["user"];
-}) {
+}: UpdateProfileProps) {
   const queryClient = useQueryClient();
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const previewBlobRef = useRef<string | null>(null);
 
+  const initialValues = getInitialValues(data, user);
+
   const [open, setOpen] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    data?.profile_picture || null,
+    initialValues.previewUrl,
   );
-  const [updatedName, setUpdatedName] = useState(
-    data?.name || user?.fullName || "",
-  );
+  const [updatedName, setUpdatedName] = useState(initialValues.name);
   const [updatedLocation, setUpdatedLocation] = useState(
-    data?.country || user?.publicMetadata?.country || "Earth",
+    initialValues.location,
   );
   const [loading, setLoading] = useState(false);
 
@@ -52,12 +68,13 @@ function UpdateProfile({
 
   useEffect(() => {
     if (open) {
-      setUpdatedName(data?.name || "");
-      setUpdatedLocation(data?.country || "");
-      setPreviewUrl(data?.profile_picture || null);
+      const nextValues = getInitialValues(data, user);
+      setUpdatedName(nextValues.name);
+      setUpdatedLocation(nextValues.location);
+      setPreviewUrl(nextValues.previewUrl);
       setImageFile(null);
     }
-  }, [open, data]);
+  }, [open, data, user]);
 
   /* ---------------- Cleanup blob preview ---------------- */
 
@@ -90,9 +107,17 @@ function UpdateProfile({
     try {
       setLoading(true);
 
+      const safeName = updatedName.trim();
+      const safeLocation = updatedLocation.trim();
+
+      if (!safeName) {
+        toast.error("Name is required");
+        return;
+      }
+
       const formData = new FormData();
-      formData.append("name", updatedName);
-      formData.append("country", updatedLocation);
+      formData.append("name", safeName);
+      formData.append("country", safeLocation || "Earth");
       if (imageFile) formData.append("image", imageFile);
 
       await updateProfile(formData, data?.profile_picture);
@@ -102,9 +127,12 @@ function UpdateProfile({
         queryKey: ["users", user?.id],
       });
 
+      toast.success("Profile updated successfully");
       setOpen(false);
     } catch (err) {
-      console.error("❌ Update failed", err);
+      toast.error(
+        err instanceof Error ? err.message : "Failed to update profile",
+      );
     } finally {
       setLoading(false);
     }
@@ -114,13 +142,6 @@ function UpdateProfile({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button className="px-8 max-sm:w-full h-12 text-base font-semibold text-white">
-          <LordIcon
-            src="https://cdn.lordicon.com/cbtlerlm.json"
-            trigger="loop"
-            colors="primary:#ffffff,secondary:#e88c30"
-            height={20}
-            width={20}
-          />
           Update Profile
         </Button>
       </AlertDialogTrigger>
