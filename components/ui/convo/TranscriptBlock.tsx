@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import React, { useRef, memo, useEffect } from "react";
-import { Button } from "./button";
-import LordIcon from "./lordIcon";
+import { Button } from "../button";
+import LordIcon from "../lordIcon";
 import { useConvoStore } from "@/store/use-convo-store";
 import { useVirtualizer } from "@tanstack/react-virtual";
 

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import LordIcon from "./lordIcon";
+import LordIcon from "../lordIcon";
 
 interface ProfilePlanBadgeProps {
   userPlan: string;

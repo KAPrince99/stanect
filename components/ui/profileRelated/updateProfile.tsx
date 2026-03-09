@@ -10,14 +10,14 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-} from "./alert-dialog";
-import { Button } from "./button";
+} from "../alert-dialog";
+import { Button } from "../button";
 import { ChangeEvent, memo, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { updateProfile } from "@/app/(app)/actions/update";
 import { useQueryClient } from "@tanstack/react-query";
 import { Userprops } from "@/types/types";
-import LordIcon from "./lordIcon";
+import LordIcon from "../lordIcon";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";

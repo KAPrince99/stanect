@@ -2,7 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import type { Metadata } from "next";
-import ProfileContainer from "@/components/ui/ProfileContainer";
+import ProfileContainer from "@/components/ui/profileRelated/ProfileContainer";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 export const dynamic = "force-dynamic";

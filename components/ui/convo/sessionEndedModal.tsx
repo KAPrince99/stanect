@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "../dialog";
+import { Button } from "../button";
 import { Crown, LayoutDashboard, Zap, RefreshCw } from "lucide-react";
 import { memo } from "react";
 

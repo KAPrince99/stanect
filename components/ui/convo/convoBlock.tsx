@@ -4,15 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
-import TranscriptToggle from "./TranscriptToggle";
-import LordIcon from "./lordIcon";
+import TranscriptToggle from "../TranscriptToggle";
+import LordIcon from "../lordIcon";
 import { useConvoStore } from "@/store/use-convo-store";
 import { memo, useState } from "react";
 import { CompanionProps } from "@/types/types";
 import dynamic from "next/dynamic";
 import { getVapiSdk } from "@/lib/vapiSdk";
 
-const GlobeCanvas = dynamic(() => import("./GlobeCanvas"), {
+const GlobeCanvas = dynamic(() => import("../GlobeCanvas"), {
   ssr: false,
 });
 

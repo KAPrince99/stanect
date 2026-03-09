@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../LoadingSpinner";
 
 const Convo = dynamic(() => import("@/components/ui/convo/convo"), {
   ssr: false,

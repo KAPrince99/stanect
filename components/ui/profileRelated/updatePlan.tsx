@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "./button";
+import { Button } from "../button";
 
 export default function UpdatePlan() {
   return (

@@ -1,5 +1,5 @@
 import type { ProfileInfoItem } from "./ProfileInfoList";
-import LordIcon from "./lordIcon";
+import LordIcon from "../lordIcon";
 
 interface BuildProfileInfoItemsParams {
   userEmail: string;

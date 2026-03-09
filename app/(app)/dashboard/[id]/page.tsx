@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import ConvoWrapper from "@/components/ui/ConvoWrapper";
+import ConvoWrapper from "@/components/ui/convo/ConvoWrapper";
 import { Metadata } from "next";
 import CheckNecessities from "@/components/ui/CheckNecessities";
 
