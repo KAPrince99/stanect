@@ -8,22 +8,50 @@ import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import UserButton from "@/components/ui/UserButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
 
 export default function Navbar() {
   const [isLoading, setIsLoading] = useState(false);
+  const [activeSection, setActiveSection] = useState("scenarios");
   const { isSignedIn } = useUser();
   const { scrollToSection } = useScrollToSection();
   const navLinks = [
-    { name: "Demo", href: "/#demo", id: "demo" },
     { name: "Scenarios", href: "/#scenarios", id: "scenarios" },
     { name: "Pricing", href: "/#pricing", id: "pricing" },
   ];
 
   const handleScrollToSection = (id: string) => {
+    setActiveSection(id);
     scrollToSection(id);
   };
+
+  useEffect(() => {
+    const ids = navLinks.map((link) => link.id);
+    const elements = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) => b.intersectionRatio - a.intersectionRatio,
+          )[0];
+
+        if (visible?.target?.id) {
+          setActiveSection(visible.target.id);
+        }
+      },
+      { threshold: 0.4, rootMargin: "-20% 0px -35% 0px" },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 py-4">
@@ -60,8 +88,11 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => handleScrollToSection(link.id)}
-                className="text-white/80 hover:text-white font-medium 
-                           transition-all duration-300 hover:scale-105"
+                className={`font-medium transition-all duration-300 hover:scale-105 ${
+                  activeSection === link.id
+                    ? "text-amber-300"
+                    : "text-white/80 hover:text-white"
+                }`}
               >
                 {link.name}
               </Link>
@@ -105,7 +136,10 @@ export default function Navbar() {
               </SignedIn>
 
               <SignedOut>
-                <Link href="/login" className="text-sm">
+                <Link
+                  href="/login"
+                  className="text-sm text-white/80 hover:text-amber-300 transition-colors"
+                >
                   Log In
                 </Link>
               </SignedOut>

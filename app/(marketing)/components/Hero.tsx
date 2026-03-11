@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
 import WrapButton from "@/components/ui/wrap-button";
 import { Sparkles } from "lucide-react";
-import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -50,7 +48,7 @@ export default function Hero() {
 
           {/* CTA */}
 
-          <div className="flex justify-center items-center gap-8 mt-8 animate-fade-up animation-delay-800">
+          <div className="flex flex-wrap justify-center items-center gap-4 mt-8 animate-fade-up animation-delay-800">
             <WrapButton
               className=" text-lg md:text-xl font-display 
                          shadow-2xl shadow-amber-500/25 
@@ -66,7 +64,7 @@ export default function Hero() {
           <p className="mt-8 text-sm text-white/60 animate-fade-up animation-delay-1000 font-inter">
             Join{" "}
             <span className="inline-block bg-linear-to-r from-amber-400 to-amber-500 px-2 py-1  text-black font-bold rounded-md  ">
-              8,247+
+              8,000+
             </span>{" "}
             people already building real-world confidence.
           </p>

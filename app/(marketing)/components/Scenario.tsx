@@ -20,12 +20,7 @@ export default function Scenario({ scenario }: ScenarioProps) {
     <article
       className={`
         min-h-screen flex flex-col items-center justify-center 
-        p-6 md:p-12 lg:p-20 transition-colors duration-500
-        ${
-          iseven
-            ? "bg-transparent text-slate-900"
-            : "bg-linear-to-r from-amber-400 to-amber-500 text-white"
-        }
+        p-6 md:p-12 lg:p-20 transition-colors duration-500 text-white
       `}
     >
       <div
@@ -34,7 +29,7 @@ export default function Scenario({ scenario }: ScenarioProps) {
         `}
       >
         <section className="w-full lg:w-1/2 flex justify-center">
-          <div className="relative w-full aspect-3/3 max-w-2xl overflow-hidden shadow-2xl">
+          <div className="relative w-full aspect-3/3 max-w-2xl overflow-hidden shadow-2xl rounded-3xl border border-white/10">
             <Image
               src={imageUrl || "/avatars/avatar_0.jpg"}
               alt={title}
@@ -69,31 +64,16 @@ export default function Scenario({ scenario }: ScenarioProps) {
           >
             <Button
               size="lg"
-              className={`shadow-lg transition-all duration-300 hover:scale-105
-              ${
-                iseven
-                  ? "bg-amber-500 text-black hover:bg-amber-600"
-                  : "bg-black text-white hover:bg-slate-600"
-              }
-            `}
+              className="min-w-40 bg-linear-to-r from-amber-400 to-amber-500 text-black hover:from-amber-500 hover:to-amber-600 shadow-lg transition-all duration-300 hover:scale-105"
             >
               <Link href="/dashboard">Get Started</Link>
-              {iseven ? (
-                <LordIcon
-                  src="https://cdn.lordicon.com/jarmuava.json"
-                  trigger="loop"
-                  height={20}
-                  width={20}
-                />
-              ) : (
-                <LordIcon
-                  src="https://cdn.lordicon.com/jarmuava.json"
-                  trigger="loop"
-                  colors="primary:#ffffff"
-                  height={20}
-                  width={20}
-                />
-              )}
+              <LordIcon
+                src="https://cdn.lordicon.com/jarmuava.json"
+                trigger="loop"
+                colors="primary:#000000"
+                height={20}
+                width={20}
+              />
             </Button>
           </div>
         </section>

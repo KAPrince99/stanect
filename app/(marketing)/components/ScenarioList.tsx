@@ -43,14 +43,14 @@ export default function ScenarioList() {
     <main className="min-h-screen w-full h-full mt-1 md:mt-10" id="scenarios">
       <h2
         className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight 
-                 bg-gradient-to-r from-white via-white/90 to-white/40 
+                 bg-linear-to-r from-white via-white/90 to-white/40 
                  bg-clip-text text-transparent leading-tight my-20 px-5"
       >
         When talking to people makes your chest tighten…
         <br className="hidden md:block" />
         <span
           className="mt-3 inline-block 
-                     bg-gradient-to-r from-cyan-200 via-white to-blue-200 
+                     bg-linear-to-r from-amber-300 via-white to-amber-200 
                      bg-clip-text text-transparent"
         >
           Stanect helps your words flow naturally.

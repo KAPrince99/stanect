@@ -71,11 +71,12 @@ text-2xl
           <div className="mt-10">
             <MaskedDiv maskType="type-2" className="my-6 max-w-4xl mx-auto">
               <video
-                className="cursor-pointer transition-all duration-300 hover:scale-105"
+                className="cursor-pointer transition-all duration-300"
                 playsInline
                 autoPlay
                 loop
                 muted
+                preload="metadata"
               >
                 <source
                   src="https://videos.pexels.com/video-files/18069232/18069232-uhd_2560_1440_24fps.mp4"
@@ -95,7 +96,7 @@ text-2xl
   "
           >
             <MaskedDiv maskType="type-1" size={0.35} className="rotate-180">
-              <video playsInline muted autoPlay loop>
+              <video playsInline muted autoPlay loop preload="metadata">
                 <source
                   src="https://videos.pexels.com/video-files/18069803/18069803-uhd_1440_2560_24fps.mp4"
                   type="video/mp4"
@@ -104,7 +105,7 @@ text-2xl
             </MaskedDiv>
 
             <MaskedDiv maskType="type-1" size={0.25}>
-              <video playsInline muted autoPlay loop>
+              <video playsInline muted autoPlay loop preload="metadata">
                 <source
                   src="https://videos.pexels.com/video-files/7710243/7710243-uhd_2560_1440_30fps.mp4"
                   type="video/mp4"
@@ -113,7 +114,7 @@ text-2xl
             </MaskedDiv>
 
             <MaskedDiv maskType="type-1" size={0.25} className="rotate-180">
-              <video playsInline muted autoPlay loop>
+              <video playsInline muted autoPlay loop preload="metadata">
                 <source
                   src="https://videos.pexels.com/video-files/18069166/18069166-uhd_2560_1440_24fps.mp4"
                   type="video/mp4"

@@ -8,13 +8,13 @@ export default function Demo() {
   const [playing, setPlaying] = useState(false);
 
   return (
-    <section className="relative py-32 px-6 bg-transparent">
+    <section id="demo" className="relative py-32 px-6 bg-transparent">
       <div className="relative max-w-7xl mx-auto text-center">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-6xl md:text-8xl lg:text-9xl font-display font-black tracking-tighter bg-gradient-to-r from-cyan-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent"
+          className="text-6xl md:text-8xl lg:text-9xl font-display font-black tracking-tighter bg-linear-to-r from-white via-white/90 to-amber-300 bg-clip-text text-transparent"
         >
           Watch a Real Conversation
         </motion.h2>
@@ -34,8 +34,8 @@ export default function Demo() {
           transition={{ duration: 0.8 }}
           className="mt-20 relative max-w-4xl mx-auto"
         >
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-8 ring-white/10">
-            <div className="aspect-[9/19.5] bg-gradient-to-br from-[#1a3a80] to-[#0f1a36] flex items-center justify-center relative">
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/15 border border-white/10 bg-white/5 backdrop-blur-xl">
+            <div className="aspect-[9/19.5] bg-linear-to-br from-[#132a57] to-[#0b1a36] flex items-center justify-center relative">
               {/* Replace with your actual neutral avatar or live preview */}
               <Image
                 src="/avatars/avatar_0.jpg"
@@ -56,7 +56,7 @@ export default function Demo() {
                         repeat: Infinity,
                         delay: i * 0.1,
                       }}
-                      className="w-4 bg-gradient-to-t from-cyan-400 to-purple-400 rounded-full"
+                      className="w-4 bg-linear-to-t from-amber-300 to-amber-500 rounded-full"
                       style={{ height: 20 }}
                     />
                   ))}
@@ -84,7 +84,7 @@ export default function Demo() {
               onClick={() => setPlaying(true)}
               className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md"
             >
-              <div className="p-10 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 shadow-2xl">
+              <div className="p-10 rounded-full bg-linear-to-r from-amber-400 to-amber-500 shadow-2xl shadow-amber-500/40">
                 <Play className="w-24 h-24 text-white fill-white ml-4" />
               </div>
             </motion.button>
@@ -94,7 +94,7 @@ export default function Demo() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="mt-20 px-12 py-8 rounded-3xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-2xl font-bold shadow-2xl shadow-purple-600/60"
+          className="mt-20 px-12 py-8 rounded-3xl bg-linear-to-r from-amber-400 to-amber-500 text-black text-2xl font-bold shadow-2xl shadow-amber-500/40"
         >
           Start Talking — Free, Instantly
         </motion.button>
