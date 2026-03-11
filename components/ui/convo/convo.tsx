@@ -25,17 +25,17 @@ const statusConfig = {
   CONNECTING: {
     label: "Connecting...",
     icon: <Radio className="w-4 h-4 animate-pulse" />,
-    color: "bg-amber-500/20 border-amber-500/50 text-amber-300",
+    color: "bg-amber-500/15 border-amber-400/40 text-amber-200",
   },
   ACTIVE: {
     label: "Live • Listening",
     icon: <Zap className="w-4 h-4 animate-pulse" />,
-    color: "bg-emerald-600/30 border-emerald-500/60 text-emerald-300",
+    color: "bg-emerald-500/15 border-emerald-400/40 text-emerald-200",
   },
   ERROR: {
     label: "Connection Failed",
     icon: <X className="w-4 h-4" />,
-    color: "bg-red-500/30 border-red-500/60 text-red-300",
+    color: "bg-red-500/15 border-red-400/40 text-red-200",
   },
   INACTIVE: {
     label: "Ready to initiate call",
@@ -48,7 +48,7 @@ const statusConfig = {
         width={20}
       />
     ),
-    color: "bg-white/10 text-white",
+    color: "bg-white/5 border-white/20 text-white/85",
   },
 };
 
@@ -180,7 +180,7 @@ function Convo({ id }: { id: string }) {
   if (!companion) return null;
 
   return (
-    <main className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:backdrop-blur-2xl md:bg-white/10 md:border md:border-white/20 md:rounded-2xl md:shadow-2xl">
+    <main className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:backdrop-blur-xl md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-2xl">
       <ConvoBlock
         companion={companion}
         id={id}
