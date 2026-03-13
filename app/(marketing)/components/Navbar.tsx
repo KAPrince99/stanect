@@ -38,9 +38,7 @@ export default function Navbar() {
       (entries) => {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
-          .sort(
-            (a, b) => b.intersectionRatio - a.intersectionRatio,
-          )[0];
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
 
         if (visible?.target?.id) {
           setActiveSection(visible.target.id);
