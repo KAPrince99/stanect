@@ -1,4 +1,5 @@
-import type { Transition, Variants } from "framer-motion";
+import { animate, type Transition, type Variants } from "framer-motion";
+import { tr } from "zod/v4/locales";
 
 export const motionTransition = {
   smooth: {
@@ -21,8 +22,11 @@ export const motionTransition = {
 
 export const motionVariants = {
   fadeUp: {
-    hidden: { opacity: 0, y: 16 },
+    hidden: { opacity: 0, y: 32 },
     visible: { opacity: 1, y: 0 },
+    animate: {
+      transition: { duration: 0.4, ease: "easeIn" },
+    },
   } satisfies Variants,
 
   tabContentSlide: {
@@ -34,6 +38,7 @@ export const motionVariants = {
       opacity: 1,
       x: 0,
       transition: {
+        duration: 0.4,
         type: "spring",
         stiffness: 520,
         damping: 40,
@@ -52,7 +57,11 @@ export const motionVariants = {
 
   cardPop: {
     initial: { opacity: 0, scale: 0.94 },
-    animate: { opacity: 1, scale: 1 },
+    animate: {
+      opacity: 1,
+      scale: 1,
+      transition: { ...motionTransition.smooth, duration: 0.35 },
+    },
     exit: { opacity: 0, scale: 0.96 },
   } satisfies Variants,
 } as const;

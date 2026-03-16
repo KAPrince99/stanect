@@ -1,6 +1,8 @@
 "use client";
 import React, { memo } from "react";
 import TabCard from "./TabCard";
+import { motion } from "framer-motion";
+import { motionVariants } from "@/lib/motion";
 
 interface TabItem {
   name: string;
@@ -15,7 +17,12 @@ interface TabGridProps {
 
 function TabGrid({ tabs, completedTabs, isActive, onTabClick }: TabGridProps) {
   return (
-    <div className="flex items-center min-w-[400px] max-w-[600px] mx-auto mb-5 rounded-xl border border-white/10 bg-white/8 backdrop-blur-md p-2">
+    <motion.div
+      variants={motionVariants.fadeUp}
+      initial="hidden"
+      animate="visible"
+      className="flex items-center min-w-[400px] max-w-[600px] mx-auto mb-5 rounded-xl border border-white/10 bg-white/8 backdrop-blur-md p-2"
+    >
       {tabs.map((tab, index) => {
         const isCompleted = Boolean(completedTabs[index]);
         const isLastTab = index === tabs.length - 1;
@@ -39,7 +46,7 @@ function TabGrid({ tabs, completedTabs, isActive, onTabClick }: TabGridProps) {
           </React.Fragment>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
 

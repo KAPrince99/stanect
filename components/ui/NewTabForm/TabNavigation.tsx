@@ -2,6 +2,8 @@
 import React, { memo } from "react";
 import { MoveLeft, MoveRight } from "lucide-react";
 import { Button } from "../button";
+import { motion } from "framer-motion";
+import { motionVariants } from "@/lib/motion";
 
 interface TabNavigationProps {
   onPrevClick: () => void;
@@ -17,7 +19,12 @@ function TabNavigation({
   canGoNext,
 }: TabNavigationProps) {
   return (
-    <section className="flex justify-end gap-4 mx-50 min-w-[400px] max-w-[870px] my-8">
+    <motion.section
+      variants={motionVariants.fadeUp}
+      initial="hidden"
+      animate="visible"
+      className="flex justify-end gap-4 mx-50 min-w-[400px] max-w-[870px] my-8"
+    >
       <Button
         type="button"
         variant="outline"
@@ -41,7 +48,7 @@ function TabNavigation({
       >
         <MoveRight className="h-5 w-5" />
       </Button>
-    </section>
+    </motion.section>
   );
 }
 

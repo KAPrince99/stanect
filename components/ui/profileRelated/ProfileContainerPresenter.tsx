@@ -1,6 +1,9 @@
+'use client";';
+import { motion } from "framer-motion";
 import { memo, ReactNode } from "react";
 import ProfileIdentityHeader from "./ProfileIdentityHeader";
 import ProfileInfoList, { ProfileInfoItem } from "./ProfileInfoList";
+import { motionVariants } from "@/lib/motion";
 
 interface ProfileContainerPresenterProps {
   imgSrc: string;
@@ -23,7 +26,12 @@ function ProfileContainerPresenter({
 }: ProfileContainerPresenterProps) {
   return (
     <div className="w-full max-w-5xl">
-      <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden mt-5 md:backdrop-blur-2xl md:bg-white/10 md:border md:border-white/20 md:rounded-3xl md:shadow-2xl">
+      <motion.div
+        variants={motionVariants.fadeUp}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 md:grid-cols-2 overflow-hidden mt-5 md:backdrop-blur-2xl md:bg-white/10 md:border md:border-white/20 md:rounded-3xl md:shadow-2xl"
+      >
         <div className="grid relative p-8 md:p-10 text-center border-b border-gray-700/50">
           <ProfileIdentityHeader
             key={imgSrc}
@@ -40,7 +48,7 @@ function ProfileContainerPresenter({
         <div className="p-8 md:p-10">
           <ProfileInfoList items={infoItems} />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
