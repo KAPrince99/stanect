@@ -20,6 +20,8 @@ import LoadingSpinner from "../LoadingSpinner";
 import LordIcon from "../lordIcon";
 import SessionEndedModal from "./sessionEndedModal";
 import { isCallOwner } from "@/lib/tabCallLock";
+import { motion } from "framer-motion";
+import { motionVariants } from "@/lib/motion";
 
 const statusConfig = {
   CONNECTING: {
@@ -180,7 +182,12 @@ function Convo({ id }: { id: string }) {
   if (!companion) return null;
 
   return (
-    <main className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:backdrop-blur-xl md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-2xl">
+    <motion.main
+      variants={motionVariants.fadeUp}
+      initial="hidden"
+      animate="visible"
+      className="flex w-full h-full relative text-white overflow-hidden lg:flex-row flex-col md:backdrop-blur-xl md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-2xl"
+    >
       <ConvoBlock
         companion={companion}
         id={id}
@@ -199,7 +206,7 @@ function Convo({ id }: { id: string }) {
         setShowEndModal={setShowEndModal}
         userPlan={(subData?.plan as any) || "free"}
       />
-    </main>
+    </motion.main>
   );
 }
 
