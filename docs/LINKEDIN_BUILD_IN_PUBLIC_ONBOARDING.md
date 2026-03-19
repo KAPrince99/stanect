@@ -1,99 +1,63 @@
-# Building Stanect Onboarding in Public: From Friction to Flow 🚀
+# Building Stanect Onboarding in Public: From Friction to Flow
 
-Today I’m sharing a full engineering sprint I just wrapped on Stanect’s onboarding flow.
+I just wrapped an onboarding sprint for Stanect that started with one bug:
+"form values disappear on refresh."
 
-What started as a small bug report (“form values disappear on refresh”) turned into a full UX + architecture upgrade across state, validation, backend orchestration, and motion.
+That bug exposed a bigger issue: UX friction + weak flow guarantees across state, validation, preview, and backend orchestration.
 
-## The original pain points
+Here is what I shipped.
 
-- Onboarding state reset on page refresh
-- Validation happened too late and inconsistently
-- Users could move forward with incomplete steps
-- Preview experience felt disconnected from real creation logic
-- Motion and transitions felt inconsistent across tabs/options/cards
-- Server create flow was too monolithic and fragile for production
+1. State that survives and stays valid
 
-## What we shipped
+- Added persisted Zustand state (partial localStorage persistence)
+- Kept only meaningful onboarding fields
+- Moved plan constraints into the store so rules are centralized
 
-### 1) Reliable persisted onboarding state
+2. Real validation at the right boundaries
 
-- Added persisted Zustand store with localStorage partial persistence
-- Preserved only meaningful onboarding fields
-- Added plan-aware state constraints directly in the store (not scattered in components)
+- Integrated Zod field validation with typed inline errors
+- Reused shared schema logic across client + server
+- Blocked step progression until current step is valid
 
-### 2) Real field-level validation with Zod
+3. Safer defaults and fallback paths
 
-- Wired Zod validation into onboarding inputs
-- Added typed inline errors for immediate feedback
-- Reused schema definitions on both client and server for consistency
+- Default avatar auto-selects to first option
+- Server-side avatar fallback prevents empty payload failures
+- Country fallback defaults to "United States"
 
-### 3) Safer defaults + failure-resistant flows
+4. Clearer architecture
 
-- Default avatar auto-selects to first available option
-- Submit-time avatar fallback on the server to prevent empty payload failures
-- Country fallback defaulted to `United States` in create flow
+- Refactored tab flow into container/presenter structure
+- Extracted reusable TabGrid, TabCard, and TabNavigation
+- Added completed-step states + progress connectors
 
-### 4) Onboarding architecture cleanup
+5. Preview that mirrors production
 
-- Split tab flow into container/presenter pattern
-- Extracted reusable `TabGrid`, `TabCard`, `TabNavigation`
-- Added gated progression: users can’t advance until current step is valid
-- Added completed-step visual states and progress connectors
-
-### 5) Preview re-architecture (review + confirm)
-
-- Refactored Preview to build real companion payload from state
-- Added review summary + edit step jumps
+- Rebuilt preview from real onboarding state
+- Added review summary + jump-to-edit actions
 - Added full-form validation summary before create
-- Converted preview action into production-like create mutation flow
 
-### 6) Reusable UI components
+6. Backend hardening
 
-- Upgraded companion card API with optional behavior flags:
-  - optional convo button
-  - optional navigation
-  - optional hover lift
-- Allowed same component to work in dashboard and read-only preview contexts
-
-### 7) Backend hardening for production
-
-- Refactored `createCompanion` into clear orchestration helpers
+- Split createCompanion into focused orchestration helpers
 - Added server-side schema validation before DB/API calls
-- Added Vapi response guards and cleanup logic on downstream failure
-- Reduced mutation side-effects and improved failure handling
+- Added downstream failure guards + cleanup logic
 
-### 8) Motion system refinement
+7. Motion consistency
 
-- Introduced shared motion tokens/variants in a central motion config
-- Applied consistent motion language across tabs, voice options, avatar selection, preview, and dashboard empty state
-- Iterated heavily on tab/content timing so interaction feels intentional, not flashy
+- Introduced shared motion tokens/variants
+- Unified transitions across tabs, options, avatar selection, and preview
 
-## Why this sprint mattered
+Why this mattered:
 
-This wasn’t “just polish.” It improved:
+- Better data integrity
+- Lower onboarding drop-off risk
+- Cleaner component boundaries
+- Higher production confidence
 
-- **Data integrity** (less invalid submissions)
-- **Conversion readiness** (fewer drop-off moments in onboarding)
-- **Maintainability** (clearer component boundaries)
-- **Production confidence** (safer backend orchestration + cleanup)
+Big takeaway: conversion improves when uncertainty is removed.
 
-## Engineering principles I leaned on
-
-- Put invariants in the store, not in random components
-- Validate at every boundary (input + submit + server)
-- Build for fallback paths, not happy paths only
-- Refactor toward reusable behavior, not one-off UI
-- Motion should communicate state change, never distract from it
-
-## If you’re building onboarding right now
-
-My biggest takeaway: the fastest way to improve conversion is often **removing uncertainty**.
-
-For users: clear states, clear constraints, clear next steps.
-For engineers: deterministic state, consistent validation, resilient orchestration.
-
-That combination compounds.
-
----
+For users: clear states and next steps.
+For engineers: deterministic state, consistent validation, resilient fallbacks.
 
 #buildinpublic #frontend #react #nextjs #typescript #zustand #zod #productengineering #webdev #softwareengineering
