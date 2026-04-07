@@ -42,7 +42,7 @@ export default function Sidebar() {
     cn(
       "group relative block rounded-full p-4 transition-all duration-300 transform hover:scale-110",
       isActive
-        ? "scale-[1.035] border border-amber-200/20 bg-white/10 shadow-md shadow-amber-500/12"
+        ? "scale-[1.035] border border-white/70 shadow-md shadow-white/10"
         : "bg-white/5 hover:bg-white/20",
     );
 
@@ -69,8 +69,12 @@ export default function Sidebar() {
                   {isActive && (
                     <motion.span
                       layoutId="sidebar-active-tab"
-                      className="absolute inset-0 rounded-full bg-linear-to-r from-amber-300/12 to-orange-400/12"
-                      transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                      className="absolute inset-0 rounded-full border border-white/70 bg-transparent"
+                      transition={{
+                        type: "spring",
+                        stiffness: 320,
+                        damping: 28,
+                      }}
                     />
                   )}
 
@@ -86,13 +90,9 @@ export default function Sidebar() {
                     )}
                   </div>
 
-                {/* Tooltip */}
-                  <div
-                    className="absolute left-full top-1/2 -ml-2 -translate-y-1/2 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100"
-                  >
-                    <div
-                      className="rounded-full bg-white/10 px-2 py-1 text-[12px] whitespace-nowrap text-white shadow-2xl backdrop-blur"
-                    >
+                  {/* Tooltip */}
+                  <div className="absolute left-full top-1/2 -ml-2 -translate-y-1/2 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                    <div className="rounded-full bg-white/10 px-2 py-1 text-[12px] whitespace-nowrap text-white shadow-2xl backdrop-blur">
                       {item.label}
                     </div>
                   </div>
@@ -108,7 +108,7 @@ export default function Sidebar() {
               {isActiveRoute("/profile") && (
                 <motion.span
                   layoutId="sidebar-active-tab"
-                  className="absolute inset-0 rounded-full bg-linear-to-r from-amber-300/12 to-orange-400/12"
+                  className="absolute inset-0 rounded-full border border-white/70 bg-transparent"
                   transition={{ type: "spring", stiffness: 320, damping: 28 }}
                 />
               )}
@@ -117,12 +117,8 @@ export default function Sidebar() {
                 <UserImageContainer />
               </div>
 
-              <div
-                className="absolute left-full top-1/2 -ml-2 -translate-y-1/2 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100"
-              >
-                <div
-                  className="rounded-full bg-white/10 px-2 py-1 text-[12px] whitespace-nowrap text-white shadow-2xl backdrop-blur"
-                >
+              <div className="absolute left-full top-1/2 -ml-2 -translate-y-1/2 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                <div className="rounded-full bg-white/10 px-2 py-1 text-[12px] whitespace-nowrap text-white shadow-2xl backdrop-blur">
                   Profile
                 </div>
               </div>
