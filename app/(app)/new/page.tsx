@@ -1,11 +1,18 @@
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { createSupabaseClient } from "@/lib/supabase";
-import UpgradeAlert from "@/components/ui/upgradeAlert";
-import { hasReachedCompanionLimit, getMaxCompanions } from "@/lib/plan-utils";
-import type { PlanType } from "@/lib/plan-limits";
+import { redirect } from "next/navigation";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+
+import { getAvatars, getSingleAvatar } from "@/app/(app)/actions/actions";
 import TabForm from "@/components/ui/NewTabForm/TabForm";
+import UpgradeAlert from "@/components/ui/upgradeAlert";
+import type { PlanType } from "@/lib/plan-limits";
+import { getMaxCompanions, hasReachedCompanionLimit } from "@/lib/plan-utils";
+import { createSupabaseClient } from "@/lib/supabase";
 
 export const metadata: Metadata = {
   title: "Create New Companion – Stanect AI",
@@ -17,6 +24,7 @@ export default async function Page() {
   const { userId } = await auth();
   if (!userId) redirect("/login");
 
+  const queryClient = new QueryClient();
   const supabase = createSupabaseClient();
 
   const { data: userData } = await supabase
@@ -37,9 +45,33 @@ export default async function Page() {
     return <UpgradeAlert plan={plan} maxAllowed={maxAllowed} />;
   }
 
+  const avatars = await queryClient.fetchQuery({
+    queryKey: ["avatars"],
+    queryFn: getAvatars,
+    staleTime: Infinity,
+  });
+
+  const defaultAvatarId = avatars[0]?.id;
+
+  if (defaultAvatarId) {
+    await queryClient.prefetchQuery({
+      queryKey: ["avatar", defaultAvatarId],
+      queryFn: () => getSingleAvatar(defaultAvatarId),
+      staleTime: Infinity,
+    });
+  }
+
+  await queryClient.prefetchQuery({
+    queryKey: ["avatar", "default"],
+    queryFn: () => getSingleAvatar(defaultAvatarId),
+    staleTime: Infinity,
+  });
+
   return (
-    <main className="flex flex-col mt-25  bg-transparent min-h-screen md:h-screen mb-30 md:mb-15">
-      <TabForm userPlan={plan} />
+    <main className="mt-25 mb-30 flex min-h-screen flex-col bg-transparent md:mb-15 md:h-screen">
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <TabForm userPlan={plan} />
+      </HydrationBoundary>
     </main>
   );
 }

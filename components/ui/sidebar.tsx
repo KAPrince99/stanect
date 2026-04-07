@@ -1,33 +1,51 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+import { cn } from "@/lib/utils";
+
 import LordIcon from "./lordIcon";
-import { Home, Sparkles, Plus } from "lucide-react";
 import UserImageContainer from "./UserImageContainer";
 
 const navItems = [
   {
     href: "/dashboard",
-    icon: Home,
     label: "Dashboard",
     lordIcon: "https://cdn.lordicon.com/pgirtdfe.json",
   },
   {
     href: "/new",
-    icon: Plus,
     label: "Create",
     lordIcon: "https://cdn.lordicon.com/ueoydrft.json",
   },
   {
     href: "/pricing",
-    icon: Sparkles,
     label: "Pricing",
     lordIcon: "https://cdn.lordicon.com/opqmrqco.json",
   },
 ];
 
 export default function Sidebar() {
+  const pathname = usePathname();
+
+  const isActiveRoute = (href: string) => {
+    if (href === "/dashboard") {
+      return pathname === href || pathname.startsWith(`${href}/`);
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const getTabClasses = (isActive: boolean) =>
+    cn(
+      "group relative block rounded-full p-4 transition-all duration-300 transform hover:scale-110",
+      isActive
+        ? "scale-[1.035] border border-amber-200/20 bg-white/10 shadow-md shadow-amber-500/12"
+        : "bg-white/5 hover:bg-white/20",
+    );
+
   return (
     <aside
       className="flex flex-col items-center w-24 h-full py-10 
@@ -38,60 +56,72 @@ export default function Sidebar() {
         <div className="relative">
           <div className="absolute inset-0 bg-linear-to-r from-amber-400/20 via-orange-500/20 to-pink-500/20 blur-xl rounded-full scale-125 animate-pulse" />
           <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-4 shadow-2xl flex flex-col gap-8 items-center">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="relative block p-4 rounded-full bg-white/5 hover:bg-white/20 transition-transform duration-300 transform hover:scale-110 group"
-              >
-                <div className="relative flex justify-center items-center">
-                  {item.lordIcon && (
-                    <LordIcon
-                      src={item.lordIcon}
-                      trigger="loop"
-                      colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
-                      width={item.href === "/new" ? 40 : 35}
-                      height={item.href === "/new" ? 40 : 35}
+            {navItems.map((item) => {
+              const isActive = isActiveRoute(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={getTabClasses(isActive)}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="sidebar-active-tab"
+                      className="absolute inset-0 rounded-full bg-linear-to-r from-amber-300/12 to-orange-400/12"
+                      transition={{ type: "spring", stiffness: 320, damping: 28 }}
                     />
                   )}
-                </div>
+
+                  <div className="relative z-10 flex items-center justify-center">
+                    {item.lordIcon && (
+                      <LordIcon
+                        src={item.lordIcon}
+                        trigger="loop"
+                        colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
+                        width={item.href === "/new" ? 40 : 35}
+                        height={item.href === "/new" ? 40 : 35}
+                      />
+                    )}
+                  </div>
 
                 {/* Tooltip */}
-                <div
-                  className="absolute left-full -ml-2 top-1/2 -translate-y-1/2 
-                opacity-0 group-hover:opacity-100 
-                pointer-events-none transition-opacity duration-200"
-                >
                   <div
-                    className="bg-white/10 backdrop-blur 
-                  text-white text-[12px] px-2 py-1 
-                  rounded-full whitespace-nowrap 
-                  shadow-2xl "
+                    className="absolute left-full top-1/2 -ml-2 -translate-y-1/2 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100"
                   >
-                    {item.label}
+                    <div
+                      className="rounded-full bg-white/10 px-2 py-1 text-[12px] whitespace-nowrap text-white shadow-2xl backdrop-blur"
+                    >
+                      {item.label}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
 
             <Link
               href="/profile"
-              className="relative block p-4 rounded-full bg-white/5 hover:bg-white/20 transition-transform duration-300 transform hover:scale-110 group"
+              aria-current={isActiveRoute("/profile") ? "page" : undefined}
+              className={getTabClasses(isActiveRoute("/profile"))}
             >
-              <div className="relative flex justify-center items-center">
+              {isActiveRoute("/profile") && (
+                <motion.span
+                  layoutId="sidebar-active-tab"
+                  className="absolute inset-0 rounded-full bg-linear-to-r from-amber-300/12 to-orange-400/12"
+                  transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                />
+              )}
+
+              <div className="relative z-10 flex items-center justify-center">
                 <UserImageContainer />
               </div>
 
               <div
-                className="absolute left-full -ml-2 top-1/2 -translate-y-1/2 
-                opacity-0 group-hover:opacity-100 
-                pointer-events-none transition-opacity duration-200"
+                className="absolute left-full top-1/2 -ml-2 -translate-y-1/2 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100"
               >
                 <div
-                  className="bg-white/10 backdrop-blur 
-                  text-white text-[12px] px-2 py-1 
-                  rounded-full whitespace-nowrap 
-                  shadow-2xl "
+                  className="rounded-full bg-white/10 px-2 py-1 text-[12px] whitespace-nowrap text-white shadow-2xl backdrop-blur"
                 >
                   Profile
                 </div>
