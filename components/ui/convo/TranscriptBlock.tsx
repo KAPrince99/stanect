@@ -22,6 +22,7 @@ function TranscriptBlock({
   const { messages } = useConvoStore();
   const parentRef = useRef<HTMLDivElement>(null);
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Virtual is intentional for transcript rendering performance.
   const rowVirtualizer = useVirtualizer({
     count: messages.length,
     getScrollElement: () => parentRef.current,

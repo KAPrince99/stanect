@@ -7,7 +7,7 @@ import LordIcon from "../lordIcon";
 import { Button } from "../button";
 import { motionTransition, motionVariants } from "@/lib/motion";
 
-export default function Fresh() {
+function EmptyCompanionState() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -26,7 +26,7 @@ export default function Fresh() {
         transition={motionTransition.soft}
         className="flex flex-col items-center justify-center py-1 lg:-ml-35"
       >
-        <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl px-6 py-10 md:px-10 md:py-12 text-center shadow-xl">
+        <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl px-6 py-10 text-center shadow-xl md:px-10 md:py-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-400/10 px-4 py-1.5 text-xs tracking-wide uppercase text-amber-300 mb-6">
             <Sparkles className="w-3.5 h-3.5" />
             New Companion Setup
@@ -76,3 +76,5 @@ export default function Fresh() {
     </div>
   );
 }
+
+export default EmptyCompanionState;

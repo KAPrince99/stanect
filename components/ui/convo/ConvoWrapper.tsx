@@ -4,15 +4,18 @@ import dynamic from "next/dynamic";
 
 import LoadingSpinner from "../LoadingSpinner";
 
-const Convo = dynamic(() => import("@/components/ui/convo/convo"), {
-  ssr: false,
-  loading: () => <LoadingSpinner />,
-});
+const ConvoContainer = dynamic(
+  () => import("@/components/ui/convo/ConvoContainer"),
+  {
+    ssr: false,
+    loading: () => <LoadingSpinner />,
+  },
+);
 
 interface ConvoWrapperProps {
   companionId: string;
 }
 
 export default function ConvoWrapper({ companionId }: ConvoWrapperProps) {
-  return <Convo id={companionId} />;
+  return <ConvoContainer id={companionId} />;
 }

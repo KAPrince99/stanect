@@ -1,15 +1,17 @@
 import React, { useEffect } from "react";
 
-export const useOutsideClick = (
-  ref: React.RefObject<HTMLDivElement>,
-  callback: Function
-) => {
+export function useOutsideClick<T extends HTMLElement>(
+  ref: React.RefObject<T | null>,
+  callback: (event: MouseEvent | TouchEvent) => void,
+) {
   useEffect(() => {
-    const listener = (event: any) => {
-      // DO NOTHING if the element being clicked is the target element or their children
-      if (!ref.current || ref.current.contains(event.target)) {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+
+      if (!ref.current || (target && ref.current.contains(target))) {
         return;
       }
+
       callback(event);
     };
 
@@ -20,5 +22,5 @@ export const useOutsideClick = (
       document.removeEventListener("mousedown", listener);
       document.removeEventListener("touchstart", listener);
     };
-  }, [ref, callback]);
-};
+  }, [callback, ref]);
+}

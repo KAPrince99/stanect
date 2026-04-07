@@ -1,12 +1,18 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { getCompanions } from "@/app/(app)/actions/actions";
 import { useUser } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
 import { memo, useMemo } from "react";
-import CompanionListPresenter from "./CompanionListPresenter";
 
-function CompanionList({ userId }: { userId: string }) {
+import { getCompanions } from "@/app/(app)/actions/actions";
+
+import DashboardCompanionsView from "./DashboardCompanionsView";
+
+interface DashboardCompanionListProps {
+  userId: string;
+}
+
+function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
   const { user, isLoaded: userLoaded } = useUser();
 
   const { data: companions = [], isLoading } = useQuery({
@@ -22,7 +28,7 @@ function CompanionList({ userId }: { userId: string }) {
   );
 
   return (
-    <CompanionListPresenter
+    <DashboardCompanionsView
       companions={companions}
       welcomeUser={welcomeUser}
       userLoaded={userLoaded}
@@ -31,4 +37,4 @@ function CompanionList({ userId }: { userId: string }) {
   );
 }
 
-export default memo(CompanionList);
+export default memo(DashboardCompanionList);

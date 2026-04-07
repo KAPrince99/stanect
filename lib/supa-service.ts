@@ -6,7 +6,7 @@ export const getSupabaseService = () => {
 
   if (!url || !key) {
     throw new Error(
-      "Supabase Service Key is missing from Environment Variables"
+      "Supabase Service Key is missing from Environment Variables",
     );
   }
 

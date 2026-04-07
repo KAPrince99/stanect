@@ -11,7 +11,11 @@ interface SvgPath {
 }
 
 interface MaskedDivProps {
-  children: React.ReactElement<HTMLVideoElement | HTMLImageElement>;
+  children: React.ReactElement<
+    { className?: string } & Partial<
+      React.VideoHTMLAttributes<HTMLVideoElement>
+    >
+  >;
   maskType?: MaskType;
   className?: string;
   backgroundColor?: string;
@@ -48,12 +52,14 @@ const MaskedDiv: React.FC<MaskedDivProps> = ({
   backgroundColor = "transparent",
   size = 1,
 }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    const videoElement = containerRef.current?.querySelector("video");
+
     const handleVisibilityChange = () => {
-      if (!videoRef.current) return;
-      if (document.hidden) videoRef.current.pause();
+      if (!videoElement) return;
+      if (document.hidden) videoElement.pause();
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -61,19 +67,22 @@ const MaskedDiv: React.FC<MaskedDivProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const vid = entry.target as HTMLVideoElement;
-          if (!entry.isIntersecting) vid.pause();
-          else vid.play().catch(() => {});
+          const video = entry.target as HTMLVideoElement;
+          if (!entry.isIntersecting) {
+            video.pause();
+          } else {
+            video.play().catch(() => {});
+          }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
-    if (videoRef.current) observer.observe(videoRef.current);
+    if (videoElement) observer.observe(videoElement);
 
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      if (videoRef.current) observer.unobserve(videoRef.current);
+      if (videoElement) observer.unobserve(videoElement);
     };
   }, []);
 
@@ -96,9 +105,12 @@ const MaskedDiv: React.FC<MaskedDivProps> = ({
   };
 
   return (
-    <section className={`relative ${className}`} style={containerStyle}>
+    <section
+      ref={containerRef}
+      className={`relative ${className}`}
+      style={containerStyle}
+    >
       {React.cloneElement(children, {
-        ref: videoRef,
         autoPlay: true,
         muted: true,
         playsInline: true,

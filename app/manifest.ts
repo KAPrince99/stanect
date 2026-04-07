@@ -17,13 +17,13 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/icon-192x192.png",
         sizes: "192x192",
         type: "image/png",
-        purpose: "any maskable", // Good practice to include 'any'
+        purpose: "maskable",
       },
       {
         src: "/icon-512x512.png",
         sizes: "512x512",
         type: "image/png",
-        purpose: "any maskable",
+        purpose: "maskable",
       },
       // You may want to add 384x384, 256x256, 144x144, and 96x96 versions too for full coverage
     ],

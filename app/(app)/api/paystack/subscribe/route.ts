@@ -16,20 +16,36 @@ const PLAN_CODES: Record<string, { monthly: string; yearly: string }> = {
   },
 };
 
+type SubscriptionPlan = keyof typeof PLAN_CODES;
+type BillingInterval = "monthly" | "yearly";
+
+function isSubscriptionPlan(value: unknown): value is SubscriptionPlan {
+  return typeof value === "string" && value in PLAN_CODES;
+}
+
+function isBillingInterval(value: unknown): value is BillingInterval {
+  return value === "monthly" || value === "yearly";
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { userId: clerk_user_id } = await auth();
     if (!clerk_user_id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { plan, interval } = await req.json();
-    const planCode = PLAN_CODES[plan]?.[interval];
+    const { plan, interval } = (await req.json()) as {
+      plan?: unknown;
+      interval?: unknown;
+    };
 
-    if (!planCode)
+    if (!isSubscriptionPlan(plan) || !isBillingInterval(interval)) {
       return NextResponse.json(
-        { error: "Plan configuration missing" },
+        { error: "Invalid plan selection" },
         { status: 400 },
       );
+    }
+
+    const planCode = PLAN_CODES[plan][interval];
 
     const { data: userRow } = await supabase
       .from("users")
@@ -82,8 +98,14 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json(initRes.data.data);
-  } catch (err: any) {
-    console.error("❌ PAYSTACK ERROR:", err.response?.data || err.message);
+  } catch (error: unknown) {
+    const errorMessage = axios.isAxiosError(error)
+      ? error.response?.data || error.message
+      : error instanceof Error
+        ? error.message
+        : "Unknown error";
+
+    console.error("❌ PAYSTACK ERROR:", errorMessage);
     const { userId } = await auth();
     if (userId)
       await supabase

@@ -9,7 +9,7 @@ import { memo, useMemo } from "react";
 import { toast } from "sonner";
 import { Loader2, MoveRight } from "lucide-react";
 import { motion } from "framer-motion";
-import CompanionCard from "../HomeDashboard/companionCard";
+import CompanionOverviewCard from "../HomeDashboard/CompanionOverviewCard";
 import LoadingSpinner from "../LoadingSpinner";
 import { Button } from "../button";
 import { motionTransition, motionVariants } from "@/lib/motion";
@@ -135,7 +135,7 @@ function Preview({ onEditStep }: PreviewProps) {
           animate="animate"
           transition={motionTransition.soft}
         >
-          <CompanionCard
+          <CompanionOverviewCard
             companion={previewCompanion}
             showConvoButton={false}
             enableNavigation={false}

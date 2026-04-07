@@ -4,11 +4,11 @@ export interface VapiSDK {
   start: (
     assistantId: string,
     options: { maxDurationSeconds: number },
-  ) => Promise<void>;
+  ) => Promise<unknown>;
   stop: () => Promise<void>;
   setMuted: (muted: boolean) => Promise<void>;
-  on: (event: string, cb: (...args: any[]) => void) => void;
-  off: (event: string, cb: (...args: any[]) => void) => void;
+  on: (event: string, cb: (...args: unknown[]) => void) => void;
+  off: (event: string, cb: (...args: unknown[]) => void) => void;
 }
 
 export async function getVapiSdk(): Promise<VapiSDK> {
@@ -19,7 +19,9 @@ export async function getVapiSdk(): Promise<VapiSDK> {
   }
 
   const { default: Vapi } = await import("@vapi-ai/web");
-  vapiInstance = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY!) as VapiSDK;
+  vapiInstance = new Vapi(
+    process.env.NEXT_PUBLIC_VAPI_API_KEY!,
+  ) as unknown as VapiSDK;
 
   return vapiInstance;
 }

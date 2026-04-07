@@ -1,8 +1,14 @@
 "use client";
 
-import { useState, useEffect, useMemo, memo } from "react";
+import {
+  useEffect,
+  useMemo,
+  memo,
+  type ComponentProps,
+  type ReactNode,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -38,6 +44,14 @@ interface AvatarFormProps {
   userPlan?: "free" | "pro" | "king"; // Made optional with default
 }
 
+type FlagComponent = (typeof Flags)[keyof typeof Flags];
+
+interface CountryOption {
+  name: string;
+  code: string;
+  Flag: FlagComponent;
+}
+
 function AvatarForm({
   avatars,
   selectedAvatarId,
@@ -48,9 +62,6 @@ function AvatarForm({
   const queryClient = useQueryClient();
 
   const urlAvatarId = params.get("avatarId");
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(
-    urlAvatarId || null,
-  );
 
   // Dynamic limits based on prop
   const maxMinutes = useMemo(() => {
@@ -77,28 +88,23 @@ function AvatarForm({
           .max(120, "Scene too long"),
 
         voice: z.enum(["male", "female"], {
-          required_error: "Select a voice",
+          error: "Select a voice",
         }),
 
         country: z.string().min(1, "Please select a country"),
 
-        duration: z.preprocess(
-          (val) => (val === "" ? undefined : Number(val)),
-          z
-            .number({ invalid_type_error: "Enter a number" })
-            .int("Please enter a whole number")
-            .min(1, "Min 1 minute")
-            .max(
-              maxMinutes,
-              `Your ${userPlan} plan limit is ${maxMinutes} mins`,
-            ),
-        ),
+        duration: z.coerce
+          .number({ error: "Enter a number" })
+          .int("Please enter a whole number")
+          .min(1, "Min 1 minute")
+          .max(maxMinutes, `Your ${userPlan} plan limit is ${maxMinutes} mins`),
       }),
     [maxMinutes, userPlan],
   );
-  type FormData = z.infer<typeof formSchema>;
+  type FormData = z.output<typeof formSchema>;
+  type FormValues = z.input<typeof formSchema>;
 
-  const form = useForm<FormData>({
+  const form = useForm<FormValues, unknown, FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       avatar_id: selectedAvatarId || urlAvatarId || "",
@@ -111,6 +117,22 @@ function AvatarForm({
     mode: "onBlur",
   });
 
+  const selectedVoice = useWatch({
+    control: form.control,
+    name: "voice",
+  });
+
+  const selectedCountry = useWatch({
+    control: form.control,
+    name: "country",
+  });
+
+  const selectedAvatar =
+    useWatch({
+      control: form.control,
+      name: "avatar_id",
+    }) || null;
+
   // Re-sync duration if userPlan changes (e.g. after upgrade)
   useEffect(() => {
     form.setValue("duration", maxMinutes);
@@ -119,12 +141,10 @@ function AvatarForm({
   useEffect(() => {
     if (selectedAvatarId) {
       form.setValue("avatar_id", selectedAvatarId);
-      setSelectedAvatar(selectedAvatarId);
     }
   }, [selectedAvatarId, form]);
 
   const handleAvatarSelect = (id: string) => {
-    setSelectedAvatar(id);
     form.setValue("avatar_id", id, { shouldValidate: true });
     const searchParams = new URLSearchParams(params.toString());
     searchParams.set("avatarId", id);
@@ -133,28 +153,30 @@ function AvatarForm({
 
   const mutation = useMutation({
     mutationFn: createCompanion,
-    onSuccess: (res) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companions"] });
       toast.success("Your companion is alive", {
         icon: <Sparkles className="w-5 h-5 text-amber-400" />,
       });
       setTimeout(() => router.replace("/dashboard"), 1200);
     },
-    onError: (err: any) => toast.error(err.message || "Something went wrong"),
+    onError: (error: Error) =>
+      toast.error(error.message || "Something went wrong"),
   });
 
-  const onSubmit = (data: FormData) => mutation.mutate(data as any);
+  const onSubmit: SubmitHandler<FormData> = (data) => mutation.mutate(data);
 
-  const countryOptions = useMemo(
+  const countryOptions = useMemo<CountryOption[]>(
     () =>
       getNames()
         .sort()
         .map((name) => {
           const code = getCode(name);
-          const Flag = Flags[code as keyof typeof Flags];
-          return { name, code, Flag };
+          const Flag = code ? Flags[code as keyof typeof Flags] : undefined;
+
+          return code && Flag ? { name, code, Flag } : null;
         })
-        .filter((c) => c.code && c.Flag),
+        .filter((option): option is CountryOption => option !== null),
     [],
   );
 
@@ -224,7 +246,7 @@ function AvatarForm({
                 <p className="font-inter">Voice</p>
               </div>
               <Choicebox
-                value={form.watch("voice")}
+                value={selectedVoice ?? "female"}
                 onValueChange={(val: "male" | "female") =>
                   form.setValue("voice", val, { shouldValidate: true })
                 }
@@ -232,7 +254,7 @@ function AvatarForm({
               >
                 <ChoiceboxItem
                   value="male"
-                  className={`border-2 rounded-sm transition cursor-pointer ${form.watch("voice") === "male" ? "border-amber-400 bg-amber-600/50" : "border-white/10"}`}
+                  className={`border-2 rounded-sm transition cursor-pointer ${selectedVoice === "male" ? "border-amber-400 bg-amber-600/50" : "border-white/10"}`}
                 >
                   <ChoiceboxItemHeader>
                     <ChoiceboxItemTitle>Male</ChoiceboxItemTitle>
@@ -241,7 +263,7 @@ function AvatarForm({
                 </ChoiceboxItem>
                 <ChoiceboxItem
                   value="female"
-                  className={`border-2 rounded-sm transition cursor-pointer ${form.watch("voice") === "female" ? "border-amber-400 bg-amber-600/50" : "border-white/10"}`}
+                  className={`border-2 rounded-sm transition cursor-pointer ${selectedVoice === "female" ? "border-amber-400 bg-amber-600/50" : "border-white/10"}`}
                 >
                   <ChoiceboxItemHeader>
                     <ChoiceboxItemTitle>Female</ChoiceboxItemTitle>
@@ -263,12 +285,12 @@ function AvatarForm({
                   width={25}
                 />
               }
-              value={form.watch("country")}
+              value={selectedCountry ?? ""}
               onChange={(val: string) =>
                 form.setValue("country", val, { shouldValidate: true })
               }
             >
-              {countryOptions.map(({ name, Flag }: any) => (
+              {countryOptions.map(({ name, Flag }) => (
                 <SelectItem
                   key={name}
                   value={name}
@@ -337,7 +359,12 @@ function AvatarForm({
 }
 
 // --- Helpers ---
-function InputField({ label, icon, className, ...props }: any) {
+interface InputFieldProps extends ComponentProps<typeof Input> {
+  label?: string;
+  icon?: ReactNode;
+}
+
+function InputField({ label, icon, className, ...props }: InputFieldProps) {
   return (
     <div className="space-y-2">
       {label && (
@@ -353,7 +380,21 @@ function InputField({ label, icon, className, ...props }: any) {
   );
 }
 
-function SelectField({ label, icon, value, onChange, children }: any) {
+interface SelectFieldProps {
+  label: string;
+  icon?: ReactNode;
+  value: string;
+  onChange: (value: string) => void;
+  children: ReactNode;
+}
+
+function SelectField({
+  label,
+  icon,
+  value,
+  onChange,
+  children,
+}: SelectFieldProps) {
   return (
     <div className="space-y-2">
       <label className="text-white/90 text-sm font-medium flex items-center gap-2">

@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { memo } from "react";
+
 import { Button } from "@/components/ui/button";
 import { CompanionProps } from "@/types/types";
-import { motion } from "framer-motion";
+
 import LordIcon from "../lordIcon";
-import { memo } from "react";
 
 interface CompanionCardProps {
   companion: CompanionProps;
@@ -13,15 +15,17 @@ interface CompanionCardProps {
   enableHoverLift?: boolean;
 }
 
-function CompanionCard({
-  companion,
-  showConvoButton = true,
-  enableNavigation = true,
-  enableHoverLift = true,
-}: CompanionCardProps) {
-  const cardHref = `/dashboard/${companion.id}`;
+interface CompanionCardMediaProps {
+  companion: CompanionProps;
+}
 
-  const imageContent = (
+interface CompanionCardActionProps {
+  cardHref: string;
+  enableNavigation: boolean;
+}
+
+function CompanionCardMedia({ companion }: CompanionCardMediaProps) {
+  return (
     <div className="relative aspect-square overflow-hidden">
       <Image
         src={companion.avatars.image_url}
@@ -31,9 +35,9 @@ function CompanionCard({
         style={{ willChange: "transform" }}
       />
 
-      <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
 
-      <div className="absolute top-4 left-4 bg-black/70 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+      <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1.5">
         <LordIcon
           src="https://cdn.lordicon.com/zjuyeglr.json"
           trigger="hover"
@@ -44,13 +48,13 @@ function CompanionCard({
         <span className="text-sm font-medium">{companion.duration} min</span>
       </div>
 
-      <div className="absolute bottom-4 left-4 bg-white/10 px-3 py-1.5 rounded-full">
+      <div className="absolute bottom-4 left-4 rounded-full bg-white/10 px-3 py-1.5">
         <span className="text-sm font-medium capitalize">
           {companion.scene}
         </span>
       </div>
 
-      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute right-4 top-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <LordIcon
           src="https://cdn.lordicon.com/ewmfucya.json"
           trigger="hover"
@@ -61,60 +65,74 @@ function CompanionCard({
       </div>
     </div>
   );
+}
+
+function CompanionCardAction({
+  cardHref,
+  enableNavigation,
+}: CompanionCardActionProps) {
+  const buttonContent = (
+    <Button
+      size="lg"
+      className="h-10 w-full bg-linear-to-r from-amber-400 to-orange-500 text-md font-display text-black shadow-lg md:h-12"
+      disabled={!enableNavigation}
+    >
+      <LordIcon
+        src="https://cdn.lordicon.com/ckooqaow.json"
+        trigger={enableNavigation ? "hover" : "loop"}
+        colors="primary:#000000,secondary:#000000,tertiary:#000000,quaternary:#000000,quinary:#000000"
+        height={20}
+        width={20}
+      />
+      Convo
+    </Button>
+  );
+
+  return enableNavigation ? (
+    <Link href={cardHref} className="block">
+      {buttonContent}
+    </Link>
+  ) : (
+    buttonContent
+  );
+}
+
+function CompanionCard({
+  companion,
+  showConvoButton = true,
+  enableNavigation = true,
+  enableHoverLift = true,
+}: CompanionCardProps) {
+  const cardHref = `/dashboard/${companion.id}`;
+  const mediaContent = <CompanionCardMedia companion={companion} />;
 
   return (
     <motion.article
       whileHover={enableHoverLift ? { y: -6 } : undefined}
       transition={{ type: "spring", stiffness: 120, damping: 20 }}
-      className="group relative bg-white/5 rounded-3xl overflow-hidden border border-white/10 shadow-xl"
+      className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl"
       style={{ willChange: "transform" }}
     >
       {enableNavigation ? (
-        <Link href={cardHref}>{imageContent}</Link>
+        <Link href={cardHref}>{mediaContent}</Link>
       ) : (
-        imageContent
+        mediaContent
       )}
 
       <div className="p-5 text-center">
-        <h3 className="text-xl md:text-2xl text-white mb-3">
+        <h3 className="mb-3 text-xl text-white md:text-2xl">
           {companion.companion_name}
         </h3>
 
-        {showConvoButton &&
-          (enableNavigation ? (
-            <Link href={cardHref}>
-              <Button
-                size="lg"
-                className="w-full h-10 md:h-12 bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-display cursor-pointer text-md shadow-lg"
-              >
-                <LordIcon
-                  src="https://cdn.lordicon.com/ckooqaow.json"
-                  trigger="hover"
-                  colors="primary:#000000,secondary:#000000,tertiary:#000000,quaternary:#000000,quinary:#000000"
-                  height={20}
-                  width={20}
-                />
-                Convo
-              </Button>
-            </Link>
-          ) : (
-            <Button
-              size="lg"
-              className="w-full h-10 md:h-12 bg-linear-to-r from-amber-400 to-orange-500 text-black font-display text-md shadow-lg"
-              disabled
-            >
-              <LordIcon
-                src="https://cdn.lordicon.com/ckooqaow.json"
-                trigger="loop"
-                colors="primary:#000000,secondary:#000000,tertiary:#000000,quaternary:#000000,quinary:#000000"
-                height={20}
-                width={20}
-              />
-              Convo
-            </Button>
-          ))}
+        {showConvoButton ? (
+          <CompanionCardAction
+            cardHref={cardHref}
+            enableNavigation={enableNavigation}
+          />
+        ) : null}
       </div>
     </motion.article>
   );
 }
+
 export default memo(CompanionCard);

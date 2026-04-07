@@ -1,1 +1,1 @@
-export { default } from "./convo/convo";
+export { default } from "./convo/ConvoContainer";
