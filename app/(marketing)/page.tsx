@@ -1,13 +1,13 @@
 import MarketingLayout from "./layout";
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Footer from "./components/Footer";
-import ComponentsShowcase from "./components/ComponentsShowcase";
+import Navbar from "./components/Navbar/Navbar";
+import Hero from "./components/Hero/Hero";
+import Footer from "./components/Footer/Footer";
+import ComponentsShowcase from "./components/Showcase/ComponentsShowcase";
 import Pricing from "./components/Pricing";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import ScenarioList from "./components/ScenarioList";
+import ScenarioList from "./components/Scenario/ScenarioList";
 
 export const metadata: Metadata = {
   title: "Stanect – AI Voice Companion to Practice Real Conversations",
