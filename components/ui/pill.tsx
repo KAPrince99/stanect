@@ -1,14 +1,17 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignOutButton } from "@clerk/nextjs";
 import Link from "next/link";
-import { LogIn } from "lucide-react";
+import { LogIn, LogOut } from "lucide-react";
 
-import UserButton from "@/components/ui/UserButton";
+import UserImageContainer from "@/components/ui/UserImageContainer";
+import { usePrefetchRoute } from "@/hooks/usePrefetchRoute";
 
 import UploadButton from "./uploadButton";
 
 export default function Pill() {
+  const prefetchRoute = usePrefetchRoute();
+
   return (
     <div className="group relative flex h-14 w-full items-center justify-between overflow-hidden rounded-full border border-white/20 bg-white/10 px-6 shadow-2xl shadow-black/40 backdrop-blur-2xl transition-transform duration-200 hover:scale-[1.01] sm:h-16 sm:px-10">
       <div className="pointer-events-none absolute inset-0 scale-150 bg-linear-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
@@ -28,7 +31,7 @@ export default function Pill() {
         <UploadButton />
       </div>
 
-      <div className="z-10 flex items-center gap-4">
+      <div className="z-10 flex items-center gap-3 sm:gap-4">
         <SignedOut>
           <SignInButton mode="modal">
             <button
@@ -42,10 +45,41 @@ export default function Pill() {
         </SignedOut>
 
         <SignedIn>
-          <div className="relative hidden lg:flex">
-            <UserButton />
-            <span className="absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 border-black bg-emerald-400 shadow-lg" />
+          <div className="hidden items-center gap-4 lg:flex">
+            <Link
+              href="/pricing"
+              prefetch
+              className="type-cta rounded-full bg-emerald-500 px-4 py-1.5 text-sm text-black shadow-md transition-colors hover:bg-emerald-400"
+              onMouseEnter={() => prefetchRoute("/pricing")}
+              onFocus={() => prefetchRoute("/pricing")}
+            >
+              Upgrade
+            </Link>
+
+            <Link
+              href="/profile"
+              prefetch
+              aria-label="Go to profile"
+              className="relative transition-transform duration-200 hover:scale-105"
+              onMouseEnter={() => prefetchRoute("/profile")}
+              onFocus={() => prefetchRoute("/profile")}
+            >
+              <UserImageContainer />
+              <span className="absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 border-black bg-emerald-400 shadow-lg" />
+            </Link>
+
+            <SignOutButton>
+              <button
+                type="button"
+                aria-label="Sign out"
+                className="type-label flex cursor-pointer items-center gap-1.5 rounded-full border border-white/10 bg-black px-3 py-1.5 text-white/90 transition-colors hover:bg-black/80 hover:text-white"
+              >
+                <LogOut className="h-4 w-4 text-red-400" />
+                <span className="hidden xl:inline">Sign Out</span>
+              </button>
+            </SignOutButton>
           </div>
+
           <span className="h-4 w-4 rounded-full border bg-emerald-400 shadow-lg lg:hidden" />
         </SignedIn>
       </div>
