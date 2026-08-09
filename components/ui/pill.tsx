@@ -49,7 +49,7 @@ export default function Pill() {
             <Link
               href="/pricing"
               prefetch
-              className="type-cta rounded-full bg-emerald-500 px-4 py-1.5 text-sm text-black shadow-md transition-colors hover:bg-emerald-400"
+              className="rounded-full bg-emerald-500 px-3 py-1 text-xs font-semibold text-black shadow-sm transition-colors hover:bg-emerald-400"
               onMouseEnter={() => prefetchRoute("/pricing")}
               onFocus={() => prefetchRoute("/pricing")}
             >
@@ -65,16 +65,16 @@ export default function Pill() {
               onFocus={() => prefetchRoute("/profile")}
             >
               <UserImageContainer />
-              <span className="absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 border-black bg-emerald-400 shadow-lg" />
+              <span className="absolute -right-1 -bottom-1 h-3.5 w-3.5 rounded-full border-2 border-black bg-emerald-400 shadow-lg" />
             </Link>
 
             <SignOutButton>
               <button
                 type="button"
                 aria-label="Sign out"
-                className="type-label flex cursor-pointer items-center gap-1.5 rounded-full border border-white/10 bg-black px-3 py-1.5 text-white/90 transition-colors hover:bg-black/80 hover:text-white"
+                className="flex cursor-pointer items-center gap-1 rounded-full border border-white/10 bg-black px-2.5 py-1 text-xs font-medium text-white/85 transition-colors hover:bg-black/80 hover:text-white"
               >
-                <LogOut className="h-4 w-4 text-red-400" />
+                <LogOut className="h-3.5 w-3.5 text-red-400" />
                 <span className="hidden xl:inline">Sign Out</span>
               </button>
             </SignOutButton>

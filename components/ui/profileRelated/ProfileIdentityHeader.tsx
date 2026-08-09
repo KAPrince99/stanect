@@ -23,9 +23,9 @@ function ProfileIdentityHeader({
   const displaySrc = hasImageError ? FALLBACK_AVATAR : imgSrc;
 
   return (
-    <div className="grid grid-cols-[1fr_3fr] gap-4 md:place-items-center md:px-10 relative z-10">
-      <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-linear-to-br from-amber-400 to-orange-600 p-1 shadow-xl">
-        <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center text-white text-4xl font-bold overflow-hidden relative">
+    <div className="relative z-10 grid grid-cols-[1fr_3fr] items-center gap-4 md:place-items-center md:px-6">
+      <div className="h-28 w-28 rounded-full bg-linear-to-br from-amber-400 to-orange-600 p-1 shadow-xl md:h-32 md:w-32">
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-gray-900 text-4xl font-bold text-white">
           {imgSrc ? (
             <Image
               src={displaySrc}
@@ -42,10 +42,7 @@ function ProfileIdentityHeader({
       </div>
 
       <div className="flex flex-col items-start space-y-2">
-        <h1 className="type-title text-xl md:text-2xl">
-          {userFullName}
-        </h1>
-
+        <h1 className="type-title text-xl md:text-2xl">{userFullName}</h1>
         <p className="type-meta flex items-center gap-2 text-sm">
           {planLabel}
           <ProfilePlanBadge userPlan={userPlan} />

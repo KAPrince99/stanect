@@ -44,6 +44,10 @@ export interface Userprops {
   profile_picture: string;
   country: string;
   plan: string;
+  total_lifetime_seconds?: number;
+  daily_seconds_used?: number;
+  created_at?: string;
+  metadata?: Record<string, unknown>;
 }
 export interface VoiceProps {
   male: string;

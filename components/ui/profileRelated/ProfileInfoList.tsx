@@ -13,7 +13,7 @@ interface ProfileInfoListProps {
 
 function ProfileInfoList({ items }: ProfileInfoListProps) {
   return (
-    <div className="grid gap-6 max-w-3xl mx-auto">
+    <div className="mx-auto grid max-w-3xl gap-6">
       {items.map((item) => (
         <InfoItem key={item.label} {...item} />
       ))}

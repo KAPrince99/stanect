@@ -18,10 +18,8 @@ export default async function ProfilePage() {
   if (!userId) redirect("/login");
 
   return (
-    <main className="relative mb-30 min-h-screen overflow-hidden md:mb-0">
-      <div className="relative z-10 flex min-h-screen items-center justify-center py-12 sm:px-6 md:py-20">
-        <ProfileContainer userId={userId} />
-      </div>
-    </main>
+    <section className="relative px-4 pt-24 pb-28 sm:px-6 lg:pt-28 md:pb-16">
+      <ProfileContainer userId={userId} />
+    </section>
   );
 }

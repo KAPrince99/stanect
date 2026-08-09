@@ -18,9 +18,10 @@ import { updateProfile } from "@/app/(app)/actions/update";
 import { useQueryClient } from "@tanstack/react-query";
 import { Userprops } from "@/types/types";
 import LordIcon from "../lordIcon";
-import { Loader2 } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
+import InputField from "../NewTabForm/InputField";
 
 interface UpdateProfileProps {
   data: Userprops;
@@ -64,8 +65,6 @@ function UpdateProfile({
   );
   const [loading, setLoading] = useState(false);
 
-  /* ---------------- Sync state when dialog opens ---------------- */
-
   useEffect(() => {
     if (open) {
       const nextValues = getInitialValues(data, user);
@@ -75,8 +74,6 @@ function UpdateProfile({
       setImageFile(null);
     }
   }, [open, data, user]);
-
-  /* ---------------- Cleanup blob preview ---------------- */
 
   useEffect(() => {
     return () => {
@@ -112,6 +109,7 @@ function UpdateProfile({
 
       if (!safeName) {
         toast.error("Name is required");
+        setLoading(false);
         return;
       }
 
@@ -122,7 +120,6 @@ function UpdateProfile({
 
       await updateProfile(formData, data?.profile_picture);
 
-      /* precise invalidation */
       await queryClient.invalidateQueries({
         queryKey: ["users", user?.id],
       });
@@ -141,103 +138,133 @@ function UpdateProfile({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="type-cta h-11 w-full px-8 text-white sm:w-auto">
+        <Button
+          size="lg"
+          variant="outline"
+          className="type-cta h-11 w-full border-white/20 bg-white/5 px-8 text-white hover:bg-white/10 hover:text-white sm:w-auto"
+        >
           Update Profile
         </Button>
       </AlertDialogTrigger>
 
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Update your profile</AlertDialogTitle>
-          <AlertDialogDescription>
-            Changes are saved securely.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+      <AlertDialogContent className="gap-0 overflow-hidden rounded-3xl border border-white/10 bg-zinc-900 p-0 text-white shadow-2xl backdrop-blur-xl sm:max-w-md">
+        <div className="h-1 bg-linear-to-r from-amber-400 via-orange-500 to-amber-400" />
 
-        <div className="flex flex-col space-y-4 py-4">
-          <input
-            ref={imageInputRef}
-            type="file"
-            hidden
-            accept="image/*"
-            onChange={handleImageChange}
-            disabled={loading}
-          />
+        <div className="p-6 sm:p-8">
+          <AlertDialogHeader className="space-y-2 text-center sm:text-center">
+            <AlertDialogTitle className="type-title text-xl sm:text-2xl">
+              Update your profile
+            </AlertDialogTitle>
+            <AlertDialogDescription className="type-body text-white/65">
+              Refresh your photo, name, and location.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
 
-          {/* Avatar */}
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-800 relative">
-              {previewUrl ? (
-                <Image
-                  src={previewUrl}
-                  alt="Profile preview"
-                  fill
-                  className="object-cover"
-                  unoptimized={previewUrl.startsWith("blob:")}
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-white text-xl font-bold">
-                  {userFirstNameInitial || "?"}
+          <div className="mt-8 space-y-5">
+            <input
+              ref={imageInputRef}
+              type="file"
+              hidden
+              accept="image/*"
+              onChange={handleImageChange}
+              disabled={loading}
+            />
+
+            <div className="flex flex-col items-center gap-4">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => imageInputRef.current?.click()}
+                className="group relative h-24 w-24 rounded-full bg-linear-to-br from-amber-400 to-orange-600 p-1 shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 disabled:opacity-60"
+                aria-label="Change profile photo"
+              >
+                <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-gray-900 text-3xl font-bold text-white">
+                  {previewUrl ? (
+                    <Image
+                      src={previewUrl}
+                      alt="Profile preview"
+                      fill
+                      className="object-cover"
+                      unoptimized={previewUrl.startsWith("blob:")}
+                    />
+                  ) : (
+                    <span>{userFirstNameInitial || "?"}</span>
+                  )}
                 </div>
-              )}
+                <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/45 opacity-0 transition group-hover:opacity-100">
+                  <Camera className="h-5 w-5 text-white" />
+                </span>
+              </button>
+
+              <Button
+                type="button"
+                size="sm"
+                disabled={loading}
+                onClick={() => imageInputRef.current?.click()}
+                className="type-meta h-9 rounded-full border border-white/15 bg-white/5 px-4 text-white hover:bg-white/10"
+              >
+                Change photo
+              </Button>
             </div>
 
-            <Button
-              type="button"
-              disabled={loading}
-              onClick={() => imageInputRef.current?.click()}
-            >
-              Change Photo
-            </Button>
-          </div>
-
-          {/* Name */}
-          <div className="flex items-center gap-4">
-            <LordIcon
-              src="https://cdn.lordicon.com/hhljfoaj.json"
-              trigger="loop"
-              colors="primary:#e88c30"
-              height={28}
-              width={28}
-            />
-            <input
+            <InputField
+              label="Name"
+              icon={
+                <LordIcon
+                  src="https://cdn.lordicon.com/hhljfoaj.json"
+                  trigger="hover"
+                  colors="primary:#e88c30"
+                  height={22}
+                  width={22}
+                />
+              }
               value={updatedName}
               disabled={loading}
               onChange={(e) => setUpdatedName(e.target.value)}
-              placeholder="Name"
-              className="bg-transparent border border-white/20 p-2 rounded-md focus:outline-none"
+              placeholder="Your name"
+              className="focus-visible:border-amber-400/40 focus-visible:ring-amber-400/20"
             />
-          </div>
 
-          {/* Location */}
-          <div className="flex items-center gap-4">
-            <LordIcon
-              src="https://cdn.lordicon.com/tyntlpjn.json"
-              trigger="loop"
-              colors="primary:#ffffff,secondary:#e88c30"
-              height={28}
-              width={28}
-            />
-            <input
+            <InputField
+              label="Location"
+              icon={
+                <LordIcon
+                  src="https://cdn.lordicon.com/tyntlpjn.json"
+                  trigger="hover"
+                  colors="primary:#ffffff,secondary:#e88c30"
+                  height={22}
+                  width={22}
+                />
+              }
               value={updatedLocation}
               disabled={loading}
               onChange={(e) => setUpdatedLocation(e.target.value)}
-              placeholder="Location"
-              className="bg-transparent border border-white/20 p-2 rounded-md focus:outline-none"
+              placeholder="Where you're based"
+              className="focus-visible:border-amber-400/40 focus-visible:ring-amber-400/20"
             />
           </div>
+
+          <AlertDialogFooter className="mt-8 gap-3 sm:justify-stretch">
+            <AlertDialogCancel
+              disabled={loading}
+              className="type-label h-11 flex-1 rounded-full border-none bg-white/5 text-white hover:bg-white/10 hover:text-white"
+            >
+              Cancel
+            </AlertDialogCancel>
+
+            <AlertDialogAction
+              onClick={handleContinue}
+              disabled={loading}
+              className="type-cta h-11 flex-1 rounded-full border-none bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-lg shadow-amber-500/30 hover:from-amber-500 hover:to-orange-600"
+            >
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                "Save changes"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
         </div>
-
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
-
-          <AlertDialogAction
-            onClick={handleContinue}
-            className="bg-black text-white px-6"
-          >
-            {loading ? <Loader2 className="animate-spin" /> : "Save"}
-          </AlertDialogAction>
-        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
