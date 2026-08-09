@@ -11,39 +11,34 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div lang="en" className="h-full w-screen">
       <div className="h-full text-white antialiased">
-        {/*Global Background*/}
+        {/* Global Background */}
         <div className="fixed inset-0 -z-10 pointer-events-none">
           <div className="absolute inset-0 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]" />
           <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
         </div>
 
-        {/*  Content Wrapper */}
-        <div className="flex h-screen overflow-hidden lg:mx-auto lg:w-full lg:max-w-[1600px]">
-          {/* Sidebar */}
-          <div className="hidden lg:flex shrink-0">
-            <Sidebar />
+        <div className="relative h-screen overflow-hidden">
+          {/* Sidebar overlays the viewport so main content can center on the same axis as the navbar */}
+          <div className="pointer-events-none fixed inset-y-0 left-0 z-40 hidden lg:block">
+            <div className="pointer-events-auto h-full">
+              <Sidebar />
+            </div>
           </div>
 
-          {/* Right-hand Content Area  */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Navbar*/}
+          <div className="flex h-full flex-col overflow-hidden">
             <Navbar />
 
-            {/* Main Content Area */}
-            <main
-              className="flex-1 overflow-y-auto scrollbar-hide 
-                         pb-0 lg:pb-0 will-change-scroll"
-            >
+            <main className="flex-1 overflow-y-auto scrollbar-hide will-change-scroll lg:px-36">
               <ScrollToTop />
               {children}
             </main>
 
-            {/* Mobile Dock */}
             <div className="lg:hidden shrink-0">
               <MobileDock />
             </div>
           </div>
         </div>
+
         <Toaster
           position="top-right"
           closeButton

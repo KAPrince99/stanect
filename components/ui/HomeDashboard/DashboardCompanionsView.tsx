@@ -12,24 +12,22 @@ import EmptyCompanionState from "./EmptyCompanionState";
 interface DashboardCompanionsViewProps {
   companions: CompanionProps[];
   welcomeUser: string;
-  userLoaded: boolean;
   isLoading: boolean;
 }
 
 function DashboardCompanionsView({
   companions,
   welcomeUser,
-  userLoaded,
   isLoading,
 }: DashboardCompanionsViewProps) {
-  if (!userLoaded || isLoading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 
   const hasCompanions = companions.length > 0;
 
   return (
-    <section className="relative px-6 py-25 md:px-10 lg:px-16">
+    <section className="relative px-4 pt-24 pb-8 sm:px-6 md:px-10 lg:px-12 lg:pt-28">
       <DashboardWelcomeHeader
         welcomeUser={welcomeUser}
         hasCompanions={hasCompanions}

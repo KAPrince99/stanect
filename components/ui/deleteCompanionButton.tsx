@@ -33,18 +33,19 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
     mutationFn: (id: string) => deleteCompanion(id),
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: ["companions"] });
-      const previousData = queryClient.getQueryData<CompanionProps[]>([
-        "companions",
-      ]);
-      queryClient.setQueryData(["companions"], (old?: CompanionProps[]) =>
-        old?.filter((c) => c.id !== id),
+      const previousQueries = queryClient.getQueriesData<CompanionProps[]>({
+        queryKey: ["companions"],
+      });
+      queryClient.setQueriesData<CompanionProps[]>(
+        { queryKey: ["companions"] },
+        (old) => old?.filter((c) => c.id !== id),
       );
-      return { previousData };
+      return { previousQueries };
     },
-    onError: (err, id, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(["companions"], context.previousData);
-      }
+    onError: (_err, _id, context) => {
+      context?.previousQueries?.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
       toast.error("Failed to delete companion", {
         style: { background: "#ff4d4f" },
       });

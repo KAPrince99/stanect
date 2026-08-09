@@ -5,6 +5,7 @@ import CompanionOverviewCardAction from "./CompanionOverviewCardAction";
 interface CompanionOverviewCardContentProps {
   cardHref: string;
   companionName: string;
+  scene?: string;
   showConvoButton: boolean;
   enableNavigation: boolean;
 }
@@ -12,12 +13,20 @@ interface CompanionOverviewCardContentProps {
 function CompanionOverviewCardContent({
   cardHref,
   companionName,
+  scene,
   showConvoButton,
   enableNavigation,
 }: CompanionOverviewCardContentProps) {
   return (
-    <div className="p-5 text-center">
-      <h3 className="mb-3 text-xl text-white md:text-2xl">{companionName}</h3>
+    <div className="space-y-3 p-4 text-center sm:p-5">
+      <div className="space-y-1">
+        <h3 className="font-display text-lg text-white sm:text-xl">
+          {companionName}
+        </h3>
+        {scene ? (
+          <p className="text-xs capitalize text-white/55 sm:hidden">{scene}</p>
+        ) : null}
+      </div>
 
       {showConvoButton ? (
         <CompanionOverviewCardAction

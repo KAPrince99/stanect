@@ -29,15 +29,14 @@ function getPlanLabel(plan: string) {
   return "Free Plan";
 }
 
-function ProfileContainer() {
-  const { user, isLoaded } = useUser();
-  const userId = user?.id;
+function ProfileContainer({ userId }: { userId: string }) {
+  const { user } = useUser();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["users", userId],
-    queryFn: () => getUser(userId as string),
-    enabled: !!userId && isLoaded,
-    staleTime: Infinity,
+    queryFn: () => getUser(userId),
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5,
   });
 
   const profileView = useMemo(() => {
@@ -94,10 +93,10 @@ function ProfileContainer() {
     [data, profileView.userFirstNameInitial, user],
   );
 
-  if (!isLoaded || isLoading) return <LoadingSpinner />;
+  if (isLoading) return <LoadingSpinner />;
   if (isError) {
     return (
-      <div className="w-full max-w-5xl mt-5 text-red-300">
+      <div className="mt-5 w-full max-w-5xl text-red-300">
         Unable to load profile details right now.
       </div>
     );

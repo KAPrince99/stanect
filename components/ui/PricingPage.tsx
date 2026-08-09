@@ -34,9 +34,10 @@ function PricingPage() {
     isLoading,
     refetch: refetchSubscriptionStatus,
   } = useQuery({
-    queryKey: ["users", clerkUserId],
+    queryKey: ["subscription", clerkUserId],
     enabled: !!clerkUserId,
     queryFn: () => fetchSubscriptionStatus(clerkUserId!),
+    staleTime: 1000 * 60 * 5,
   });
 
   const handleSubscribe = useCallback(
@@ -99,7 +100,11 @@ function PricingPage() {
     }
   }, [refetchSubscriptionStatus]);
 
-  if (!isClerkLoaded || (clerkUserId && isLoading)) {
+  if (!isClerkLoaded) {
+    return <LoadingSpinner />;
+  }
+
+  if (clerkUserId && isLoading && !subscriptionData) {
     return <LoadingSpinner />;
   }
 

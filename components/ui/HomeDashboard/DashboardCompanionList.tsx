@@ -13,12 +13,12 @@ interface DashboardCompanionListProps {
 }
 
 function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
-  const { user, isLoaded: userLoaded } = useUser();
+  const { user } = useUser();
 
   const { data: companions = [], isLoading } = useQuery({
     queryKey: ["companions", userId],
     queryFn: () => getCompanions(userId),
-    enabled: !!userId && userLoaded,
+    enabled: !!userId,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -31,7 +31,6 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
     <DashboardCompanionsView
       companions={companions}
       welcomeUser={welcomeUser}
-      userLoaded={userLoaded}
       isLoading={isLoading}
     />
   );

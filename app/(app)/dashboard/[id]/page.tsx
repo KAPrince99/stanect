@@ -1,8 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+
+import ConvoAccessGate from "@/components/ui/convo/ConvoAccessGate";
 import ConvoWrapper from "@/components/ui/convo/ConvoWrapper";
-import { Metadata } from "next";
-import CheckNecessities from "@/components/ui/CheckNecessities";
 
 export const metadata: Metadata = {
   title: "Conversation – Stanect AI",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }> | { id: string };
 }
 
 export default async function Page({ params }: PageProps) {
@@ -20,12 +21,11 @@ export default async function Page({ params }: PageProps) {
 
   if (!userId) redirect("/login");
 
-  const necessities = await CheckNecessities({ userId });
-  if (necessities) return necessities;
-
   return (
-    <div className="min-h-[calc(100vh)] lg:h-[300px] bg-transparent py-16 md:mx-10 xl:mx-40 sm:px-6 mt-5 md:mt-10">
-      <ConvoWrapper companionId={id} />
+    <div className="mt-5 min-h-[calc(100vh)] bg-transparent py-16 sm:px-6 md:mx-10 md:mt-10 lg:h-[300px] xl:mx-40">
+      <ConvoAccessGate userId={userId}>
+        <ConvoWrapper companionId={id} />
+      </ConvoAccessGate>
     </div>
   );
 }

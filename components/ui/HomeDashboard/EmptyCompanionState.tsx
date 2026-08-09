@@ -24,7 +24,7 @@ function EmptyCompanionState() {
         initial="hidden"
         animate="visible"
         transition={motionTransition.soft}
-        className="flex flex-col items-center justify-center py-1 lg:-ml-35"
+        className="flex flex-col items-center justify-center"
       >
         <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl px-6 py-10 text-center shadow-xl md:px-10 md:py-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-400/10 px-4 py-1.5 text-xs tracking-wide uppercase text-amber-300 mb-6">
@@ -46,11 +46,11 @@ function EmptyCompanionState() {
             />
           </motion.div>
 
-          <h2 className="text-3xl md:text-4xl font-display tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+          <h2 className="font-display text-2xl tracking-tight bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent sm:text-3xl">
             Create your first companion
           </h2>
 
-          <p className="mt-4 text-white/70 text-base md:text-lg max-w-xl mx-auto">
+          <p className="mx-auto mt-3 max-w-xl text-sm text-white/70 sm:text-base">
             Build a personalized AI companion with your preferred voice, scene,
             and style in a guided setup.
           </p>

@@ -37,6 +37,7 @@ function CompanionOverviewCard({
       <CompanionOverviewCardContent
         cardHref={cardHref}
         companionName={companion.companion_name}
+        scene={companion.scene}
         showConvoButton={showConvoButton}
         enableNavigation={enableNavigation}
       />
