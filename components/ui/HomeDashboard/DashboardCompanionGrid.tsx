@@ -6,13 +6,19 @@ import { memo } from "react";
 import { motionTransition, motionVariants } from "@/lib/motion";
 import { CompanionProps } from "@/types/types";
 
+import CompanionGhostCard from "./CompanionGhostCard";
 import CompanionOverviewCard from "./CompanionOverviewCard";
+
+/** Fill the first row visually until the user has a full set of companions. */
+const TARGET_SLOT_COUNT = 3;
 
 interface DashboardCompanionGridProps {
   companions: CompanionProps[];
 }
 
 function DashboardCompanionGrid({ companions }: DashboardCompanionGridProps) {
+  const ghostCount = Math.max(0, TARGET_SLOT_COUNT - companions.length);
+
   return (
     <motion.div
       layout
@@ -33,6 +39,10 @@ function DashboardCompanionGrid({ companions }: DashboardCompanionGridProps) {
           </motion.div>
         ))}
       </AnimatePresence>
+
+      {Array.from({ length: ghostCount }).map((_, index) => (
+        <CompanionGhostCard key={`ghost-${index}`} index={index} />
+      ))}
     </motion.div>
   );
 }
