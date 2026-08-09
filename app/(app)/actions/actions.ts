@@ -1,6 +1,8 @@
 "use server";
 import { fetchSubscriptionStatus } from "./subs";
 import { buildAssistant } from "@/lib/buildAssistant";
+import type { PlanType } from "@/lib/plan-limits";
+import { hasReachedCompanionLimit } from "@/lib/plan-utils";
 import { createSupabaseClient } from "@/lib/supabase";
 import {
   AssistantCompanionContext,
@@ -49,6 +51,35 @@ export async function getAvatars(): Promise<AvatarProps[]> {
   const { data, error } = await supabase.from("avatars").select("*");
   if (!data || error) if (error) throw new Error("Error fetching avatars");
   return (data ?? []) as AvatarProps[];
+}
+
+export async function getCreateCompanionGate(userId: string) {
+  if (!userId) {
+    return { plan: "free" as PlanType, count: 0 };
+  }
+
+  const supabase = createSupabaseClient();
+
+  const [{ data: userData }, { count, error: countError }] = await Promise.all([
+    supabase
+      .from("users")
+      .select("plan")
+      .eq("clerk_user_id", userId)
+      .maybeSingle(),
+    supabase
+      .from("companions")
+      .select("*", { count: "exact", head: true })
+      .eq("owner_id", userId),
+  ]);
+
+  if (countError) {
+    throw new Error(countError.message);
+  }
+
+  return {
+    plan: (userData?.plan || "free") as PlanType,
+    count: count ?? 0,
+  };
 }
 
 export async function getSingleAvatar(
@@ -218,7 +249,16 @@ export async function createCompanion(formData: unknown) {
   const normalizedInput = parsed.data;
 
   const sub = await fetchSubscriptionStatus(userId);
-  const userPlan = sub?.plan || "free";
+  const userPlan = (sub?.plan || "free") as PlanType;
+
+  const { count } = await supabase
+    .from("companions")
+    .select("*", { count: "exact", head: true })
+    .eq("owner_id", userId);
+
+  if (hasReachedCompanionLimit(count ?? 0, userPlan)) {
+    throw new Error("Companion limit reached for your plan");
+  }
 
   const maxAllowed = planDurationLimits[userPlan] || 2;
   const safeDuration = Math.min(normalizedInput.duration, maxAllowed);

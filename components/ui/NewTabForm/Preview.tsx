@@ -97,6 +97,7 @@ function Preview({ onEditStep }: PreviewProps) {
     mutationFn: (payload: CreateCompanionProps) => createCompanion(payload),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["companions"] });
+      queryClient.invalidateQueries({ queryKey: ["createCompanionGate"] });
       toast.success("Companion created successfully 🎉");
       const createdCompanionId = result?.data?.id;
       reset();

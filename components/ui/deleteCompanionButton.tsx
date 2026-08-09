@@ -55,6 +55,10 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
         queryKey: ["companions"],
         type: "all",
       });
+      await queryClient.invalidateQueries({
+        queryKey: ["createCompanionGate"],
+        type: "all",
+      });
       toast.success("Companion deleted successfully", {
         description: "They’ve been removed from your world forever.",
         duration: 5000,
