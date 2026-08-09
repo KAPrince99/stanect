@@ -21,11 +21,11 @@ export default function ConvoGuard({ reason, plan }: ConvoGuardProps) {
           )}
         </div>
 
-        <h1 className="text-3xl font-display text-white mb-4 font-bold">
-          {isTrial ? "Trial Period Ended" : "Daily Limit Reached"}
+        <h1 className="type-display mb-4 text-[1.75rem]">
+          {isTrial ? "Trial period ended" : "Daily limit reached"}
         </h1>
 
-        <p className="text-white/70 mb-8 font-inter text-lg">
+        <p className="type-body mb-8">
           {isTrial
             ? "Your 7-day exploration of Stanect AI has finished. Upgrade to Pro to keep your companions alive."
             : "You've used your 6 free minutes for today. Conversations reset every 24 hours at midnight."}
@@ -34,13 +34,13 @@ export default function ConvoGuard({ reason, plan }: ConvoGuardProps) {
         <div className="flex flex-col gap-4">
           <Button
             asChild
-            className="bg-linear-to-r from-amber-400 to-orange-500 text-black font-bold h-12 text-md shadow-lg shadow-orange-500/20"
+            className="type-cta h-12 bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-lg shadow-orange-500/20"
           >
             <Link
               href="/pricing"
               className="flex items-center justify-center gap-2"
             >
-              <Zap className="w-4 h-4 fill-current" />
+              <Zap className="h-4 w-4 fill-current" />
               Upgrade to Pro
             </Link>
           </Button>
@@ -48,7 +48,7 @@ export default function ConvoGuard({ reason, plan }: ConvoGuardProps) {
           <Button
             asChild
             variant="ghost"
-            className="text-white/50 hover:text-white hover:bg-white/5"
+            className="type-label text-white/50 hover:bg-white/5 hover:text-white"
           >
             <Link href="/dashboard">Back to Dashboard</Link>
           </Button>

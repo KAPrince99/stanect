@@ -31,24 +31,46 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
 
   const mutation = useMutation({
     mutationFn: (id: string) => deleteCompanion(id),
-    onMutate: async (id: string) => {
+    onMutate: async (deletedId: string) => {
       await queryClient.cancelQueries({ queryKey: ["companions"] });
-      const previousQueries = queryClient.getQueriesData<CompanionProps[]>({
+
+      const previousQueries = queryClient.getQueriesData({
         queryKey: ["companions"],
       });
-      queryClient.setQueriesData<CompanionProps[]>(
-        { queryKey: ["companions"] },
-        (old) => old?.filter((c) => c.id !== id),
-      );
+
+      // List caches are CompanionProps[]; convo detail is a single companion.
+      // Only call .filter on arrays.
+      queryClient.setQueriesData({ queryKey: ["companions"] }, (old) => {
+        if (Array.isArray(old)) {
+          return old.filter(
+            (companion: CompanionProps) => companion.id !== deletedId,
+          );
+        }
+
+        if (
+          old &&
+          typeof old === "object" &&
+          "id" in old &&
+          (old as CompanionProps).id === deletedId
+        ) {
+          return null;
+        }
+
+        return old;
+      });
+
       return { previousQueries };
     },
-    onError: (_err, _id, context) => {
+    onError: (err, _id, context) => {
       context?.previousQueries?.forEach(([queryKey, data]) => {
         queryClient.setQueryData(queryKey, data);
       });
-      toast.error("Failed to delete companion", {
-        style: { background: "#ff4d4f" },
-      });
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete companion",
+        {
+          style: { background: "#ff4d4f" },
+        },
+      );
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -73,7 +95,6 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
         action: {
           label: "Undo",
           onClick: () => {
-            // Optional: implement undo logic later
             toast("Undo not available yet", { duration: 2000 });
           },
         },
@@ -167,7 +188,10 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
 
               <AlertDialogAction asChild>
                 <Button
-                  onClick={handleDelete}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleDelete();
+                  }}
                   disabled={mutation.isPending}
                   className="
                 w-full sm:w-auto 

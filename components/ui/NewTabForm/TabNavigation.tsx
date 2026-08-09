@@ -1,9 +1,12 @@
 "use client";
+
 import React, { memo } from "react";
 import { MoveLeft, MoveRight } from "lucide-react";
-import { Button } from "../button";
 import { motion } from "framer-motion";
+
 import { motionVariants } from "@/lib/motion";
+
+import { Button } from "../button";
 
 interface TabNavigationProps {
   onPrevClick: () => void;
@@ -23,13 +26,13 @@ function TabNavigation({
       variants={motionVariants.fadeUp}
       initial="hidden"
       animate="visible"
-      className="flex justify-end gap-4 mx-50 min-w-[400px] max-w-[870px] my-8"
+      className="my-8 flex justify-end gap-3"
     >
       <Button
         type="button"
         variant="outline"
         size="icon"
-        className="bg-background/60 border-border/60 text-foreground hover:bg-accent"
+        className="size-11 rounded-full border-white/12 bg-white/5 text-white hover:bg-white/10"
         onClick={onPrevClick}
         disabled={!canGoPrev}
         aria-label="Go to previous tab"
@@ -41,7 +44,7 @@ function TabNavigation({
         type="button"
         variant="outline"
         size="icon"
-        className="bg-background/60 border-border/60 text-foreground hover:bg-accent"
+        className="size-11 rounded-full border-white/12 bg-white/5 text-white hover:bg-white/10"
         onClick={onNextClick}
         disabled={!canGoNext}
         aria-label="Go to next tab"

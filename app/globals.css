@@ -280,6 +280,85 @@ h6 {
   --ui-bg: linear-gradient(180deg, #0b1a36 0%, #1e4ea8 100%);
 }
 
+/*
+  Signed-in app type scale
+  Display / Title = Space Grotesk
+  Body / Meta / Label = Inter
+  Cap display at ~text-4xl in-app (marketing can go larger)
+*/
+@utility type-brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+@utility type-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.875rem;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: rgb(255 255 255);
+}
+
+@utility type-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: rgb(255 255 255);
+}
+
+@utility type-body {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: rgb(255 255 255 / 0.7);
+}
+
+@utility type-meta {
+  font-family: var(--font-inter);
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: rgb(255 255 255 / 0.55);
+}
+
+@utility type-label {
+  font-family: var(--font-inter);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: rgb(255 255 255 / 0.85);
+}
+
+@utility type-cta {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 640px) {
+  .type-brand {
+    font-size: 1.25rem;
+  }
+  .type-display {
+    font-size: 2.25rem;
+  }
+  .type-title {
+    font-size: 1.5rem;
+  }
+  .type-body {
+    font-size: 1rem;
+  }
+}
+
 /* performance friendly: reduce backdrop-filter scope */
 .backdrop-blur-lite {
   backdrop-filter: blur(6px);

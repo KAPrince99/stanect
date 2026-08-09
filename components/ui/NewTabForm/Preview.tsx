@@ -49,9 +49,7 @@ function Preview({ onEditStep }: PreviewProps) {
         : queryClient.getQueryData(["avatar", "default"]),
     initialDataUpdatedAt: () =>
       queryClient.getQueryState(
-        selectedAvatarId
-          ? ["avatar", selectedAvatarId]
-          : ["avatar", "default"],
+        selectedAvatarId ? ["avatar", selectedAvatarId] : ["avatar", "default"],
       )?.dataUpdatedAt,
   });
 
@@ -161,10 +159,10 @@ function Preview({ onEditStep }: PreviewProps) {
           transition={motionTransition.soft}
         >
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 space-y-5">
-            <h3 className="text-3xl md:text-4xl font-display tracking-tight text-center bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+            <h3 className="type-display text-center text-[1.5rem] sm:text-[1.875rem]">
               Review companion
             </h3>
-            <p className="text-base text-white/70 text-center">
+            <p className="type-body text-center">
               Confirm the details below before creating your companion.
             </p>
 
@@ -175,7 +173,7 @@ function Preview({ onEditStep }: PreviewProps) {
             <PreviewValidationIssues issues={validationIssues} />
 
             <Button
-              className="w-full h-12 bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold shadow-xl shadow-amber-500/20 transition-all"
+              className="type-cta h-12 w-full bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-xl shadow-amber-500/20 transition-all hover:from-amber-500 hover:to-orange-600"
               disabled={mutation.isPending || validationIssues.length > 0}
               onClick={handleCreateCompanion}
             >
@@ -187,7 +185,7 @@ function Preview({ onEditStep }: PreviewProps) {
               )}
             </Button>
 
-            <p className="text-xs text-white/60 text-center">
+            <p className="type-meta text-center">
               You can edit these details later in your dashboard.
             </p>
           </div>

@@ -45,7 +45,7 @@ function ConvoActionBar({
 
       {!isCallInProgress ? (
         <Button
-          className="flex items-center bg-green-500 px-8 py-3 text-lg font-bold shadow-lg shadow-indigo-600/50 transition-colors hover:bg-[#e88c30] cursor-pointer"
+          className="type-cta flex cursor-pointer items-center bg-green-500 px-8 py-3 text-white shadow-lg transition-colors hover:bg-[#e88c30]"
           onClick={onStartCall}
           disabled={loadingStart || !hasAssistantId}
         >

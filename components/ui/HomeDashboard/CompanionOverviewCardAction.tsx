@@ -15,7 +15,7 @@ function CompanionOverviewCardAction({
   const buttonContent = (
     <Button
       size="lg"
-      className="h-10 w-full bg-linear-to-r from-amber-400 to-orange-500 text-sm font-display font-semibold text-black shadow-lg hover:from-amber-500 hover:to-orange-600 md:h-11"
+      className="type-cta h-9 w-full bg-linear-to-r from-amber-400 to-orange-500 text-sm text-black shadow-lg hover:from-amber-500 hover:to-orange-600 md:h-10"
       disabled={!enableNavigation}
     >
       Start Convo

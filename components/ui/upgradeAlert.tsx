@@ -13,7 +13,7 @@ export default function UpgradeAlert({
   maxAllowed: number;
 }) {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-6 text-center lg:-ml-30">
+    <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
       <div className="backdrop-blur-2xl bg-white/10 border border-white/20 p-10 rounded-3xl shadow-2xl max-w-md">
         <LordIcon
           src="https://cdn.lordicon.com/wdbwxkvh.json"
@@ -23,20 +23,20 @@ export default function UpgradeAlert({
           width={75}
         />
 
-        <h1 className="text-3xl md:text-4xl font-display text-white mb-4 font-bold">
-          Limit Reached
+        <h1 className="type-display mb-4 text-[1.75rem] md:text-[2rem]">
+          Limit reached
         </h1>
-        <p className="text-white/70 mb-8 font-inter">
+        <p className="type-body mb-8">
           Your {plan.toUpperCase()} plan allows for {maxAllowed} companion.
           You&apos;ve already brought one to life!
         </p>
         <div className="flex flex-col gap-4">
           <Button
             asChild
-            className="bg-linear-to-r from-amber-400 to-orange-500 text-black font-bold h-12"
+            className="type-cta h-12 bg-linear-to-r from-amber-400 to-orange-500 text-black"
           >
             <Link href="/pricing">
-              <span className="text-md md:text-lg">Upgrade to Pro</span>{" "}
+              <span>Upgrade to Pro</span>{" "}
               <LordIcon
                 src="https://cdn.lordicon.com/wmqqbxlm.json"
                 trigger="loop"
@@ -46,7 +46,7 @@ export default function UpgradeAlert({
               />
             </Link>
           </Button>
-          <Button asChild variant="ghost" className="text-white/50 ">
+          <Button asChild variant="ghost" className="type-label text-white/50">
             <Link href="/dashboard">
               <ArrowLeft /> Back to Dashboard
             </Link>

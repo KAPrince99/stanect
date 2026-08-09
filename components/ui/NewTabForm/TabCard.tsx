@@ -27,7 +27,7 @@ function TabCard({
   return (
     <button
       type="button"
-      className={`relative px-3 py-1.5 rounded-md cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${textClassName}`}
+      className={`type-label relative cursor-pointer rounded-md px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${textClassName}`}
       onClick={() => onTabClick(index)}
     >
       {isCompleted && !isActive && (
@@ -45,7 +45,7 @@ function TabCard({
         />
       )}
 
-      <span className="relative z-10">{name}</span>
+      <span className="relative z-10 text-sm font-medium">{name}</span>
     </button>
   );
 }

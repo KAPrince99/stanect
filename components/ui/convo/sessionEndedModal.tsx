@@ -65,17 +65,17 @@ function SessionEndedModal({
               <Zap className="w-6 h-6 text-amber-500" />
             )}
           </div>
-          <DialogTitle className="text-center text-2xl font-bold">
+          <DialogTitle className="type-title text-center text-xl">
             {active.title}
           </DialogTitle>
-          <DialogDescription className="text-center text-zinc-400 pt-2 text-base">
+          <DialogDescription className="type-body pt-2 text-center text-zinc-400">
             {active.description}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3 pt-6">
           <Button
-            className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-12 rounded-xl transition-all active:scale-95"
+            className="type-cta h-11 w-full rounded-xl bg-amber-500 text-black transition-all hover:bg-amber-600 active:scale-95"
             onClick={active.primaryAction}
           >
             {active.primaryIcon}
@@ -84,7 +84,7 @@ function SessionEndedModal({
 
           <Button
             variant="outline"
-            className="w-full bg-transparent border-white/10 hover:bg-white/5 text-white h-12 rounded-xl transition-all"
+            className="type-label h-11 w-full rounded-xl border-white/10 bg-transparent text-white transition-all hover:bg-white/5"
             onClick={() => router.push("/dashboard")}
           >
             <LayoutDashboard className="w-4 h-4 mr-2" />

@@ -22,18 +22,16 @@ function DashboardWelcomeHeader({
       initial="hidden"
       animate="visible"
       transition={motionTransition.soft}
-      className={`mx-auto w-full max-w-5xl text-center ${hasCompanions ? "mb-10" : "mb-8"}`}
+      className={`w-full text-center ${hasCompanions ? "mb-10" : "mb-8"}`}
     >
-      <h1 className="font-display text-2xl tracking-tight sm:text-3xl md:text-4xl">
-        <span className="bg-linear-to-b from-white to-white/75 bg-clip-text text-transparent">
-          {hasCompanions
-            ? `Welcome back, ${welcomeUser}.`
-            : "Welcome to Stanect"}
-        </span>
+      <h1 className="type-display">
+        {hasCompanions
+          ? `Welcome back, ${welcomeUser}`
+          : "Welcome to Stanect"}
       </h1>
 
       {hasCompanions && (
-        <p className="mt-3 text-sm text-white/60 sm:text-base">
+        <p className="type-meta mt-3 text-[0.875rem] sm:text-[0.9375rem]">
           {companionCount === 1
             ? "1 companion ready to practice"
             : `${companionCount} companions ready to practice`}

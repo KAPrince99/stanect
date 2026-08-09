@@ -122,24 +122,22 @@ function StatusContent() {
   if (status === "failed") return <ErrorView message="Transaction declined." />;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6 bg-white rounded-3xl shadow-xl border border-amber-100 max-w-md mx-auto">
-      <div className="bg-amber-50 p-6 rounded-full mb-8 relative">
-        <Clock className="w-16 h-16 text-amber-500 animate-pulse" />
-        <div className="absolute inset-0 rounded-full border-4 border-amber-200 border-t-transparent animate-spin" />
+    <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center rounded-3xl border border-white/12 bg-white/[0.06] p-8 text-center backdrop-blur-xl">
+      <div className="relative mb-8 rounded-full bg-amber-400/15 p-6">
+        <Clock className="h-14 w-14 animate-pulse text-amber-400" />
+        <div className="absolute inset-0 animate-spin rounded-full border-2 border-amber-400/30 border-t-transparent" />
       </div>
 
-      <h1 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">
-        Confirming Payment
-      </h1>
+      <h1 className="type-display mb-3 text-[1.75rem]">Confirming payment</h1>
 
-      <p className="text-gray-500 mb-10 leading-relaxed">
+      <p className="type-body mb-10">
         Waiting for your bank to confirm. This usually takes a few seconds.
       </p>
 
-      <div className="space-y-4 w-full">
-        <div className="flex items-center justify-center gap-3 text-sm font-medium text-amber-600 bg-amber-50 py-3 rounded-xl border border-amber-100">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          Awaiting Network Confirmation
+      <div className="w-full space-y-4">
+        <div className="type-label flex items-center justify-center gap-3 rounded-full border border-amber-400/20 bg-amber-400/10 py-3 text-amber-200">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Awaiting confirmation
         </div>
 
         {showReset && (
@@ -148,9 +146,9 @@ function StatusContent() {
               await performReset();
               router.push("/pricing");
             }}
-            className="mt-4 text-sm text-red-500 underline block mx-auto font-medium"
+            className="type-meta mx-auto mt-4 block text-red-300 underline"
           >
-            Taking too long? Click here to try again.
+            Taking too long? Try again.
           </button>
         )}
       </div>

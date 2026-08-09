@@ -1,7 +1,6 @@
 "use client";
+
 import React, { memo } from "react";
-import { motion } from "framer-motion";
-import { motionVariants } from "@/lib/motion";
 
 interface TabContentHeaderProps {
   title: string;
@@ -15,20 +14,17 @@ function TabContentHeader({
   titleClassName,
 }: TabContentHeaderProps) {
   return (
-    <motion.div
-      className={`flex items-center justify-center my-4 ${className ?? ""}`.trim()}
-      // variants={motionVariants.fadeUp}
-      // initial="hidden"
-      // animate="visible"
+    <div
+      className={`my-6 flex items-center justify-center ${className ?? ""}`.trim()}
     >
       <h2
-        className={`text-4xl md:text-5xl font-display tracking-tight text-center bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent ${
+        className={`type-display text-center text-[1.75rem] sm:text-[2rem] ${
           titleClassName ?? ""
         }`.trim()}
       >
         {title}
       </h2>
-    </motion.div>
+    </div>
   );
 }
 

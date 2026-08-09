@@ -7,27 +7,27 @@ interface ErrorViewProps {
 
 export default function ErrorView({ message }: ErrorViewProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6 bg-white rounded-2xl shadow-sm border border-red-50">
-      <div className="bg-red-100 p-4 rounded-full mb-6">
-        <XCircleIcon className="w-16 h-16 text-red-600" />
+    <div className="flex min-h-[60vh] flex-col items-center justify-center rounded-3xl border border-white/12 bg-white/[0.06] p-8 text-center backdrop-blur-xl">
+      <div className="mb-6 rounded-full bg-red-500/20 p-4">
+        <XCircleIcon className="h-14 w-14 text-red-400" />
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Failed</h1>
-      <p className="text-gray-600 mb-8 max-w-sm">
+      <h1 className="type-display mb-2 text-[1.75rem]">Payment failed</h1>
+      <p className="type-body mb-8 max-w-sm">
         {message ||
-          "We couldn't process your transaction. This might be due to insufficient funds or an expired card."}
+          "We couldn't process your transaction. Try again or use a different card."}
       </p>
-      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xs">
+      <div className="flex w-full max-w-xs flex-col gap-3 sm:flex-row">
         <Link
           href="/pricing"
-          className="w-full py-3 px-6 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition"
+          className="type-cta w-full rounded-full bg-linear-to-r from-amber-400 to-orange-500 py-3 text-center text-black transition-opacity hover:opacity-95"
         >
           Try Again
         </Link>
         <Link
-          href="/support"
-          className="w-full py-3 px-6 bg-white text-gray-700 font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+          href="/dashboard"
+          className="type-label w-full rounded-full border border-white/12 py-3 text-center text-white/80 transition-colors hover:bg-white/10"
         >
-          Contact Support
+          Dashboard
         </Link>
       </div>
     </div>

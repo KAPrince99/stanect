@@ -15,10 +15,10 @@ export function InfoItem({
     >
       <div className={`p-3 `}>{icon}</div>
       <div>
-        <p className="text-gray-400 text-xs md:text-sm font-medium uppercase tracking-wider">
+        <p className="type-meta uppercase tracking-wider">
           {label}
         </p>
-        <p className="text-md md:text-lg font-bold text-white mt-0.5">
+        <p className="type-label mt-0.5 text-base text-white">
           {value}
         </p>
       </div>

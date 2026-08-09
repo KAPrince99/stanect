@@ -1,9 +1,12 @@
 "use client";
+
 import React, { memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+
+import { motionVariants } from "@/lib/motion";
+
 import TabGrid from "./TabGrid";
 import TabNavigation from "./TabNavigation";
-import { motionVariants } from "@/lib/motion";
 
 interface TabItem {
   name: string;
@@ -39,7 +42,7 @@ function TabFormPresenter({
   canGoNext,
 }: TabFormPresenterProps) {
   return (
-    <main className="-ml-30">
+    <div className="mx-auto w-full max-w-4xl px-4">
       <TabGrid
         tabs={tabs}
         completedTabs={completedTabs}
@@ -47,7 +50,7 @@ function TabFormPresenter({
         onTabClick={onTabClick}
       />
 
-      <div className="relative overflow-hidden lg:mx-50">
+      <div className="relative overflow-hidden">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={activeTabKey}
@@ -71,7 +74,7 @@ function TabFormPresenter({
           canGoNext={canGoNext}
         />
       )}
-    </main>
+    </div>
   );
 }
 

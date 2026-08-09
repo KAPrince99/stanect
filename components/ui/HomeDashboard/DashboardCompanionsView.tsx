@@ -27,18 +27,20 @@ function DashboardCompanionsView({
   const hasCompanions = companions.length > 0;
 
   return (
-    <section className="relative px-4 pt-24 pb-8 sm:px-6 md:px-10 lg:px-12 lg:pt-28">
-      <DashboardWelcomeHeader
-        welcomeUser={welcomeUser}
-        hasCompanions={hasCompanions}
-        companionCount={companions.length}
-      />
+    <section className="relative px-4 pt-24 pb-8 sm:px-6 lg:pt-28">
+      <div className="mx-auto w-full max-w-4xl">
+        <DashboardWelcomeHeader
+          welcomeUser={welcomeUser}
+          hasCompanions={hasCompanions}
+          companionCount={companions.length}
+        />
 
-      {hasCompanions ? (
-        <DashboardCompanionGrid companions={companions} />
-      ) : (
-        <EmptyCompanionState />
-      )}
+        {hasCompanions ? (
+          <DashboardCompanionGrid companions={companions} />
+        ) : (
+          <EmptyCompanionState />
+        )}
+      </div>
     </section>
   );
 }

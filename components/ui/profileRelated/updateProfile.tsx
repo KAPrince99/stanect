@@ -141,7 +141,7 @@ function UpdateProfile({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="px-8 max-sm:w-full h-12 text-base font-semibold text-white">
+        <Button className="type-cta h-11 w-full px-8 text-white sm:w-auto">
           Update Profile
         </Button>
       </AlertDialogTrigger>

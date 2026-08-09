@@ -42,11 +42,11 @@ function ProfileIdentityHeader({
       </div>
 
       <div className="flex flex-col items-start space-y-2">
-        <h1 className="text-xl md:text-2xl font-extrabold text-white">
+        <h1 className="type-title text-xl md:text-2xl">
           {userFullName}
         </h1>
 
-        <p className="text-gray-400 text-base md:text-lg font-medium flex items-center gap-2">
+        <p className="type-meta flex items-center gap-2 text-sm">
           {planLabel}
           <ProfilePlanBadge userPlan={userPlan} />
         </p>

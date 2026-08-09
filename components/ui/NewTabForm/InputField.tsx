@@ -18,7 +18,7 @@ export default function InputField({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="text-white/90 text-lg font-medium flex items-center gap-2">
+        <label className="type-label flex items-center gap-2">
           {icon} {label}
         </label>
       )}

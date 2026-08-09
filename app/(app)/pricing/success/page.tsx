@@ -39,10 +39,10 @@ export default function SuccessPage() {
           </div>
         </div>
 
-        <h1 className="text-3xl font-extrabold text-white mb-2">
-          Power Unlocked!
+        <h1 className="type-display mb-2 text-[1.75rem]">
+          Plan unlocked
         </h1>
-        <p className="text-white/70 mb-8">
+        <p className="type-body mb-8">
           Your subscription is now active. You have full access to all premium
           features.
         </p>
@@ -50,7 +50,7 @@ export default function SuccessPage() {
         <div className="space-y-4">
           <Button
             onClick={() => router.push("/dashboard")}
-            className="w-full h-12 bg-linear-to-r from-amber-400 to-orange-500 text-black font-bold rounded-full hover:scale-105 transition-transform flex items-center justify-center gap-2"
+            className="type-cta flex h-11 w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-amber-400 to-orange-500 text-black transition-opacity hover:opacity-95"
           >
             Go to Dashboard <ArrowRight className="w-5 h-5" />
           </Button>

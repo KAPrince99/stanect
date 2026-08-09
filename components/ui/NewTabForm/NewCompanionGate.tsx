@@ -40,7 +40,7 @@ export default function NewCompanionGate({ userId }: NewCompanionGateProps) {
   }
 
   return (
-    <main className="mt-25 mb-30 flex min-h-screen flex-col bg-transparent md:mb-15 md:h-screen">
+    <main className="flex min-h-screen flex-col bg-transparent pt-24 pb-28 lg:pb-16">
       <TabForm userPlan={data.plan} />
     </main>
   );

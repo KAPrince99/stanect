@@ -8,7 +8,7 @@ export default function UpdatePlan() {
     <Link href="/pricing">
       <Button
         size="lg"
-        className="w-full sm:w-auto px-8 h-12 text-base font-semibold bg-linear-to-r from-amber-500 to-orange-600 text-black"
+        className="type-cta h-11 w-full bg-linear-to-r from-amber-500 to-orange-600 px-8 text-black sm:w-auto"
       >
         Upgrade Plan
       </Button>

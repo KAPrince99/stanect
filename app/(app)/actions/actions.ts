@@ -300,12 +300,67 @@ export async function createCompanion(formData: unknown) {
 }
 
 export async function deleteCompanion(id: string) {
-  const supbase = createSupabaseClient();
-  const { error } = await supbase.from("companions").delete().eq("id", id);
-  if (error) throw new Error("Failed to delete companion");
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  if (!id) throw new Error("Companion id is required");
+
+  // Service client bypasses RLS after we verify ownership with Clerk.
+  // Publishable-key deletes fail when there is no DELETE policy on companions.
+  const { supabase } = await import("@/lib/supa-service");
+
+  const { data: companion, error: fetchError } = await supabase
+    .from("companions")
+    .select("id, owner_id, assistant_id")
+    .eq("id", id)
+    .eq("owner_id", userId)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error("deleteCompanion fetch error:", fetchError);
+    throw new Error(fetchError.message || "Failed to find companion");
+  }
+
+  if (!companion) {
+    throw new Error("Companion not found or you do not have permission");
+  }
+
+  const { data: deleted, error: deleteError } = await supabase
+    .from("companions")
+    .delete()
+    .eq("id", id)
+    .eq("owner_id", userId)
+    .select("id")
+    .maybeSingle();
+
+  if (deleteError) {
+    console.error("deleteCompanion delete error:", deleteError);
+    throw new Error(deleteError.message || "Failed to delete companion");
+  }
+
+  if (!deleted) {
+    throw new Error("Companion could not be deleted");
+  }
+
+  // Best-effort cleanup of the Vapi assistant; DB row is already gone.
+  if (companion.assistant_id && process.env.VAPI_PRIVATE_KEY) {
+    try {
+      await fetch(
+        `https://api.vapi.ai/assistant/${companion.assistant_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${process.env.VAPI_PRIVATE_KEY}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Failed to delete Vapi assistant:", error);
+    }
+  }
+
   return {
     success: true,
-    message: "Companion deleted successfully🎉",
+    message: "Companion deleted successfully",
   };
 }
 

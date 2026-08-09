@@ -54,7 +54,7 @@ function Person() {
           }}
           onBlur={() => validateCompanionName(companionName)}
           placeholder="Sophia • Alex • Mia..."
-          className="h-14 text-lg"
+          className="h-12 text-base"
           error={errors.companionName}
           icon={
             <LordIcon
@@ -77,7 +77,7 @@ function Person() {
           }}
           onBlur={() => validateScene(scene)}
           placeholder="Gym • Coffee Shop • Bookstore..."
-          className="h-14 placeholder:text-md text-lg"
+          className="h-12 text-base placeholder:text-sm"
           error={errors.scene}
           icon={
             <LordIcon

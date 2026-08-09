@@ -47,7 +47,7 @@ function TranscriptBlock({
           className="w-full h-full lg:w-[300px] xl:w-sm flex flex-col backdrop-blur-xl bg-white/5 border-l border-white/10 shadow-2xl lg:shadow-none"
         >
           <div className="p-5 border-b border-white/10 flex items-center justify-between shrink-0">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="type-title flex items-center gap-2 text-lg">
               <LordIcon
                 src="https://cdn.lordicon.com/zyyejanq.json"
                 trigger="loop"
@@ -94,13 +94,13 @@ function TranscriptBlock({
                       }`}
                     >
                       <div
-                        className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-md ${
+                        className={`max-w-[85%] rounded-2xl p-3 text-sm shadow-md ${
                           msg.role === "user"
-                            ? "bg-amber-500/20 border border-amber-400/40 text-amber-50 rounded-br-none"
-                            : "bg-white/6 border border-white/10 text-white/90 rounded-tl-none"
+                            ? "rounded-br-none border border-amber-400/40 bg-amber-500/20 text-amber-50"
+                            : "rounded-tl-none border border-white/10 bg-white/6 text-white/90"
                         }`}
                       >
-                        <div className="text-xs font-semibold mb-1 opacity-70">
+                        <div className="type-meta mb-1 opacity-80">
                           {msg.role === "user" ? "You" : companionName}
                         </div>
                         {msg.content}

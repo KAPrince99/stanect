@@ -7,12 +7,12 @@ interface PreviewEditStepsProps {
 
 function PreviewEditSteps({ onEditStep }: PreviewEditStepsProps) {
   return (
-    <div className="space-y-5 text-sm text-white/80">
+    <div className="type-label space-y-5">
       <div className="flex items-center justify-between">
         <span>Avatar</span>
         <Button
           variant="ghost"
-          className="h-auto p-0"
+          className="type-meta h-auto p-0 text-amber-300 hover:text-amber-200"
           onClick={() => onEditStep?.(0)}
         >
           Edit
@@ -22,7 +22,7 @@ function PreviewEditSteps({ onEditStep }: PreviewEditStepsProps) {
         <span>Name & Scene</span>
         <Button
           variant="ghost"
-          className="h-auto p-0"
+          className="type-meta h-auto p-0 text-amber-300 hover:text-amber-200"
           onClick={() => onEditStep?.(1)}
         >
           Edit
@@ -32,7 +32,7 @@ function PreviewEditSteps({ onEditStep }: PreviewEditStepsProps) {
         <span>Voice & Duration</span>
         <Button
           variant="ghost"
-          className="h-auto p-0"
+          className="type-meta h-auto p-0 text-amber-300 hover:text-amber-200"
           onClick={() => onEditStep?.(2)}
         >
           Edit

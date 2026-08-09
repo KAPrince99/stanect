@@ -82,7 +82,7 @@ function Voice() {
           onChange={handleSessionLengthChange}
           onBlur={() => validateSessionLength(sessionLength)}
           placeholder={`1 - ${maxMinutes}`}
-          className="h-14 text-lg"
+          className="h-12 text-base"
           error={sessionLengthError}
           icon={
             <LordIcon

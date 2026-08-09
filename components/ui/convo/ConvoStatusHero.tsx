@@ -35,16 +35,16 @@ function ConvoStatusHero({
         className="w-full max-w-lg shrink-0 space-y-4 pt-2 pb-4 text-center"
       >
         <div
-          className={`inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-medium backdrop-blur-md transition-colors ${currentStatus.color}`}
+          className={`type-meta inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 backdrop-blur-md transition-colors ${currentStatus.color}`}
         >
           {currentStatus.icon}
-          <span className="uppercase tracking-wider">
+          <span className="tracking-wider uppercase">
             {currentStatus.label}
             {callStatus === "ACTIVE" && ` • ${timeLeftDisplay}`}
           </span>
         </div>
 
-        <h1 className="bg-linear-to-r from-white to-white/70 bg-clip-text text-4xl font-extrabold tracking-tighter text-transparent md:text-6xl lg:text-7xl">
+        <h1 className="type-display text-[1.75rem] md:text-[2rem]">
           {companionName || "Your AI Companion"}
         </h1>
       </motion.div>

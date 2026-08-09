@@ -50,9 +50,7 @@ export default function Sidebar() {
   const getTabClasses = (isActive: boolean) =>
     cn(
       "group relative block rounded-full p-4 transition-transform duration-200 hover:scale-105",
-      isActive
-        ? "border border-white/70 shadow-md shadow-white/10"
-        : "bg-white/5 hover:bg-white/20",
+      isActive ? "" : "bg-white/5 hover:bg-white/20",
     );
 
   const intentHandlers = (href: string) => ({
@@ -81,7 +79,7 @@ export default function Sidebar() {
                   {isActive && (
                     <motion.span
                       layoutId="sidebar-active-tab"
-                      className="absolute inset-0 rounded-full border border-white/70 bg-transparent"
+                      className="absolute inset-0 rounded-full bg-[#e88c30]/40"
                       transition={{
                         type: "spring",
                         stiffness: 380,
@@ -101,7 +99,7 @@ export default function Sidebar() {
                   </div>
 
                   <div className="pointer-events-none absolute top-1/2 left-full -ml-2 -translate-y-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                    <div className="whitespace-nowrap rounded-full bg-white/10 px-2 py-1 text-[12px] text-white shadow-2xl backdrop-blur">
+                    <div className="type-meta whitespace-nowrap rounded-full bg-white/10 px-2 py-1 text-white shadow-2xl backdrop-blur">
                       {item.label}
                     </div>
                   </div>
@@ -119,7 +117,7 @@ export default function Sidebar() {
               {isActiveRoute("/profile") && (
                 <motion.span
                   layoutId="sidebar-active-tab"
-                  className="absolute inset-0 rounded-full border border-white/70 bg-transparent"
+                  className="absolute inset-0 rounded-full bg-[#e88c30]/40"
                   transition={{ type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
@@ -129,7 +127,7 @@ export default function Sidebar() {
               </div>
 
               <div className="pointer-events-none absolute top-1/2 left-full -ml-2 -translate-y-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                <div className="whitespace-nowrap rounded-full bg-white/10 px-2 py-1 text-[12px] text-white shadow-2xl backdrop-blur">
+                <div className="type-meta whitespace-nowrap rounded-full bg-white/10 px-2 py-1 text-white shadow-2xl backdrop-blur">
                   Profile
                 </div>
               </div>
@@ -137,7 +135,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <div className="mt-auto pt-16 text-xs font-light tracking-widest text-white/40">
+        <div className="type-meta mt-auto pt-16 tracking-widest">
           STANECT
         </div>
       </div>

@@ -10,28 +10,29 @@ import { ReactNode } from "react";
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div lang="en" className="h-full w-screen">
-      <div className="h-full text-white antialiased">
+      <div className="relative h-full text-white antialiased">
         <div className="pointer-events-none fixed inset-0 -z-10">
           <div className="absolute inset-0 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]" />
           <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
         </div>
 
-        <div className="mx-auto flex h-screen w-full max-w-[1600px] overflow-hidden">
-          <div className="hidden shrink-0 lg:flex">
+        {/* Centered on the full page — same axis as dashboard content */}
+        <Navbar />
+
+        <div className="pointer-events-none fixed inset-y-0 left-0 z-40 hidden lg:block">
+          <div className="pointer-events-auto h-full">
             <Sidebar />
           </div>
+        </div>
 
-          <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-            <Navbar />
+        <div className="flex h-screen flex-col overflow-hidden">
+          <main className="flex-1 overflow-y-auto scrollbar-hide will-change-scroll">
+            <ScrollToTop />
+            {children}
+          </main>
 
-            <main className="flex-1 overflow-y-auto scrollbar-hide will-change-scroll">
-              <ScrollToTop />
-              {children}
-            </main>
-
-            <div className="shrink-0 lg:hidden">
-              <MobileDock />
-            </div>
+          <div className="shrink-0 lg:hidden">
+            <MobileDock />
           </div>
         </div>
 

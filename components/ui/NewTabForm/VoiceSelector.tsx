@@ -19,7 +19,7 @@ function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
           height={25}
           width={25}
         />
-        <p className="text-white/90 text-lg font-medium">Voice</p>
+        <p className="type-label">Voice</p>
       </div>
 
       <section className="my-5 flex items-center gap-4 bg-white/10 p-2 rounded-xl">
@@ -33,8 +33,8 @@ function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.98 }}
               transition={motionTransition.soft}
-              className={`relative flex-1 py-3 text-center rounded-lg cursor-pointer font-medium capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${
-                isActive ? "text-white" : "text-white/80 hover:text-white"
+              className={`type-label relative flex-1 cursor-pointer rounded-lg py-3 text-center capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${
+                isActive ? "text-white" : "text-white/70 hover:text-white"
               }`}
               onClick={() => onSelectVoice(value)}
             >

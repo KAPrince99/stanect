@@ -16,7 +16,7 @@ function PlanLimitHint({ userPlan, maxMinutes }: PlanLimitHintProps) {
         <Crown className="w-3 h-3 text-emerald-400 animate-pulse" />
       )}
       <p
-        className={`text-[10px] uppercase tracking-widest font-bold ${
+        className={`type-meta uppercase tracking-widest ${
           userPlan === "free" ? "text-white/50" : "text-emerald-400"
         }`}
       >

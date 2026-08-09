@@ -18,13 +18,13 @@ function CompanionOverviewCardContent({
   enableNavigation,
 }: CompanionOverviewCardContentProps) {
   return (
-    <div className="space-y-3 p-4 text-center sm:p-5">
+    <div className="space-y-2.5 p-3.5 text-center sm:p-4">
       <div className="space-y-1">
-        <h3 className="font-display text-lg text-white sm:text-xl">
+        <h3 className="type-title text-base sm:text-lg">
           {companionName}
         </h3>
         {scene ? (
-          <p className="text-xs capitalize text-white/55 sm:hidden">{scene}</p>
+          <p className="type-meta capitalize sm:hidden">{scene}</p>
         ) : null}
       </div>
 

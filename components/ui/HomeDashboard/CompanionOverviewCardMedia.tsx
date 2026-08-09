@@ -22,11 +22,11 @@ function CompanionOverviewCardMedia({
 
       <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-black/15 to-transparent" />
 
-      <div className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+      <div className="absolute left-2.5 top-2.5 rounded-full bg-black/60 px-2 py-0.5 type-meta text-white/90 backdrop-blur-sm">
         {companion.duration} min
       </div>
 
-      <div className="absolute bottom-3 left-3 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium capitalize text-white/90 backdrop-blur-sm">
+      <div className="absolute bottom-2.5 left-2.5 rounded-full bg-white/10 px-2 py-0.5 type-meta capitalize text-white/90 backdrop-blur-sm">
         {companion.scene}
       </div>
     </div>

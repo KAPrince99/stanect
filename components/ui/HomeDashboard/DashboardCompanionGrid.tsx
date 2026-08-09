@@ -16,7 +16,7 @@ function DashboardCompanionGrid({ companions }: DashboardCompanionGridProps) {
   return (
     <motion.div
       layout
-      className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3"
+      className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"
     >
       <AnimatePresence mode="popLayout">
         {companions.map((companion, index) => (

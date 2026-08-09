@@ -48,8 +48,8 @@ export function PricingTierCard({
     >
       {tier.popular ? (
         <div className="absolute top-[-1.25rem] left-1/2 z-20 -translate-x-1/2">
-          <div className="flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-6 py-2 text-sm font-semibold text-black shadow-lg">
-            <Zap className="h-4 w-4" />
+          <div className="type-cta flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-1.5 text-xs text-black shadow-lg">
+            <Zap className="h-3.5 w-3.5" />
             MOST POPULAR
           </div>
         </div>
@@ -67,22 +67,22 @@ export function PricingTierCard({
 
       <div className="relative flex h-full flex-col justify-between rounded-3xl border border-white/10 p-6 pt-10 backdrop-blur-xl transition-all duration-300 hover:scale-[1.015]">
         <div>
-          <h3 className="mb-2 text-2xl font-bold text-white">{tier.name}</h3>
+          <h3 className="type-title mb-2">{tier.name}</h3>
 
-          <div className="mb-6">
-            <span className="text-5xl font-extrabold text-white">${price}</span>
-            <span className="text-lg text-white/60">{periodLabel}</span>
+          <div className="mb-5">
+            <span className="type-display text-[2rem] sm:text-[2.5rem]">
+              ${price}
+            </span>
+            <span className="type-meta ml-1 text-sm">{periodLabel}</span>
           </div>
 
-          <p className="mb-6 min-h-12 text-white/70">{tier.description}</p>
+          <p className="type-body mb-6 min-h-12">{tier.description}</p>
 
           <ul className="mb-8 space-y-3">
             {tier.features.map((feature) => (
               <li key={feature} className="flex items-start gap-3">
-                <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-400" />
-                <span className="text-sm font-inter text-white/90">
-                  {feature}
-                </span>
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                <span className="type-label text-white/90">{feature}</span>
               </li>
             ))}
           </ul>
@@ -90,7 +90,7 @@ export function PricingTierCard({
 
         <Button
           disabled={pendingTierKey !== null || isCurrentPlan}
-          className={`flex h-12 w-full items-center justify-center gap-2 rounded-full text-lg font-bold transition-all duration-300 ${buttonClassName}`}
+          className={`type-cta flex h-11 w-full items-center justify-center gap-2 rounded-full transition-all duration-300 ${buttonClassName}`}
           onClick={() => onSelectTier(tier.key)}
         >
           {isPending ? (
