@@ -25,9 +25,7 @@ function DashboardWelcomeHeader({
       className={`w-full text-center ${hasCompanions ? "mb-10" : "mb-8"}`}
     >
       <h1 className="type-display">
-        {hasCompanions
-          ? `Welcome back, ${welcomeUser}`
-          : "Welcome to Stanect"}
+        {hasCompanions ? `Welcome back, ${welcomeUser}` : "Welcome to Stanect"}
       </h1>
 
       {hasCompanions && (
