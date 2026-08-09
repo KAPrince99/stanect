@@ -6,7 +6,7 @@ import { type ReactNode } from "react";
 import { fetchUserNecessities } from "@/app/(app)/actions/actions";
 import { isTrialExpired } from "@/lib/plan-utils";
 
-import { ConvoRouteLoading } from "../AppRouteLoading";
+import LoadingSpinner from "../LoadingSpinner";
 import ConvoGuard from "../convoGuard";
 
 interface ConvoAccessGateProps {
@@ -23,7 +23,7 @@ function ConvoAccessGate({ userId, children }: ConvoAccessGateProps) {
   });
 
   if (isLoading) {
-    return <ConvoRouteLoading />;
+    return <LoadingSpinner />;
   }
 
   if (isError) {

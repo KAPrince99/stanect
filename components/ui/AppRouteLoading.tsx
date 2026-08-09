@@ -143,29 +143,6 @@ export function ProfileRouteLoading() {
   );
 }
 
-export function ConvoRouteLoading() {
-  return (
-    <div
-      className="mt-5 flex min-h-[calc(100vh)] items-center justify-center bg-transparent py-16 sm:px-6 md:mx-10 md:mt-10 xl:mx-40"
-      role="status"
-      aria-label="Loading conversation"
-    >
-      <div className="flex w-full max-w-3xl flex-col items-center gap-6">
-        <div className="h-40 w-40 animate-pulse rounded-full bg-white/10 sm:h-52 sm:w-52" />
-        <Pulse className="h-8 w-48 rounded-lg" />
-        <Pulse className="h-4 w-64 max-w-[80%]" />
-        <div className="mt-4 flex gap-4">
-          <div className="h-14 w-14 animate-pulse rounded-full bg-white/10" />
-          <div className="h-14 w-14 animate-pulse rounded-full bg-amber-400/25" />
-          <div className="h-14 w-14 animate-pulse rounded-full bg-white/10" />
-        </div>
-      </div>
-
-      <span className="sr-only">Loading conversation…</span>
-    </div>
-  );
-}
-
 /** Fallback for payment and other app routes */
 export default function AppRouteLoading() {
   return (

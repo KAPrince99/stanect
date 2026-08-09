@@ -2,13 +2,13 @@
 
 import dynamic from "next/dynamic";
 
-import { ConvoRouteLoading } from "../AppRouteLoading";
+import LoadingSpinner from "../LoadingSpinner";
 
 const ConvoContainer = dynamic(
   () => import("@/components/ui/convo/ConvoContainer"),
   {
     ssr: false,
-    loading: () => <ConvoRouteLoading />,
+    loading: () => <LoadingSpinner />,
   },
 );
 

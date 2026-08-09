@@ -1,5 +1,5 @@
-import { ConvoRouteLoading } from "@/components/ui/AppRouteLoading";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function Loading() {
-  return <ConvoRouteLoading />;
+  return <LoadingSpinner />;
 }
