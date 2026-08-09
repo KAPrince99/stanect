@@ -54,7 +54,9 @@ export default function UserButton({
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="cursor-pointer outline:none">
-          <Link href={"/profile"}>Profile</Link>
+          <Link href="/profile" prefetch>
+            Profile
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <SignOutButton>

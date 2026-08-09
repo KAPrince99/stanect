@@ -2,19 +2,18 @@
 
 "use client";
 
-import { useEffect } from "react";
-import Script from "next/script";
-
 interface LordIconProps {
   src: string;
-  trigger?: "hover" | "click" | "loop";
+  trigger?: "hover" | "click" | "loop" | "morph" | "boomerang";
   state?: string;
   width?: number | string;
   height?: number | string;
   colors?: string;
   className?: string;
+  loading?: "lazy" | "interaction" | "delay";
 }
 
+/** Renders a Lordicon. Script is loaded once from the app layout. */
 export default function LordIcon({
   src,
   trigger = "hover",
@@ -23,38 +22,17 @@ export default function LordIcon({
   height = 150,
   colors,
   className,
+  loading = "lazy",
 }: LordIconProps) {
-  // Ensure the script loads once
-  useEffect(() => {
-    if (
-      !document.querySelector(
-        'script[src="https://cdn.lordicon.com/lordicon.js"]'
-      )
-    ) {
-      const script = document.createElement("script");
-      script.src = "https://cdn.lordicon.com/lordicon.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, []);
-
   return (
-    <>
-      {/* Load the Lordicon library safely */}
-      <Script
-        src="https://cdn.lordicon.com/lordicon.js"
-        strategy="afterInteractive"
-      />
-
-      {/* Render the Lordicon */}
-      <lord-icon
-        src={src}
-        trigger={trigger}
-        state={state}
-        colors={colors}
-        style={{ width, height }}
-        className={className}
-      ></lord-icon>
-    </>
+    <lord-icon
+      src={src}
+      trigger={trigger}
+      state={state}
+      colors={colors}
+      loading={loading}
+      style={{ width, height }}
+      className={className}
+    />
   );
 }

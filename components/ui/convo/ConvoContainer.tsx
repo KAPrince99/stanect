@@ -5,7 +5,7 @@ import { memo } from "react";
 import { useConvoData } from "@/hooks/useConvoData";
 import { useConvoSession } from "@/hooks/useConvoSession";
 
-import LoadingSpinner from "../LoadingSpinner";
+import { ConvoRouteLoading } from "../AppRouteLoading";
 import ConvoPresenter from "./ConvoPresenter";
 
 interface ConvoContainerProps {
@@ -23,7 +23,7 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     isDesktop,
   } = useConvoSession();
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) return <ConvoRouteLoading />;
   if (!companion) return null;
 
   return (

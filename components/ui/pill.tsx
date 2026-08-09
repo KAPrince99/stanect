@@ -1,49 +1,22 @@
 "use client";
 
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
-import { motion } from "framer-motion";
-
 import Link from "next/link";
-import UploadButton from "./uploadButton";
+import { LogIn } from "lucide-react";
+
 import UserButton from "@/components/ui/UserButton";
-import { Sparkles, LogIn } from "lucide-react";
+
+import UploadButton from "./uploadButton";
 
 export default function Pill() {
   return (
-    <motion.div
-      initial={{ scale: 0.95, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
-      whileHover={{ scale: 1.03 }}
-      className="
-        relative
-        h-14 sm:h-16
-        w-full max-w-xl
-        bg-white/10 backdrop-blur-2xl
-        border border-white/20
-        rounded-full
-        shadow-2xl shadow-black/40
-        flex items-center justify-between
-        px-6 sm:px-8
-        overflow-hidden
-        group
-      "
-    >
-      {/* Floating Glow Background */}
-      <div className="absolute inset-0 bg-linear-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 blur-3xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+    <div className="group relative flex h-14 w-full max-w-xl items-center justify-between overflow-hidden rounded-full border border-white/20 bg-white/10 px-6 shadow-2xl shadow-black/40 backdrop-blur-2xl transition-transform duration-200 hover:scale-[1.02] sm:h-16 sm:px-8">
+      <div className="pointer-events-none absolute inset-0 scale-150 bg-linear-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
 
       <Link
         href="/"
-        className="flex items-center z-10 no-underline focus:outline-none group outline-none"
+        className="group z-10 flex items-center no-underline outline-none focus:outline-none"
       >
-        <div className="relative">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -inset-4 bg-linear-to-r from-amber-400/20 to-pink-500/20 rounded-full blur-xl"
-          />
-        </div>
-
         <div className="text-xl font-extrabold tracking-tight">
           <span className="bg-linear-to-r from-white via-white/90 to-white/50 bg-clip-text text-transparent">
             Stanect
@@ -51,70 +24,31 @@ export default function Pill() {
         </div>
       </Link>
 
-      {/* Center: Upload (only on large screens) */}
-      <div className="hidden lg:block absolute left-1/2 -translate-x-1/2">
+      <div className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
         <UploadButton />
       </div>
 
-      {/* Right: Auth */}
-      <div className="flex items-center gap-4 z-10">
+      <div className="z-10 flex items-center gap-4">
         <SignedOut>
           <SignInButton mode="modal">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-amber-400 to-orange-500 text-black font-bold rounded-full shadow-xl hover:shadow-amber-500/50 transition-all"
+            <button
+              type="button"
+              className="flex cursor-pointer items-center gap-2 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-6 py-3 font-bold text-black shadow-xl transition-transform hover:scale-105 hover:shadow-amber-500/50"
             >
-              <LogIn className="w-5 h-5" />
+              <LogIn className="h-5 w-5" />
               <span className="hidden sm:inline">Sign In</span>
-            </motion.button>
+            </button>
           </SignInButton>
         </SignedOut>
 
         <SignedIn>
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            className="relative hidden lg:flex"
-          >
+          <div className="relative hidden lg:flex">
             <UserButton />
-            {/* Online Indicator */}
-            <motion.div
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ repeat: Infinity, duration: 3 }}
-              className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-black shadow-lg"
-            />
-          </motion.div>
-          <motion.div
-            animate={{ scale: [1, 1.3, 1] }}
-            transition={{ repeat: Infinity, duration: 3 }}
-            className=" w-4 h-4 bg-emerald-400 rounded-full border shadow-lg lg:hidden"
-          />
+            <span className="absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 border-black bg-emerald-400 shadow-lg" />
+          </div>
+          <span className="h-4 w-4 rounded-full border bg-emerald-400 shadow-lg lg:hidden" />
         </SignedIn>
       </div>
-
-      {/* Floating Sparkles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <motion.div
-          animate={{
-            x: [-100, 800],
-            y: [0, -50, 20],
-          }}
-          transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
-          className="absolute top-4 left-0"
-        >
-          <Sparkles className="w-5 h-5 text-amber-300 opacity-60" />
-        </motion.div>
-        <motion.div
-          animate={{
-            x: [800, -100],
-            y: [20, -30, 0],
-          }}
-          transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
-          className="absolute bottom-4 right-0"
-        >
-          <Sparkles className="w-4 h-4 text-pink-300 opacity-50" />
-        </motion.div>
-      </div>
-    </motion.div>
+    </div>
   );
 }

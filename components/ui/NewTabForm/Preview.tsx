@@ -43,6 +43,16 @@ function Preview({ onEditStep }: PreviewProps) {
     staleTime: Infinity,
     gcTime: Infinity,
     placeholderData: (prev) => prev,
+    initialData: () =>
+      selectedAvatarId
+        ? queryClient.getQueryData(["avatar", selectedAvatarId])
+        : queryClient.getQueryData(["avatar", "default"]),
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(
+        selectedAvatarId
+          ? ["avatar", selectedAvatarId]
+          : ["avatar", "default"],
+      )?.dataUpdatedAt,
   });
 
   const previewCompanion = useMemo<CompanionProps | null>(() => {

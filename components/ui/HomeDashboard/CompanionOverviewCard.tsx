@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { memo } from "react";
+
+import { usePrefetchRoute } from "@/hooks/usePrefetchRoute";
 import { CompanionProps } from "@/types/types";
+
 import CompanionOverviewCardContent from "./CompanionOverviewCardContent";
 import CompanionOverviewCardMedia from "./CompanionOverviewCardMedia";
 
@@ -18,8 +21,16 @@ function CompanionOverviewCard({
   enableNavigation = true,
   enableHoverLift = true,
 }: CompanionOverviewCardProps) {
+  const prefetchRoute = usePrefetchRoute();
   const cardHref = `/dashboard/${companion.id}`;
   const mediaContent = <CompanionOverviewCardMedia companion={companion} />;
+  const intentHandlers = enableNavigation
+    ? {
+        onMouseEnter: () => prefetchRoute(cardHref),
+        onFocus: () => prefetchRoute(cardHref),
+        onTouchStart: () => prefetchRoute(cardHref),
+      }
+    : undefined;
 
   return (
     <motion.article
@@ -27,9 +38,12 @@ function CompanionOverviewCard({
       transition={{ type: "spring", stiffness: 120, damping: 20 }}
       className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl"
       style={{ willChange: "transform" }}
+      {...intentHandlers}
     >
       {enableNavigation ? (
-        <Link href={cardHref}>{mediaContent}</Link>
+        <Link href={cardHref} prefetch>
+          {mediaContent}
+        </Link>
       ) : (
         mediaContent
       )}

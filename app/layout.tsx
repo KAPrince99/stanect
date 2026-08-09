@@ -2,8 +2,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import QueryProvider from "./providers/queryProvider";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import ScrollToTop from "@/components/ui/ScrollToTop";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 
 /* Fonts */
 const inter = Inter({
@@ -86,8 +86,11 @@ export default function RootLayout({
       </head>
 
       <body>
+        <Script
+          src="https://cdn.lordicon.com/lordicon.js"
+          strategy="lazyOnload"
+        />
         <ClerkProvider>
-          {/* <ScrollToTop /> */}
           <QueryProvider>{children}</QueryProvider>
         </ClerkProvider>
       </body>

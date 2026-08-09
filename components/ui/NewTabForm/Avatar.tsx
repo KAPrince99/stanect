@@ -1,16 +1,31 @@
 "use client";
 
 import { getAvatars } from "@/app/(app)/actions/actions";
-import { useQuery } from "@tanstack/react-query";
-import React, { memo, useEffect } from "react";
+import { useTabFormStore } from "@/store/useTabFormStore";
+import type { AvatarProps } from "@/types/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { memo, useEffect } from "react";
+
 import LoadingSpinner from "../LoadingSpinner";
 import AvatarGrid from "./AvatarGrid";
-import { useTabFormStore } from "@/store/useTabFormStore";
 import TabContentHeader from "./TabContentHeader";
 
-function Avatar() {
-  const selectedAvatarId = useTabFormStore((state) => state.selectedAvatarId);
+function seedAvatarQueries(
+  queryClient: ReturnType<typeof useQueryClient>,
+  avatars: AvatarProps[],
+) {
+  if (!avatars.length) return;
 
+  for (const avatar of avatars) {
+    queryClient.setQueryData(["avatar", avatar.id], avatar);
+  }
+
+  queryClient.setQueryData(["avatar", "default"], avatars[0]);
+}
+
+function Avatar() {
+  const queryClient = useQueryClient();
+  const selectedAvatarId = useTabFormStore((state) => state.selectedAvatarId);
   const setSelectedAvatarId = useTabFormStore(
     (state) => state.setSelectedAvatarId,
   );
@@ -30,6 +45,8 @@ function Avatar() {
   useEffect(() => {
     if (!avatars?.length) return;
 
+    seedAvatarQueries(queryClient, avatars);
+
     const hasValidSelection = selectedAvatarId
       ? avatars.some((avatar) => avatar.id === selectedAvatarId)
       : false;
@@ -37,7 +54,16 @@ function Avatar() {
     if (!hasValidSelection) {
       setSelectedAvatarId(avatars[0].id);
     }
-  }, [avatars, selectedAvatarId, setSelectedAvatarId]);
+  }, [avatars, queryClient, selectedAvatarId, setSelectedAvatarId]);
+
+  useEffect(() => {
+    if (!selectedAvatarId || !avatars?.length) return;
+
+    const selected = avatars.find((avatar) => avatar.id === selectedAvatarId);
+    if (selected) {
+      queryClient.setQueryData(["avatar", selectedAvatarId], selected);
+    }
+  }, [avatars, queryClient, selectedAvatarId]);
 
   if (avatarsLoading && !avatars) return <LoadingSpinner />;
   if (error) return <div>Error loading avatars</div>;

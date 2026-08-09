@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { useEffect } from "react";
+
+import { APP_NAV_ROUTES, usePrefetchRoute } from "@/hooks/usePrefetchRoute";
+
 import LordIcon from "./lordIcon";
 import UserImageContainer from "./UserImageContainer";
 
@@ -39,39 +42,50 @@ const dockItems = [
 ];
 
 export default function MobileDock() {
+  const prefetchRoute = usePrefetchRoute();
+
+  useEffect(() => {
+    for (const href of APP_NAV_ROUTES) {
+      prefetchRoute(href);
+    }
+  }, [prefetchRoute]);
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden w-full bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] border-t border-white/20">
-      <div className="flex justify-around items-start h-20 max-w-xl mx-auto px-4 pt-3">
+    <div className="fixed right-0 bottom-0 left-0 z-50 w-full border-t border-white/20 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] lg:hidden">
+      <div className="mx-auto flex h-20 max-w-xl items-start justify-around px-4 pt-3">
         {dockItems.map((item) => (
-          <Link key={item.href} href={item.href}>
-            <motion.div
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              className="relative"
-            >
-              {item.gradient ? (
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-linear-to-r from-amber-400 to-orange-500 rounded-full blur-md opacity-50" />
-                  <LordIcon
-                    src={item.iconSrc}
-                    trigger="loop"
-                    colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
-                    width={item.width}
-                    height={item.height}
-                  />
-                </div>
-              ) : item.profile ? (
-                <UserImageContainer />
-              ) : (
+          <Link
+            key={item.href}
+            href={item.href}
+            prefetch
+            aria-label={item.label}
+            className="relative transition-transform duration-150 active:scale-90"
+            onMouseEnter={() => prefetchRoute(item.href)}
+            onFocus={() => prefetchRoute(item.href)}
+            onTouchStart={() => prefetchRoute(item.href)}
+          >
+            {item.gradient ? (
+              <div className="relative">
+                <div className="absolute -inset-1 rounded-full bg-linear-to-r from-amber-400 to-orange-500 opacity-50 blur-md" />
                 <LordIcon
                   src={item.iconSrc}
-                  trigger="loop"
-                  colors="primary:#4bb3fd,secondary:#e88c30,tertiary:#1a3a80"
+                  trigger="hover"
+                  colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
                   width={item.width}
                   height={item.height}
                 />
-              )}
-            </motion.div>
+              </div>
+            ) : item.profile ? (
+              <UserImageContainer />
+            ) : (
+              <LordIcon
+                src={item.iconSrc}
+                trigger="hover"
+                colors="primary:#4bb3fd,secondary:#e88c30,tertiary:#1a3a80"
+                width={item.width}
+                height={item.height}
+              />
+            )}
           </Link>
         ))}
       </div>

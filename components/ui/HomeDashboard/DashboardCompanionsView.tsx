@@ -4,7 +4,7 @@ import { memo } from "react";
 
 import { CompanionProps } from "@/types/types";
 
-import LoadingSpinner from "../LoadingSpinner";
+import { DashboardRouteLoading } from "../AppRouteLoading";
 import DashboardCompanionGrid from "./DashboardCompanionGrid";
 import DashboardWelcomeHeader from "./DashboardWelcomeHeader";
 import EmptyCompanionState from "./EmptyCompanionState";
@@ -21,7 +21,7 @@ function DashboardCompanionsView({
   isLoading,
 }: DashboardCompanionsViewProps) {
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <DashboardRouteLoading />;
   }
 
   const hasCompanions = companions.length > 0;
