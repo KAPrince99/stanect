@@ -1,4 +1,5 @@
 "use client";
+
 import { createCompanion, getSingleAvatar } from "@/app/(app)/actions/actions";
 import { companionSchema } from "@/schemas/newCompanionSchema";
 import { useTabFormStore } from "@/store/useTabFormStore";
@@ -7,15 +8,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { memo, useMemo } from "react";
 import { toast } from "sonner";
-import { Loader2, MoveRight } from "lucide-react";
-import { motion } from "framer-motion";
-import CompanionOverviewCard from "../HomeDashboard/CompanionOverviewCard";
+
 import LoadingSpinner from "../LoadingSpinner";
-import { Button } from "../button";
-import { motionTransition, motionVariants } from "@/lib/motion";
-import PreviewSummary from "./PreviewSummary";
-import PreviewEditSteps from "./PreviewEditSteps";
-import PreviewValidationIssues from "./PreviewValidationIssues";
+import PreviewView from "./PreviewView";
 
 interface PreviewProps {
   onEditStep?: (index: number) => void;
@@ -96,7 +91,7 @@ function Preview({ onEditStep }: PreviewProps) {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["companions"] });
       queryClient.invalidateQueries({ queryKey: ["createCompanionGate"] });
-      toast.success("Companion created successfully 🎉");
+      toast.success("Companion created successfully");
       const createdCompanionId = result?.data?.id;
       reset();
       router.replace(
@@ -104,19 +99,19 @@ function Preview({ onEditStep }: PreviewProps) {
       );
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to create companion ⚠️");
+      toast.error(error.message || "Failed to create companion");
     },
   });
 
   const handleCreateCompanion = () => {
     if (!selectedAvatar) {
-      toast.error("Please select an avatar first ⚠️");
+      toast.error("Please select an avatar first");
       onEditStep?.(0);
       return;
     }
 
     if (validationIssues.length > 0) {
-      toast.error("Please fix the highlighted fields before continuing ⚠️");
+      toast.error("Please fix the highlighted fields before continuing");
       return;
     }
 
@@ -131,67 +126,19 @@ function Preview({ onEditStep }: PreviewProps) {
 
   if (isLoading && !selectedAvatar) return <LoadingSpinner />;
   if (error) return <p className="text-red-300">Unable to load preview.</p>;
-  if (!previewCompanion)
+  if (!previewCompanion) {
     return <p className="text-white/70">No avatar available for preview.</p>;
+  }
 
   return (
-    <main className="w-full">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-4xl mx-auto px-4">
-        <motion.div
-          className="w-full max-w-[320px] mx-auto"
-          variants={motionVariants.cardPop}
-          initial="initial"
-          animate="animate"
-          transition={motionTransition.soft}
-        >
-          <CompanionOverviewCard
-            companion={previewCompanion}
-            showConvoButton={false}
-            enableNavigation={false}
-            enableHoverLift={false}
-          />
-        </motion.div>
-        <motion.div
-          className="w-full max-w-md mx-auto space-y-10"
-          variants={motionVariants.fadeUp}
-          initial="hidden"
-          animate="visible"
-          transition={motionTransition.soft}
-        >
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 space-y-5">
-            <h3 className="type-display text-center text-[1.5rem] sm:text-[1.875rem]">
-              Review companion
-            </h3>
-            <p className="type-body text-center">
-              Confirm the details below before creating your companion.
-            </p>
-
-            <PreviewSummary companion={previewCompanion} />
-
-            <PreviewEditSteps onEditStep={onEditStep} />
-
-            <PreviewValidationIssues issues={validationIssues} />
-
-            <Button
-              className="type-cta h-12 w-full bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-xl shadow-amber-500/20 transition-all hover:from-amber-500 hover:to-orange-600"
-              disabled={mutation.isPending || validationIssues.length > 0}
-              onClick={handleCreateCompanion}
-            >
-              Create Companion
-              {mutation.isPending ? (
-                <Loader2 className="w-5 h-5 ml-2 animate-spin" />
-              ) : (
-                <MoveRight className="w-5 h-5 ml-2" />
-              )}
-            </Button>
-
-            <p className="type-meta text-center">
-              You can edit these details later in your dashboard.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    </main>
+    <PreviewView
+      previewCompanion={previewCompanion}
+      validationIssues={validationIssues}
+      isCreating={mutation.isPending}
+      onEditStep={onEditStep}
+      onCreate={handleCreateCompanion}
+    />
   );
 }
+
 export default memo(Preview);

@@ -12,6 +12,9 @@ import UpdateProfile from "./updateProfile";
 import UpdatePlan from "./updatePlan";
 import { buildProfileInfoItems } from "./profileInfoItems";
 import ProfileContainerPresenter from "./ProfileContainerPresenter";
+import ProfileBillingActions from "./ProfileBillingSection";
+import ProfileSecuritySection from "./ProfileSecuritySection";
+import ProfileDangerZone from "./ProfileDangerZone";
 import type { Userprops } from "@/types/types";
 
 const FALLBACK_AVATAR = "/avatars/avatar_0.jpg";
@@ -124,6 +127,24 @@ function ProfileContainer({ userId }: { userId: string }) {
     [data, isPaid, profileView.userFirstNameInitial, user],
   );
 
+  const billingActions = useMemo(
+    () => (isPaid ? <ProfileBillingActions userId={userId} /> : null),
+    [isPaid, userId],
+  );
+
+  const accountActions = useMemo(
+    () => (
+      <>
+        <ProfileSecuritySection />
+        <span className="text-white/20" aria-hidden>
+          ·
+        </span>
+        <ProfileDangerZone />
+      </>
+    ),
+    [],
+  );
+
   if (isUserLoading || isCompanionsLoading || isSubLoading) {
     return <LoadingSpinner />;
   }
@@ -138,7 +159,6 @@ function ProfileContainer({ userId }: { userId: string }) {
 
   return (
     <ProfileContainerPresenter
-      userId={userId}
       imgSrc={profileView.avatar}
       userFullName={profileView.userFullName}
       userFirstNameInitial={profileView.userFirstNameInitial}
@@ -149,6 +169,8 @@ function ProfileContainer({ userId }: { userId: string }) {
       companionCount={Array.isArray(companions) ? companions.length : 0}
       infoItems={infoItems}
       actions={actions}
+      billingActions={billingActions}
+      accountActions={accountActions}
     />
   );
 }

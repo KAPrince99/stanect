@@ -4,14 +4,20 @@ import { mockAvatars } from "./data";
 import path from "path";
 import fs from "fs";
 
+import { auth } from "@clerk/nextjs/server";
 import { supabase } from "@/lib/supa-service";
 
 export async function setAvatarData() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Avatar seeding is disabled in production");
+  }
+
   for (const data of mockAvatars) {
-    // Read image files from public directory
     const avatarPath = path.join(process.cwd(), "public", data.image_url);
     const avatarBuffer = fs.readFileSync(avatarPath);
-    // Upload avatar image to Storage
     const { error: avatarError } = await supabase.storage
       .from("avatarStore")
       .upload(`exhibit/${data.name}.webp`, avatarBuffer, {
@@ -20,17 +26,15 @@ export async function setAvatarData() {
       });
 
     if (avatarError) throw new Error(avatarError.message);
-    // Get public URL
+
     const { data: avatarUrl } = supabase.storage
       .from("avatarStore")
       .getPublicUrl(`exhibit/${data.name}.webp`);
 
-    // Insert record into "avatars" table
     const { error: inserError } = await supabase.from("avatars").insert({
       name: data.name,
       image_url: avatarUrl.publicUrl,
     });
     if (inserError) throw new Error(inserError?.message);
   }
-  console.log("✅ All images uploaded and records created successfully!");
 }

@@ -22,6 +22,8 @@ interface ConvoPresenterProps {
   showEndModal: boolean;
   setShowEndModal: (value: boolean) => void;
   userPlan: "free" | "pro" | "king";
+  onUpgrade: () => void;
+  onDashboard: () => void;
 }
 
 function ConvoPresenter({
@@ -34,6 +36,8 @@ function ConvoPresenter({
   showEndModal,
   setShowEndModal,
   userPlan,
+  onUpgrade,
+  onDashboard,
 }: ConvoPresenterProps) {
   return (
     <motion.main
@@ -61,6 +65,8 @@ function ConvoPresenter({
         showEndModal={showEndModal}
         setShowEndModal={setShowEndModal}
         userPlan={userPlan}
+        onUpgrade={onUpgrade}
+        onDashboard={onDashboard}
       />
     </motion.main>
   );

@@ -3,27 +3,34 @@
 import { supabase } from "@/lib/supa-service";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { updateProfileSchema } from "@/schemas/updateProfileSchema";
 
 export async function updateProfile(
   formData: FormData,
-  currentProfilePicture?: string
+  currentProfilePicture?: string,
 ) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const name = formData.get("name") as string;
-  const country = formData.get("country") as string;
-  const image = formData.get("image") as File | null;
+  const parsed = updateProfileSchema.safeParse({
+    name: formData.get("name"),
+    country: formData.get("country") || "Earth",
+  });
+
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || "Invalid profile data");
+  }
+
+  const { name, country } = parsed.data;
+  const image = formData.get("image");
+  const imageFile = image instanceof File && image.size > 0 ? image : null;
 
   let profilePictureUrl: string | null = currentProfilePicture || null;
 
-  // If a new image is provided, delete the old one first
-  if (image && image.size > 0 && currentProfilePicture) {
+  if (imageFile && currentProfilePicture) {
     try {
-      // Extract the path from the full public URL
-      // Logic: https://.../storage/v1/object/public/profiles/FOLDER/FILE.png -> FOLDER/FILE.png
       const urlParts = currentProfilePicture.split(
-        "/storage/v1/object/public/profiles/"
+        "/storage/v1/object/public/profiles/",
       );
       const oldFilePath = urlParts[1];
 
@@ -40,17 +47,15 @@ export async function updateProfile(
     }
   }
 
-  // Upload the new image
-  if (image && image.size > 0) {
-    const fileExt = image.name.split(".").pop();
-    // Unique name using timestamp ensures CDN cache-busting
+  if (imageFile) {
+    const fileExt = imageFile.name.split(".").pop();
     const newFileName = `${userId}-${Date.now()}.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
       .from("profiles")
-      .upload(newFileName, image, {
+      .upload(newFileName, imageFile, {
         upsert: true,
-        contentType: image.type,
+        contentType: imageFile.type,
       });
 
     if (uploadError) throw new Error(`Upload failed: ${uploadError.message}`);
@@ -62,7 +67,6 @@ export async function updateProfile(
     profilePictureUrl = publicUrlData.publicUrl;
   }
 
-  // Update the database
   const { error: updateError } = await supabase
     .from("users")
     .update({

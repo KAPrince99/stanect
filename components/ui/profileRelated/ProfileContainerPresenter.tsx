@@ -9,14 +9,8 @@ import { PLAN_LIMITS, type PlanType } from "@/lib/plan-limits";
 import { motionTransition, motionVariants } from "@/lib/motion";
 import ProfileIdentityHeader from "./ProfileIdentityHeader";
 import ProfileInfoList, { ProfileInfoItem } from "./ProfileInfoList";
-import ProfileBillingActions from "./ProfileBillingSection";
-import ProfileSecuritySection from "./ProfileSecuritySection";
-import ProfileDangerZone from "./ProfileDangerZone";
-
-const FREE_DAILY_SECONDS = 360;
 
 interface ProfileContainerPresenterProps {
-  userId: string;
   imgSrc: string;
   userFullName: string;
   userFirstNameInitial: string;
@@ -27,6 +21,8 @@ interface ProfileContainerPresenterProps {
   companionCount: number;
   infoItems: ProfileInfoItem[];
   actions: ReactNode;
+  billingActions?: ReactNode;
+  accountActions?: ReactNode;
 }
 
 function formatMinutes(seconds: number) {
@@ -37,7 +33,6 @@ function formatMinutes(seconds: number) {
 }
 
 function ProfileContainerPresenter({
-  userId,
   imgSrc,
   userFullName,
   userFirstNameInitial,
@@ -48,6 +43,8 @@ function ProfileContainerPresenter({
   companionCount,
   infoItems,
   actions,
+  billingActions,
+  accountActions,
 }: ProfileContainerPresenterProps) {
   const planKey = (
     userPlan === "pro" || userPlan === "king" ? userPlan : "free"
@@ -55,14 +52,15 @@ function ProfileContainerPresenter({
   const isPaid = planKey !== "free";
   const maxCompanions = PLAN_LIMITS[planKey].maxCompanions;
   const used = Math.max(0, dailySecondsUsed || 0);
+  const freeDailyLimit = PLAN_LIMITS.free.dailyLimit;
   const progress = isPaid
     ? 100
-    : Math.min(100, Math.round((used / FREE_DAILY_SECONDS) * 100));
+    : Math.min(100, Math.round((used / freeDailyLimit) * 100));
   const tier = TIERS.find((t) => t.key === planKey) ?? TIERS[0];
   const sessionLimit =
     planKey === "pro" || planKey === "king"
       ? PLAN_LIMITS[planKey].sessionLimit
-      : undefined;
+      : PLAN_LIMITS.free.sessionLimit;
 
   return (
     <div className="mx-auto w-full max-w-4xl space-y-5">
@@ -106,7 +104,7 @@ function ProfileContainerPresenter({
           <p className="type-title mt-2 text-white">
             {isPaid
               ? "Unlimited"
-              : `${formatMinutes(used)} / ${formatMinutes(FREE_DAILY_SECONDS)}`}
+              : `${formatMinutes(used)} / ${formatMinutes(freeDailyLimit)}`}
           </p>
           {!isPaid ? (
             <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
@@ -169,22 +167,21 @@ function ProfileContainerPresenter({
             </p>
             <h2 className="type-title mt-2">Plan & billing</h2>
             <p className="type-body mt-2 text-white/70">
-              {tier.features.slice(0, 3).join(" · ")}
+              {tier.features
+                .slice(0, 3)
+                .map((feature) => feature.text)
+                .join(" · ")}
             </p>
-            {isPaid ? (
-              <div className="mt-4">
-                <ProfileBillingActions userId={userId} />
-              </div>
+            {isPaid && billingActions ? (
+              <div className="mt-4">{billingActions}</div>
             ) : null}
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:justify-end">
-            <ProfileSecuritySection />
-            <span className="text-white/20" aria-hidden>
-              ·
-            </span>
-            <ProfileDangerZone />
-          </div>
+          {accountActions ? (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:justify-end">
+              {accountActions}
+            </div>
+          ) : null}
         </div>
       </motion.div>
     </div>

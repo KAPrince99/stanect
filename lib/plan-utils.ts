@@ -8,20 +8,25 @@ export function isTrialExpired(createdAt: string) {
   return diffInDays > 7;
 }
 
-export function canUserCall(userData: any) {
-  const { plan, created_at, daily_seconds_used } = userData;
+export function canUserCall(userData: {
+  plan?: string | null;
+  created_at?: string | null;
+  daily_seconds_used?: number | null;
+}) {
+  const plan = (userData.plan || "free").toString().toLowerCase();
+  const dailySecondsUsed = Number(userData.daily_seconds_used ?? 0);
 
-  if (plan === "pro" || plan === "king") return { allowed: true };
+  if (plan === "pro" || plan === "king") return { allowed: true as const };
 
-  if (isTrialExpired(created_at)) {
-    return { allowed: false, reason: "TRIAL_EXPIRED" };
+  if (isTrialExpired(userData.created_at ?? "")) {
+    return { allowed: false as const, reason: "TRIAL_EXPIRED" as const };
   }
 
-  if (daily_seconds_used >= 360) {
-    return { allowed: false, reason: "DAILY_LIMIT_REACHED" };
+  if (dailySecondsUsed >= PLAN_LIMITS.free.dailyLimit) {
+    return { allowed: false as const, reason: "DAILY_LIMIT_REACHED" as const };
   }
 
-  return { allowed: true };
+  return { allowed: true as const };
 }
 
 export function getMaxCompanions(plan: PlanType): number {
@@ -30,7 +35,7 @@ export function getMaxCompanions(plan: PlanType): number {
 
 export function hasReachedCompanionLimit(
   currentCount: number,
-  plan: PlanType
+  plan: PlanType,
 ): boolean {
   return currentCount >= getMaxCompanions(plan);
 }

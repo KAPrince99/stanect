@@ -1,4 +1,8 @@
+"use client";
+
 import React, { memo, useCallback, useMemo, useState } from "react";
+
+import { PLAN_LIMITS, type PlanType } from "@/lib/plan-limits";
 import LordIcon from "../lordIcon";
 import InputField from "./InputField";
 import { useTabFormStore } from "@/store/useTabFormStore";
@@ -6,20 +10,20 @@ import TabContentHeader from "./TabContentHeader";
 import VoiceSelector from "./VoiceSelector";
 import PlanLimitHint from "./PlanLimitHint";
 
+function getMaxMinutes(plan: string) {
+  const key = (plan === "pro" || plan === "king" ? plan : "free") as PlanType;
+  return Math.floor(PLAN_LIMITS[key].sessionLimit / 60);
+}
+
 function Voice() {
   const voice = useTabFormStore((s) => s.voice);
   const setVoice = useTabFormStore((s) => s.setVoice);
-
   const sessionLength = useTabFormStore((s) => s.sessionLength);
   const setSessionLength = useTabFormStore((s) => s.setSessionLength);
   const userPlan = useTabFormStore((s) => s.userPlan);
   const [sessionLengthError, setSessionLengthError] = useState<string>();
 
-  const maxMinutes = useMemo(() => {
-    if (userPlan === "king") return 60;
-    if (userPlan === "pro") return 15;
-    return 2;
-  }, [userPlan]);
+  const maxMinutes = useMemo(() => getMaxMinutes(userPlan), [userPlan]);
 
   const validateSessionLength = useCallback(
     (value: number | null) => {
@@ -68,7 +72,7 @@ function Voice() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto px-8 ">
+    <div className="mx-auto max-w-2xl px-8">
       <TabContentHeader title="Voice and Session Length" className="my-0" />
       <VoiceSelector voice={voice} onSelectVoice={setVoice} />
 

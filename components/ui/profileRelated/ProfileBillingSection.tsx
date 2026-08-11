@@ -4,7 +4,7 @@ import { memo, useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import PricingCancelDialog from "@/components/ui/pricing/PricingCancelDialog";
+import ProfileBillingActionRow from "./ProfileBillingActionRow";
 
 interface ProfileBillingActionsProps {
   userId: string;
@@ -53,35 +53,14 @@ function ProfileBillingActions({ userId }: ProfileBillingActionsProps) {
   }, [queryClient, userId]);
 
   return (
-    <>
-      <PricingCancelDialog
-        open={isCancelOpen}
-        onOpenChange={setIsCancelOpen}
-        onConfirm={confirmCancel}
-      />
-
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <button
-          type="button"
-          disabled={busy !== null}
-          onClick={openPortal}
-          className="type-meta cursor-pointer text-white/70 transition hover:text-white disabled:opacity-50"
-        >
-          {busy === "portal" ? "Opening…" : "Manage billing"}
-        </button>
-        <span className="text-white/20" aria-hidden>
-          ·
-        </span>
-        <button
-          type="button"
-          disabled={busy !== null}
-          onClick={() => setIsCancelOpen(true)}
-          className="type-meta cursor-pointer text-red-300/80 transition hover:text-red-200 disabled:opacity-50"
-        >
-          {busy === "cancel" ? "Cancelling…" : "Cancel subscription"}
-        </button>
-      </div>
-    </>
+    <ProfileBillingActionRow
+      busy={busy}
+      isCancelOpen={isCancelOpen}
+      onOpenChangeCancel={setIsCancelOpen}
+      onOpenPortal={openPortal}
+      onConfirmCancel={confirmCancel}
+      onRequestCancel={() => setIsCancelOpen(true)}
+    />
   );
 }
 

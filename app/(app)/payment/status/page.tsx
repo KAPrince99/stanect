@@ -1,19 +1,17 @@
-//@/app/(app)/payment/status/page.tsx
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense } from "react";
-import { Loader2, Clock } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
-import { createClient } from "@supabase/supabase-js";
+import { Loader2, Clock } from "lucide-react";
+
+import {
+  clearPendingPaymentStatus,
+  fetchSubscriptionStatus,
+} from "@/app/(app)/actions/subs";
 import SuccessView from "@/components/payments/SuccessView";
 import ErrorView from "@/components/payments/ErrorView";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-);
 
 function StatusContent() {
   const { isLoaded, user } = useUser();
@@ -22,102 +20,45 @@ function StatusContent() {
 
   const status = searchParams.get("status");
   const plan = searchParams.get("plan") || "Pro";
-  const clerk_user_id = user?.id;
+  const clerkUserId = user?.id;
+  const isPendingView = status === "pending";
 
   const [showReset, setShowReset] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
-  // --- 1. THE RESET LOGIC ---
-  // Memoized so it can be used in multiple effects without re-triggering
-  const performReset = useCallback(async () => {
-    if (!clerk_user_id) return;
-    console.log("Auto-resetting pending status...");
-    await supabase
-      .from("users")
-      .update({ status: null })
-      .eq("clerk_user_id", clerk_user_id);
-  }, [clerk_user_id]);
+  const { data: subscription } = useQuery({
+    queryKey: ["subscription", clerkUserId],
+    queryFn: () => fetchSubscriptionStatus(),
+    enabled: !!isLoaded && !!clerkUserId && isPendingView,
+    refetchInterval: isPendingView ? 3000 : false,
+    staleTime: 0,
+  });
 
-  // --- 2. THE "NO REFRESH" BACK BUTTON DETECTOR ---
   useEffect(() => {
-    if (status !== "pending") return;
-
-    const handleBackButton = () => {
-      // This fires the moment the back button is pressed
-      performReset();
-    };
-
-    // Listen for browser back/forward navigation
-    window.addEventListener("popstate", handleBackButton);
-
-    // Cleanup: If they leave the page by clicking a link instead of the back button
-    return () => {
-      window.removeEventListener("popstate", handleBackButton);
-      if (status === "pending") {
-        performReset();
-      }
-    };
-  }, [status, performReset]);
-
-  // --- 3. SHOW MANUAL RESET AFTER 15 SECONDS ---
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (status === "pending") {
-      timer = setTimeout(() => setShowReset(true), 15000);
-    }
+    if (!isPendingView) return;
+    const timer = setTimeout(() => setShowReset(true), 15000);
     return () => clearTimeout(timer);
-  }, [status]);
+  }, [isPendingView]);
 
-  // --- 4. REALTIME & POLLING LOGIC ---
   useEffect(() => {
-    if (!isLoaded || !clerk_user_id || status !== "pending") return;
+    if (!isPendingView) return;
+    if (subscription?.status === "active" && subscription.plan) {
+      router.replace(
+        `/payment/status?status=success&plan=${subscription.plan}`,
+      );
+    }
+  }, [isPendingView, subscription, router]);
 
-    const checkCurrentStatus = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .select("status, plan")
-          .eq("clerk_user_id", clerk_user_id)
-          .single();
+  async function handleReset() {
+    try {
+      setResetting(true);
+      await clearPendingPaymentStatus();
+      router.push("/pricing");
+    } catch {
+      setResetting(false);
+    }
+  }
 
-        if (data?.status === "active") {
-          router.push(`/payment/status?status=success&plan=${data.plan}`);
-        }
-      } catch (err) {
-        console.error("Fetch Error:", err);
-      }
-    };
-
-    checkCurrentStatus();
-
-    const channel = supabase
-      .channel(`status-sync-${clerk_user_id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "users",
-          filter: `clerk_user_id=eq.${clerk_user_id}`,
-        },
-        (payload) => {
-          if (payload.new.status === "active") {
-            router.push(
-              `/payment/status?status=success&plan=${payload.new.plan}`,
-            );
-          }
-        },
-      )
-      .subscribe();
-
-    const polling = setInterval(checkCurrentStatus, 3000);
-
-    return () => {
-      supabase.removeChannel(channel);
-      clearInterval(polling);
-    };
-  }, [isLoaded, clerk_user_id, status, router]);
-
-  // --- Views ---
   if (status === "success") return <SuccessView planName={plan} />;
   if (status === "failed") return <ErrorView message="Transaction declined." />;
 
@@ -142,13 +83,12 @@ function StatusContent() {
 
         {showReset && (
           <button
-            onClick={async () => {
-              await performReset();
-              router.push("/pricing");
-            }}
-            className="type-meta mx-auto mt-4 block text-red-300 underline"
+            type="button"
+            disabled={resetting}
+            onClick={handleReset}
+            className="type-meta mx-auto mt-4 block text-red-300 underline disabled:opacity-50"
           >
-            Taking too long? Try again.
+            {resetting ? "Resetting…" : "Taking too long? Try again."}
           </button>
         )}
       </div>
@@ -158,7 +98,7 @@ function StatusContent() {
 
 export default function PaymentStatusPage() {
   return (
-    <main className="max-w-4xl mx-auto py-20 px-4 flex items-center justify-center min-h-screen">
+    <main className="mx-auto flex min-h-screen max-w-4xl items-center justify-center px-4 py-20">
       <Suspense fallback={<Loader2 className="animate-spin text-amber-500" />}>
         <StatusContent />
       </Suspense>

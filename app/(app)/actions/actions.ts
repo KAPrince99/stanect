@@ -2,6 +2,7 @@
 import { fetchSubscriptionStatus } from "./subs";
 import { buildAssistant } from "@/lib/buildAssistant";
 import type { PlanType } from "@/lib/plan-limits";
+import { PLAN_LIMITS } from "@/lib/plan-limits";
 import { hasReachedCompanionLimit } from "@/lib/plan-utils";
 import { createSupabaseClient } from "@/lib/supabase";
 import {
@@ -21,21 +22,26 @@ const createCompanionInputSchema = z.object({
   country: z.string().optional(),
 });
 
-const planDurationLimits: Record<string, number> = {
-  free: 2,
-  pro: 15,
-  king: 60,
-};
+function getMaxSessionMinutes(plan: string) {
+  const key = (plan === "pro" || plan === "king" ? plan : "free") as PlanType;
+  return Math.floor(PLAN_LIMITS[key].sessionLimit / 60);
+}
 
-export async function getUser(id?: string) {
-  if (!id) return null;
+const USER_PROFILE_SELECT =
+  "id, clerk_user_id, name, email, status, profile_picture, country, plan, total_lifetime_seconds, daily_seconds_used, created_at";
+
+const AVATAR_SELECT = "id, name, image_url";
+
+export async function getUser(_id?: string) {
+  const { userId } = await auth();
+  if (!userId) return null;
 
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase
     .from("users")
-    .select("*")
-    .eq("clerk_user_id", id)
+    .select(USER_PROFILE_SELECT)
+    .eq("clerk_user_id", userId)
     .maybeSingle();
 
   if (error) {
@@ -48,12 +54,13 @@ export async function getUser(id?: string) {
 
 export async function getAvatars(): Promise<AvatarProps[]> {
   const supabase = createSupabaseClient();
-  const { data, error } = await supabase.from("avatars").select("*");
+  const { data, error } = await supabase.from("avatars").select(AVATAR_SELECT);
   if (!data || error) if (error) throw new Error("Error fetching avatars");
   return (data ?? []) as AvatarProps[];
 }
 
-export async function getCreateCompanionGate(userId: string) {
+export async function getCreateCompanionGate(_userId?: string) {
+  const { userId } = await auth();
   if (!userId) {
     return { plan: "free" as PlanType, count: 0 };
   }
@@ -68,7 +75,7 @@ export async function getCreateCompanionGate(userId: string) {
       .maybeSingle(),
     supabase
       .from("companions")
-      .select("*", { count: "exact", head: true })
+      .select("id", { count: "exact", head: true })
       .eq("owner_id", userId),
   ]);
 
@@ -90,7 +97,7 @@ export async function getSingleAvatar(
   if (id) {
     const { data, error } = await supabase
       .from("avatars")
-      .select("*")
+      .select(AVATAR_SELECT)
       .eq("id", id)
       .maybeSingle();
 
@@ -100,7 +107,7 @@ export async function getSingleAvatar(
 
   const { data, error } = await supabase
     .from("avatars")
-    .select("*")
+    .select(AVATAR_SELECT)
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -110,23 +117,30 @@ export async function getSingleAvatar(
 }
 
 export async function getSingleCompanion(id: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
   const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from("companions")
     .select("*, avatars:avatar_id (image_url)")
     .eq("id", id)
+    .eq("owner_id", userId)
     .maybeSingle();
   if (error) throw new Error(error.message);
   return data;
 }
 
-export async function getCompanions(id: string) {
+export async function getCompanions(_id?: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase
     .from("companions")
     .select("*, avatars:avatar_id (image_url)")
-    .eq("owner_id", id);
+    .eq("owner_id", userId);
 
   if (error) throw new Error(error.message);
 
@@ -260,7 +274,7 @@ export async function createCompanion(formData: unknown) {
     throw new Error("Companion limit reached for your plan");
   }
 
-  const maxAllowed = planDurationLimits[userPlan] || 2;
+  const maxAllowed = getMaxSessionMinutes(userPlan);
   const safeDuration = Math.min(normalizedInput.duration, maxAllowed);
   const avatarId = await resolveAvatarId(supabase, normalizedInput.avatar_id);
   const country = normalizedInput.country?.trim() || "United States";
@@ -364,15 +378,21 @@ export async function deleteCompanion(id: string) {
   };
 }
 
+const updateUserSecondsSchema = z.number().finite().min(0).max(3600);
+
 export async function updateUserSeconds(secondsUsed: number) {
   const { userId } = await auth();
-  const supabase = createSupabaseClient();
-
   if (!userId) return { error: "No user found" };
 
+  const parsed = updateUserSecondsSchema.safeParse(secondsUsed);
+  if (!parsed.success) {
+    return { error: "Invalid usage duration" };
+  }
+
+  const supabase = createSupabaseClient();
   const { data, error } = await supabase.rpc("increment_user_stats", {
     user_id: userId,
-    seconds_to_add: secondsUsed,
+    seconds_to_add: Math.floor(parsed.data),
   });
 
   if (error) {
@@ -387,7 +407,10 @@ export async function updateUserSeconds(secondsUsed: number) {
   return { success: true };
 }
 
-export async function fetchUserNecessities(userId: string) {
+export async function fetchUserNecessities(_userId?: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
   const supabase = createSupabaseClient();
   const { data: userNeccesities, error } = await supabase
     .from("users")

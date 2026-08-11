@@ -71,18 +71,35 @@ export function PricingTierCard({
 
           <div className="mb-5">
             <span className="type-display text-[2rem] sm:text-[2.5rem]">
-              ${price}
+              {price === 0 ? "Free" : `$${price}`}
             </span>
-            <span className="type-meta ml-1 text-sm">{periodLabel}</span>
+            {price > 0 ? (
+              <span className="type-meta ml-1 text-sm">{periodLabel}</span>
+            ) : null}
           </div>
 
           <p className="type-body mb-6 min-h-12">{tier.description}</p>
 
           <ul className="mb-8 space-y-3">
             {tier.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-3">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
-                <span className="type-label text-white/90">{feature}</span>
+              <li key={feature.text} className="flex items-start gap-3">
+                <Check
+                  className={`mt-0.5 h-4 w-4 shrink-0 ${
+                    feature.comingSoon ? "text-white/35" : "text-emerald-400"
+                  }`}
+                />
+                <span
+                  className={`type-label flex flex-wrap items-center gap-2 ${
+                    feature.comingSoon ? "text-white/55" : "text-white/90"
+                  }`}
+                >
+                  {feature.text}
+                  {feature.comingSoon ? (
+                    <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide text-white/55">
+                      Coming soon
+                    </span>
+                  ) : null}
+                </span>
               </li>
             ))}
           </ul>

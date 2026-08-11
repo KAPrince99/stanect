@@ -10,10 +10,7 @@ import { fetchSubscriptionStatus } from "@/app/(app)/actions/subs";
 import { TIERS } from "@/app/constants";
 
 import LoadingSpinner from "./LoadingSpinner";
-import { PricingBackground } from "./pricing/PricingBackground";
-import PricingCancelDialog from "./pricing/PricingCancelDialog";
-import { PricingHeader } from "./pricing/PricingHeader";
-import { PricingTierCard } from "./pricing/PricingTierCard";
+import PricingPageView from "./pricing/PricingPageView";
 import type { BillingInterval } from "./pricing/pricingShared";
 
 type TierKey = (typeof TIERS)[number]["key"];
@@ -26,6 +23,9 @@ function PricingPage() {
     useState<BillingInterval>("monthly");
   const [pendingTierKey, setPendingTierKey] = useState<TierKey | null>(null);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [currencyDialogTier, setCurrencyDialogTier] = useState<TierKey | null>(
+    null,
+  );
 
   const clerkUserId = user?.id;
 
@@ -36,24 +36,12 @@ function PricingPage() {
   } = useQuery({
     queryKey: ["subscription", clerkUserId],
     enabled: !!clerkUserId,
-    queryFn: () => fetchSubscriptionStatus(clerkUserId!),
+    queryFn: () => fetchSubscriptionStatus(),
     staleTime: 1000 * 60 * 5,
   });
 
-  const handleSubscribe = useCallback(
+  const startCheckout = useCallback(
     async (tierKey: TierKey) => {
-      const currentPlan = subscriptionData?.plan;
-
-      if (tierKey === "free" && currentPlan && currentPlan !== "free") {
-        setIsCancelDialogOpen(true);
-        return;
-      }
-
-      if (tierKey === "free") {
-        router.push("/dashboard");
-        return;
-      }
-
       try {
         setPendingTierKey(tierKey);
 
@@ -74,8 +62,34 @@ function PricingPage() {
         setPendingTierKey(null);
       }
     },
-    [billingInterval, router, subscriptionData],
+    [billingInterval],
   );
+
+  const handleSubscribe = useCallback(
+    async (tierKey: TierKey) => {
+      const currentPlan = subscriptionData?.plan;
+
+      if (tierKey === "free" && currentPlan && currentPlan !== "free") {
+        setIsCancelDialogOpen(true);
+        return;
+      }
+
+      if (tierKey === "free") {
+        router.push("/dashboard");
+        return;
+      }
+
+      setCurrencyDialogTier(tierKey);
+    },
+    [router, subscriptionData],
+  );
+
+  const confirmCurrencyAndPay = useCallback(async () => {
+    const tierKey = currencyDialogTier;
+    setCurrencyDialogTier(null);
+    if (!tierKey || tierKey === "free") return;
+    await startCheckout(tierKey);
+  }, [currencyDialogTier, startCheckout]);
 
   const confirmDowngrade = useCallback(async () => {
     try {
@@ -108,37 +122,33 @@ function PricingPage() {
     return <LoadingSpinner />;
   }
 
+  const currencyTier = TIERS.find((tier) => tier.key === currencyDialogTier);
+  const currencyUsdPrice = currencyTier
+    ? billingInterval === "monthly"
+      ? currencyTier.monthly
+      : currencyTier.yearly
+    : 0;
+
   return (
-    <div className="mt-3 min-h-screen bg-transparent px-4 py-25 text-white sm:px-6">
-      <PricingCancelDialog
-        open={isCancelDialogOpen}
-        onOpenChange={setIsCancelDialogOpen}
-        onConfirm={confirmDowngrade}
-      />
-
-      <PricingBackground />
-
-      <div className="relative z-10 mx-auto max-w-6xl">
-        <PricingHeader
-          billingInterval={billingInterval}
-          onIntervalChange={setBillingInterval}
-        />
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
-          {TIERS.map((tier, index) => (
-            <PricingTierCard
-              key={tier.key}
-              tier={tier}
-              index={index}
-              billingInterval={billingInterval}
-              currentPlan={subscriptionData?.plan}
-              pendingTierKey={pendingTierKey}
-              onSelectTier={handleSubscribe}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+    <PricingPageView
+      billingInterval={billingInterval}
+      onIntervalChange={setBillingInterval}
+      currentPlan={subscriptionData?.plan}
+      pendingTierKey={pendingTierKey}
+      onSelectTier={handleSubscribe}
+      isCancelDialogOpen={isCancelDialogOpen}
+      onCancelDialogOpenChange={setIsCancelDialogOpen}
+      onConfirmDowngrade={confirmDowngrade}
+      currencyDialogTier={currencyDialogTier}
+      onCurrencyDialogOpenChange={(open) => {
+        if (!open) setCurrencyDialogTier(null);
+      }}
+      onConfirmCurrencyAndPay={confirmCurrencyAndPay}
+      currencyPlanName={currencyTier?.name ?? "Pro"}
+      currencyUsdPrice={currencyUsdPrice}
+      currencyIntervalLabel={billingInterval === "monthly" ? "/month" : "/year"}
+    />
   );
 }
+
 export default memo(PricingPage);

@@ -1,12 +1,9 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { PlanType } from "@/lib/plan-limits";
+import { PLAN_LIMITS, type PlanType } from "@/lib/plan-limits";
 
-const getMaxMinutesByPlan = (plan: PlanType) => {
-  if (plan === "king") return 60;
-  if (plan === "pro") return 15;
-  return 2;
-};
+const getMaxMinutesByPlan = (plan: PlanType) =>
+  Math.floor(PLAN_LIMITS[plan].sessionLimit / 60);
 
 interface TabFormState {
   selectedAvatarId: string | null;

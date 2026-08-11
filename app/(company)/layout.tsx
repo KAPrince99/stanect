@@ -1,9 +1,5 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
-export default function ComapnyLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="h-screen bg-black text-white overflow-y-auto p-5 md:p-10 ">
-      {children}
-    </div>
-  );
+export default function CompanyLayout({ children }: { children: ReactNode }) {
+  return <div className="min-h-screen bg-black text-white antialiased">{children}</div>;
 }

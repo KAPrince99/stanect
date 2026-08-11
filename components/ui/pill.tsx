@@ -7,8 +7,6 @@ import { LogIn, LogOut } from "lucide-react";
 import UserImageContainer from "@/components/ui/UserImageContainer";
 import { usePrefetchRoute } from "@/hooks/usePrefetchRoute";
 
-import UploadButton from "./uploadButton";
-
 export default function Pill() {
   const prefetchRoute = usePrefetchRoute();
 
@@ -26,10 +24,6 @@ export default function Pill() {
           </span>
         </div>
       </Link>
-
-      <div className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
-        <UploadButton />
-      </div>
 
       <div className="z-10 flex items-center gap-3 sm:gap-4">
         <SignedOut>

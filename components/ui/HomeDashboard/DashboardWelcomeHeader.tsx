@@ -7,13 +7,19 @@ import { motionTransition, motionVariants } from "@/lib/motion";
 
 interface DashboardWelcomeHeaderProps {
   welcomeUser: string;
-  hasCompanions: boolean;
   companionCount: number;
+}
+
+function possessiveName(name: string) {
+  const trimmed = name.trim() || "Your";
+  if (trimmed.toLowerCase() === "your") return "Your";
+  return trimmed.endsWith("s") || trimmed.endsWith("S")
+    ? `${trimmed}'`
+    : `${trimmed}'s`;
 }
 
 function DashboardWelcomeHeader({
   welcomeUser,
-  hasCompanions,
   companionCount,
 }: DashboardWelcomeHeaderProps) {
   return (
@@ -22,19 +28,15 @@ function DashboardWelcomeHeader({
       initial="hidden"
       animate="visible"
       transition={motionTransition.soft}
-      className={`w-full text-center ${hasCompanions ? "mb-10" : "mb-8"}`}
+      className="mb-10 w-full text-center"
     >
-      <h1 className="type-display">
-        {hasCompanions ? `Welcome back, ${welcomeUser}` : "Welcome to Stanect"}
-      </h1>
+      <h1 className="type-display">{possessiveName(welcomeUser)} cast</h1>
 
-      {hasCompanions && (
-        <p className="type-meta mt-3 text-[0.875rem] sm:text-[0.9375rem]">
-          {companionCount === 1
-            ? "1 companion ready to practice"
-            : `${companionCount} companions ready to practice`}
-        </p>
-      )}
+      <p className="type-meta mt-3 text-[0.875rem] sm:text-[0.9375rem]">
+        {companionCount === 1
+          ? "1 companion ready to practice"
+          : `${companionCount} companions ready to practice`}
+      </p>
     </motion.div>
   );
 }

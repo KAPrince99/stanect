@@ -1,24 +1,24 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Loader2, MoveRight, Sparkles } from "lucide-react";
+
 import LordIcon from "../lordIcon";
 import { Button } from "../button";
 import { motionTransition, motionVariants } from "@/lib/motion";
 
-function EmptyCompanionState() {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+interface EmptyCompanionStateProps {
+  onStartSetup: () => void;
+  isPending?: boolean;
+}
 
-  const handleStartSetup = () => {
-    startTransition(() => {
-      router.push("/new");
-    });
-  };
-
+function EmptyCompanionState({
+  onStartSetup,
+  isPending = false,
+}: EmptyCompanionStateProps) {
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="mx-auto max-w-5xl">
       <motion.div
         variants={motionVariants.fadeUp}
         initial="hidden"
@@ -26,7 +26,7 @@ function EmptyCompanionState() {
         transition={motionTransition.soft}
         className="flex flex-col items-center justify-center"
       >
-        <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl px-6 py-10 text-center shadow-xl md:px-10 md:py-12">
+        <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-white/5 px-6 py-10 text-center shadow-xl backdrop-blur-xl md:px-10 md:py-12">
           <div className="type-meta mb-6 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-400/10 px-4 py-1.5 uppercase tracking-wide text-amber-300">
             <Sparkles className="h-3.5 w-3.5" />
             New Companion Setup
@@ -60,14 +60,14 @@ function EmptyCompanionState() {
               type="button"
               size="lg"
               className="type-cta h-12 cursor-pointer bg-linear-to-r from-amber-400 to-orange-500 px-8 text-black shadow-2xl shadow-amber-500/40 hover:from-amber-500 hover:to-orange-600 md:px-10"
-              onClick={handleStartSetup}
+              onClick={onStartSetup}
               disabled={isPending}
             >
               Start Companion Setup
               {isPending ? (
-                <Loader2 className="w-5 h-5 ml-2 animate-spin" />
+                <Loader2 className="ml-2 h-5 w-5 animate-spin" />
               ) : (
-                <MoveRight className="w-5 h-5 ml-2" />
+                <MoveRight className="ml-2 h-5 w-5" />
               )}
             </Button>
           </div>
@@ -77,4 +77,4 @@ function EmptyCompanionState() {
   );
 }
 
-export default EmptyCompanionState;
+export default memo(EmptyCompanionState);

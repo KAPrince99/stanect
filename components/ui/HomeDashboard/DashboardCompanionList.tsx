@@ -2,7 +2,8 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import { getCompanions } from "@/app/(app)/actions/actions";
 
@@ -14,10 +15,12 @@ interface DashboardCompanionListProps {
 
 function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
   const { user } = useUser();
+  const router = useRouter();
+  const [isStartingSetup, startTransition] = useTransition();
 
   const { data: companions = [], isLoading } = useQuery({
     queryKey: ["companions", userId],
-    queryFn: () => getCompanions(userId),
+    queryFn: () => getCompanions(),
     enabled: !!userId,
     staleTime: 1000 * 60 * 5,
   });
@@ -32,6 +35,12 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
       companions={companions}
       welcomeUser={welcomeUser}
       isLoading={isLoading}
+      isStartingSetup={isStartingSetup}
+      onStartSetup={() => {
+        startTransition(() => {
+          router.push("/new");
+        });
+      }}
     />
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -16,15 +15,17 @@ interface SessionEndedModalProps {
   showEndModal: boolean;
   setShowEndModal: (show: boolean) => void;
   userPlan: "free" | "pro" | "king";
+  onUpgrade: () => void;
+  onDashboard: () => void;
 }
 
 function SessionEndedModal({
   showEndModal,
   setShowEndModal,
   userPlan,
+  onUpgrade,
+  onDashboard,
 }: SessionEndedModalProps) {
-  const router = useRouter();
-
   const config = {
     free: {
       title: "Time's Up!",
@@ -32,7 +33,7 @@ function SessionEndedModal({
         "You've reached the 2-minute limit for the Free plan. Upgrade for longer conversations.",
       primaryLabel: "Upgrade to Pro",
       primaryIcon: <Zap className="w-4 h-4 mr-2" />,
-      primaryAction: () => router.push("/pricing"),
+      primaryAction: onUpgrade,
     },
     pro: {
       title: "Session Finished",
@@ -85,7 +86,7 @@ function SessionEndedModal({
           <Button
             variant="outline"
             className="type-label h-11 w-full rounded-xl border-white/10 bg-transparent text-white transition-all hover:bg-white/5"
-            onClick={() => router.push("/dashboard")}
+            onClick={onDashboard}
           >
             <LayoutDashboard className="w-4 h-4 mr-2" />
             Back to Dashboard
@@ -95,4 +96,5 @@ function SessionEndedModal({
     </Dialog>
   );
 }
+
 export default memo(SessionEndedModal);

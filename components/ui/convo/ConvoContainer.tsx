@@ -1,6 +1,7 @@
 "use client";
 
-import { memo } from "react";
+import { useRouter } from "next/navigation";
+import { memo, useCallback } from "react";
 
 import { useConvoData } from "@/hooks/useConvoData";
 import { useConvoSession } from "@/hooks/useConvoSession";
@@ -13,6 +14,7 @@ interface ConvoContainerProps {
 }
 
 function ConvoContainer({ id }: ConvoContainerProps) {
+  const router = useRouter();
   const { companion, isLoading, userPlan } = useConvoData(id);
   const {
     callStatus,
@@ -22,6 +24,14 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     setShowTranscript,
     isDesktop,
   } = useConvoSession();
+
+  const onUpgrade = useCallback(() => {
+    router.push("/pricing");
+  }, [router]);
+
+  const onDashboard = useCallback(() => {
+    router.push("/dashboard");
+  }, [router]);
 
   if (isLoading) return <LoadingSpinner />;
   if (!companion) return null;
@@ -37,6 +47,8 @@ function ConvoContainer({ id }: ConvoContainerProps) {
       showEndModal={showEndModal}
       setShowEndModal={setShowEndModal}
       userPlan={userPlan}
+      onUpgrade={onUpgrade}
+      onDashboard={onDashboard}
     />
   );
 }

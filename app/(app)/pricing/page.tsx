@@ -69,14 +69,14 @@ export default function Page() {
               {
                 "@type": "Offer",
                 name: "Pro Plan",
-                price: "9.99",
+                price: "9",
                 priceCurrency: "USD",
                 url: "https://www.stanect.com/pricing",
               },
               {
                 "@type": "Offer",
                 name: "King Plan",
-                price: "19.99",
+                price: "49",
                 priceCurrency: "USD",
                 url: "https://www.stanect.com/pricing",
               },
