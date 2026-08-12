@@ -27,9 +27,11 @@ function GlobeCanvas({ isCallLive }: { isCallLive: boolean }) {
   return (
     <Canvas
       camera={{ position: [8, 8, 8], fov: 50 }}
-      className="h-full"
+      className="h-full w-full"
       frameloop="demand"
       dpr={[1, 1.25]}
+      // Avoid tearing down the GL context when React reconciles parents.
+      gl={{ antialias: true, powerPreference: "high-performance" }}
     >
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 5, 5]} />
@@ -44,4 +46,5 @@ function GlobeCanvas({ isCallLive }: { isCallLive: boolean }) {
     </Canvas>
   );
 }
-export default memo(GlobeCanvas);
+
+export default memo(GlobeCanvas, (prev, next) => prev.isCallLive === next.isCallLive);

@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
-export const Globe = ({ isActive }: { isActive: boolean }) => {
+export function Globe({ isActive }: { isActive: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const activeTimeRef = useRef(0);
   // Use useMemo for uniforms to prevent unnecessary re-creations
@@ -75,4 +75,4 @@ export const Globe = ({ isActive }: { isActive: boolean }) => {
       />
     </mesh>
   );
-};
+}
