@@ -2,8 +2,6 @@
 
 import { memo, type ReactNode } from "react";
 
-import { CallStatus } from "@/store/use-convo-store";
-
 import ConvoActionBar from "./ConvoActionBar";
 import type { ConvoStatusView } from "./convo-status-config";
 import ConvoStatusHero from "./ConvoStatusHero";
@@ -11,10 +9,10 @@ import ConvoStatusHero from "./ConvoStatusHero";
 interface ConvoBlockProps {
   companionName: string;
   isDesktop: boolean;
-  callStatus: CallStatus;
   currentStatus: ConvoStatusView;
   timeLeftDisplay: string;
   isCallInProgress: boolean;
+  isCallLive: boolean;
   isMuted: boolean;
   hasAssistantId: boolean;
   loadingMute: boolean;
@@ -31,10 +29,10 @@ interface ConvoBlockProps {
 function ConvoBlock({
   companionName,
   isDesktop,
-  callStatus,
   currentStatus,
   timeLeftDisplay,
   isCallInProgress,
+  isCallLive,
   isMuted,
   hasAssistantId,
   loadingMute,
@@ -63,15 +61,15 @@ function ConvoBlock({
 
       <ConvoStatusHero
         companionName={companionName}
-        callStatus={callStatus}
         currentStatus={currentStatus}
         timeLeftDisplay={timeLeftDisplay}
-        isCallInProgress={isCallInProgress}
+        isCallLive={isCallLive}
       />
 
       <ConvoActionBar
         isDesktop={isDesktop}
-        isCallInProgress={isCallInProgress}
+        isCallLive={isCallLive}
+        isStarting={isCallInProgress && !isCallLive}
         isMuted={isMuted}
         hasAssistantId={hasAssistantId}
         loadingMute={loadingMute}

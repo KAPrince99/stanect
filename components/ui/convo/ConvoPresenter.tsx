@@ -25,6 +25,7 @@ interface ConvoPresenterProps {
   userPlan: "free" | "pro" | "king";
   isMuted: boolean;
   isCallInProgress: boolean;
+  isCallLive: boolean;
   hasAssistantId: boolean;
   timeLeftDisplay: string;
   loadingMute: boolean;
@@ -50,6 +51,7 @@ function ConvoPresenter({
   userPlan,
   isMuted,
   isCallInProgress,
+  isCallLive,
   hasAssistantId,
   timeLeftDisplay,
   loadingMute,
@@ -74,9 +76,9 @@ function ConvoPresenter({
         <ConvoBlock
           companionName={companionName}
           currentStatus={convoStatusConfig[callStatus]}
-          callStatus={callStatus}
           timeLeftDisplay={timeLeftDisplay}
           isCallInProgress={isCallInProgress}
+          isCallLive={isCallLive}
           isMuted={isMuted}
           hasAssistantId={hasAssistantId}
           isDesktop={isDesktop}

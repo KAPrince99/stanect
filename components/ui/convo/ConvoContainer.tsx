@@ -26,6 +26,7 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     callStatus,
     isMuted,
     isCallInProgress,
+    isCallLive,
     hasAssistantId,
     timeLeftDisplay,
     showEndModal,
@@ -98,6 +99,7 @@ function ConvoContainer({ id }: ConvoContainerProps) {
       userPlan={userPlan}
       isMuted={isMuted}
       isCallInProgress={isCallInProgress}
+      isCallLive={isCallLive}
       hasAssistantId={hasAssistantId}
       timeLeftDisplay={timeLeftDisplay}
       loadingMute={loadingMute}

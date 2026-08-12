@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { memo } from "react";
 
-import { CallStatus } from "@/store/use-convo-store";
-
 import { ConvoStatusView } from "./convo-status-config";
 
 const GlobeCanvas = dynamic(() => import("../GlobeCanvas"), {
@@ -14,21 +12,19 @@ const GlobeCanvas = dynamic(() => import("../GlobeCanvas"), {
 
 interface ConvoStatusHeroProps {
   companionName: string;
-  callStatus: CallStatus;
   currentStatus: ConvoStatusView;
   timeLeftDisplay: string;
-  isCallInProgress: boolean;
+  isCallLive: boolean;
 }
 
 function ConvoStatusHero({
   companionName,
-  callStatus,
   currentStatus,
   timeLeftDisplay,
-  isCallInProgress,
+  isCallLive,
 }: ConvoStatusHeroProps) {
   const statusLabel =
-    callStatus === "ACTIVE" && timeLeftDisplay
+    isCallLive && timeLeftDisplay
       ? `Live · ${timeLeftDisplay}`
       : currentStatus.label;
 
@@ -53,9 +49,7 @@ function ConvoStatusHero({
 
       <div className="mx-auto my-2 w-full max-w-2xl min-h-0 flex-1 overflow-hidden rounded-3xl sm:my-4">
         <div className="relative mx-auto h-full max-h-80 min-h-[220px] w-full">
-          <GlobeCanvas
-            isCallInProgress={isCallInProgress}
-          />
+          <GlobeCanvas isCallLive={isCallLive} />
         </div>
       </div>
     </div>

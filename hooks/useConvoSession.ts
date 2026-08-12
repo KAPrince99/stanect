@@ -59,6 +59,8 @@ export function useConvoSession({
 
   const isCallInProgress =
     callStatus === "ACTIVE" || callStatus === "CONNECTING";
+  // Timer / live controls only kick in once Vapi fires call-start → ACTIVE.
+  const isCallLive = callStatus === "ACTIVE";
   const hasAssistantId = Boolean(assistantId);
   const timeLeftDisplay = formatTimeLeft(timeLeft);
 
@@ -230,6 +232,7 @@ export function useConvoSession({
     callStatus,
     isMuted,
     isCallInProgress,
+    isCallLive,
     hasAssistantId,
     timeLeftDisplay,
     showEndModal,

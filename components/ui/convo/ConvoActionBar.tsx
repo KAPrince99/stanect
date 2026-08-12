@@ -11,7 +11,8 @@ import TranscriptToggle from "../TranscriptToggle";
 
 interface ConvoActionBarProps {
   isDesktop: boolean;
-  isCallInProgress: boolean;
+  isCallLive: boolean;
+  isStarting: boolean;
   isMuted: boolean;
   hasAssistantId: boolean;
   loadingMute: boolean;
@@ -25,7 +26,8 @@ interface ConvoActionBarProps {
 
 function ConvoActionBar({
   isDesktop,
-  isCallInProgress,
+  isCallLive,
+  isStarting,
   isMuted,
   hasAssistantId,
   loadingMute,
@@ -36,13 +38,15 @@ function ConvoActionBar({
   onMuteToggle,
   onEndCall,
 }: ConvoActionBarProps) {
+  const showStarting = loadingStart || isStarting;
+
   return (
     <div className="z-20 flex shrink-0 items-center justify-center gap-4 py-6 sm:gap-6 sm:py-8">
-      {!isCallInProgress ? (
+      {!isCallLive ? (
         <Button
           className="type-cta h-12 cursor-pointer rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-8 text-black shadow-lg shadow-amber-500/25 transition hover:scale-[1.02] hover:shadow-amber-500/40 disabled:opacity-60"
           onClick={onStartCall}
-          disabled={loadingStart || !hasAssistantId}
+          disabled={showStarting || !hasAssistantId}
         >
           <LordIcon
             src="https://cdn.lordicon.com/wtywrnoz.json"
@@ -51,7 +55,7 @@ function ConvoActionBar({
             height={20}
             width={20}
           />
-          {loadingStart ? "Starting…" : "Start Call"}
+          {showStarting ? "Starting…" : "Start Call"}
         </Button>
       ) : (
         <div className="flex items-center gap-4">
@@ -85,7 +89,7 @@ function ConvoActionBar({
 
       {!isDesktop && (
         <AnimatePresence>
-          {!isCallInProgress && (
+          {!isCallLive && !showStarting && (
             <TranscriptToggle setShowTranscript={setShowTranscript} />
           )}
         </AnimatePresence>

@@ -23,11 +23,7 @@ function DemandInvalidator({ enabled }: { enabled: boolean }) {
   return null;
 }
 
-function GlobeCanvas({
-  isCallInProgress,
-}: {
-  isCallInProgress: boolean;
-}) {
+function GlobeCanvas({ isCallLive }: { isCallLive: boolean }) {
   return (
     <Canvas
       camera={{ position: [8, 8, 8], fov: 50 }}
@@ -37,8 +33,8 @@ function GlobeCanvas({
     >
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 5, 5]} />
-      <Globe isActive={isCallInProgress} />
-      <DemandInvalidator enabled={isCallInProgress} />
+      <Globe isActive={isCallLive} />
+      <DemandInvalidator enabled={isCallLive} />
       <OrbitControls
         enableZoom={false}
         enableRotate={false}
