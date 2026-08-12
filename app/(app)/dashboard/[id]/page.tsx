@@ -22,10 +22,12 @@ export default async function Page({ params }: PageProps) {
   if (!userId) redirect("/login");
 
   return (
-    <div className="mt-5 min-h-[calc(100vh)] bg-transparent py-16 sm:px-6 md:mx-10 md:mt-10 lg:h-[300px] xl:mx-40">
-      <ConvoAccessGate userId={userId}>
-        <ConvoWrapper companionId={id} />
-      </ConvoAccessGate>
+    <div className="box-border flex h-dvh flex-col px-4 pt-24 pb-28 sm:px-6 md:px-8 md:pb-10 lg:px-10 xl:px-16">
+      <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col">
+        <ConvoAccessGate userId={userId}>
+          <ConvoWrapper companionId={id} />
+        </ConvoAccessGate>
+      </div>
     </div>
   );
 }

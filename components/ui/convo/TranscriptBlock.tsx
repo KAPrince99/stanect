@@ -1,24 +1,28 @@
+"use client";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import React, { useRef, memo, useEffect } from "react";
-import { Button } from "../button";
-import LordIcon from "../lordIcon";
-import { useConvoStore } from "@/store/use-convo-store";
+import { useRef, memo, useEffect } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
-interface Props {
-  showTranscript: boolean;
-  setShowTranscript: (value: boolean) => void;
-  isDesktop: boolean;
+import { useConvoStore } from "@/store/use-convo-store";
+
+import { Button } from "../button";
+import LordIcon from "../lordIcon";
+
+interface TranscriptPanelProps {
   companionName: string;
+  showClose?: boolean;
+  onClose?: () => void;
+  className?: string;
 }
 
-function TranscriptBlock({
-  showTranscript,
-  setShowTranscript,
-  isDesktop,
+export function TranscriptPanel({
   companionName,
-}: Props) {
+  showClose = false,
+  onClose,
+  className,
+}: TranscriptPanelProps) {
   const { messages } = useConvoStore();
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +34,6 @@ function TranscriptBlock({
     overscan: 5,
   });
 
-  // Scroll to bottom on new message
   useEffect(() => {
     if (parentRef.current) {
       parentRef.current.scrollTop = parentRef.current.scrollHeight;
@@ -38,83 +41,115 @@ function TranscriptBlock({
   }, [messages]);
 
   return (
-    <AnimatePresence>
-      {(showTranscript || isDesktop) && (
-        <motion.div
-          initial={isDesktop ? false : { opacity: 0, x: "100%" }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: "100%" }}
-          className="w-full h-full lg:w-[300px] xl:w-sm flex flex-col backdrop-blur-xl bg-white/5 border-l border-white/10 shadow-2xl lg:shadow-none"
-        >
-          <div className="p-5 border-b border-white/10 flex items-center justify-between shrink-0">
-            <h2 className="type-title flex items-center gap-2 text-lg">
-              <LordIcon
-                src="https://cdn.lordicon.com/zyyejanq.json"
-                trigger="loop"
-                colors="primary:#e88c30"
-                height={30}
-                width={30}
-              />
-              Live Transcript
-            </h2>
+    <aside
+      className={`flex h-full min-h-0 w-full flex-col border-white/10 bg-white/5 backdrop-blur-xl ${className ?? ""}`}
+    >
+      <div className="flex shrink-0 items-center justify-between border-b border-white/10 p-5">
+        <h2 className="type-title flex items-center gap-2 text-lg">
+          <LordIcon
+            src="https://cdn.lordicon.com/zyyejanq.json"
+            trigger="loop"
+            colors="primary:#e88c30"
+            height={30}
+            width={30}
+          />
+          Live Transcript
+        </h2>
 
-            {!isDesktop && (
-              <Button
-                className="p-2 rounded-full hover:bg-white/10"
-                onClick={() => setShowTranscript(false)}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            )}
-          </div>
+        {showClose && onClose ? (
+          <Button
+            className="rounded-full p-2 hover:bg-white/10"
+            onClick={onClose}
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        ) : null}
+      </div>
 
-          <div ref={parentRef} className="flex-1 overflow-y-auto p-6">
-            <div
-              style={{
-                height: `${rowVirtualizer.getTotalSize()}px`,
-                position: "relative",
-              }}
-            >
-              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const msg = messages[virtualRow.index];
-                return (
+      <div ref={parentRef} className="min-h-0 flex-1 overflow-y-auto p-6">
+        {messages.length === 0 ? (
+          <p className="type-body pt-8 text-center text-white/40">
+            Transcript appears when you start talking.
+          </p>
+        ) : (
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              position: "relative",
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const msg = messages[virtualRow.index];
+              return (
+                <div
+                  key={msg.id}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
                   <div
-                    key={msg.id}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      transform: `translateY(${virtualRow.start}px)`,
-                    }}
+                    className={`flex ${
+                      msg.role === "user" ? "justify-end" : "justify-start"
+                    }`}
                   >
                     <div
-                      className={`flex ${
-                        msg.role === "user" ? "justify-end" : "justify-start"
+                      className={`max-w-[85%] rounded-2xl p-3 text-sm shadow-md ${
+                        msg.role === "user"
+                          ? "rounded-br-none border border-amber-400/40 bg-amber-500/20 text-amber-50"
+                          : "rounded-tl-none border border-white/10 bg-white/6 text-white/90"
                       }`}
                     >
-                      <div
-                        className={`max-w-[85%] rounded-2xl p-3 text-sm shadow-md ${
-                          msg.role === "user"
-                            ? "rounded-br-none border border-amber-400/40 bg-amber-500/20 text-amber-50"
-                            : "rounded-tl-none border border-white/10 bg-white/6 text-white/90"
-                        }`}
-                      >
-                        <div className="type-meta mb-1 opacity-80">
-                          {msg.role === "user" ? "You" : companionName}
-                        </div>
-                        {msg.content}
+                      <div className="type-meta mb-1 opacity-80">
+                        {msg.role === "user" ? "You" : companionName}
                       </div>
+                      {msg.content}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+interface MobileTranscriptProps {
+  showTranscript: boolean;
+  setShowTranscript: (value: boolean) => void;
+  companionName: string;
+}
+
+/** Full-screen transcript overlay for small viewports only. */
+export function MobileTranscriptOverlay({
+  showTranscript,
+  setShowTranscript,
+  companionName,
+}: MobileTranscriptProps) {
+  return (
+    <AnimatePresence>
+      {showTranscript ? (
+        <motion.div
+          initial={{ opacity: 0, x: "100%" }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: "100%" }}
+          className="absolute inset-0 z-30 h-full w-full lg:hidden"
+        >
+          <TranscriptPanel
+            companionName={companionName}
+            showClose
+            onClose={() => setShowTranscript(false)}
+            className="border-l shadow-2xl"
+          />
         </motion.div>
-      )}
+      ) : null}
     </AnimatePresence>
   );
 }
 
-export default memo(TranscriptBlock);
+export default memo(TranscriptPanel);

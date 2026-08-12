@@ -1,88 +1,68 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, type ReactNode } from "react";
 
-import { getVapiSdk } from "@/lib/vapiSdk";
-import { useConvoStore } from "@/store/use-convo-store";
-import { CompanionProps } from "@/types/types";
+import { CallStatus } from "@/store/use-convo-store";
 
 import ConvoActionBar from "./ConvoActionBar";
 import type { ConvoStatusView } from "./convo-status-config";
 import ConvoStatusHero from "./ConvoStatusHero";
 
 interface ConvoBlockProps {
+  companionName: string;
   isDesktop: boolean;
-  companion: CompanionProps;
-  id: string;
+  callStatus: CallStatus;
   currentStatus: ConvoStatusView;
+  timeLeftDisplay: string;
+  isCallInProgress: boolean;
+  isMuted: boolean;
+  hasAssistantId: boolean;
+  loadingMute: boolean;
+  loadingStart: boolean;
+  loadingEnd: boolean;
+  backAction?: ReactNode;
+  deleteAction?: ReactNode;
   setShowTranscript: (value: boolean) => void;
+  onStartCall: () => void | Promise<void>;
+  onMuteToggle: () => void | Promise<void>;
+  onEndCall: () => void | Promise<void>;
 }
 
 function ConvoBlock({
+  companionName,
   isDesktop,
-  companion,
-  id,
+  callStatus,
   currentStatus,
+  timeLeftDisplay,
+  isCallInProgress,
+  isMuted,
+  hasAssistantId,
+  loadingMute,
+  loadingStart,
+  loadingEnd,
+  backAction,
+  deleteAction,
   setShowTranscript,
+  onStartCall,
+  onMuteToggle,
+  onEndCall,
 }: ConvoBlockProps) {
-  const { callStatus, isMuted, setMuted, timeLeft, startCall, endCall } =
-    useConvoStore();
-
-  const [loadingMute, setLoadingMute] = useState(false);
-  const [loadingStart, setLoadingStart] = useState(false);
-  const [loadingEnd, setLoadingEnd] = useState(false);
-
-  const isCallInProgress =
-    callStatus === "ACTIVE" || callStatus === "CONNECTING";
-
-  const timeLeftDisplay =
-    timeLeft !== null
-      ? `${Math.floor(timeLeft / 60)}:${(timeLeft % 60)
-          .toString()
-          .padStart(2, "0")}`
-      : "";
-
-  // Async-safe mute toggle
-  const handleMuteToggle = async () => {
-    if (!isCallInProgress) return;
-    setLoadingMute(true);
-    try {
-      const vapi = await getVapiSdk();
-      await vapi.setMuted(!isMuted);
-      setMuted(!isMuted);
-    } catch (err) {
-      console.error("Failed to toggle mute:", err);
-    } finally {
-      setLoadingMute(false);
-    }
-  };
-
-  // Async-safe start call
-  const handleStartCall = async () => {
-    if (!companion.assistant_id || isCallInProgress) return;
-    setLoadingStart(true);
-    try {
-      await startCall(companion.assistant_id, Number(companion.duration) || 2);
-    } finally {
-      setLoadingStart(false);
-    }
-  };
-
-  // Async-safe end call
-  const handleEndCall = async () => {
-    if (!isCallInProgress) return;
-    setLoadingEnd(true);
-    try {
-      await endCall();
-    } finally {
-      setLoadingEnd(false);
-    }
-  };
-
   return (
-    <div className="relative z-10 flex h-full flex-1 flex-col items-center justify-between gap-y-15 px-2 md:gap-y-0">
+    <div className="relative z-10 flex h-full min-h-0 w-full flex-col items-center justify-between px-2">
+      {backAction ? (
+        <div className="absolute top-3 left-3 z-20 sm:top-4 sm:left-4">
+          {backAction}
+        </div>
+      ) : null}
+
+      {deleteAction ? (
+        <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4">
+          {deleteAction}
+        </div>
+      ) : null}
+
       <ConvoStatusHero
-        companionName={companion.companion_name || "Your AI Companion"}
+        companionName={companionName}
         callStatus={callStatus}
         currentStatus={currentStatus}
         timeLeftDisplay={timeLeftDisplay}
@@ -90,18 +70,17 @@ function ConvoBlock({
       />
 
       <ConvoActionBar
-        companionId={id}
         isDesktop={isDesktop}
         isCallInProgress={isCallInProgress}
         isMuted={isMuted}
-        hasAssistantId={Boolean(companion.assistant_id)}
+        hasAssistantId={hasAssistantId}
         loadingMute={loadingMute}
         loadingStart={loadingStart}
         loadingEnd={loadingEnd}
         setShowTranscript={setShowTranscript}
-        onStartCall={handleStartCall}
-        onMuteToggle={handleMuteToggle}
-        onEndCall={handleEndCall}
+        onStartCall={onStartCall}
+        onMuteToggle={onMuteToggle}
+        onEndCall={onEndCall}
       />
     </div>
   );

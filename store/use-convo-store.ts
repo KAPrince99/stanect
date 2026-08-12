@@ -32,6 +32,7 @@ interface ConvoState {
   messages: Message[];
   timeLeft: number | null;
   showEndModal: boolean;
+  activeCallId: string | null;
 
   setCallStatus: (status: CallStatus) => void;
   setMuted: (muted: boolean) => void;
@@ -49,6 +50,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
   messages: [],
   timeLeft: null,
   showEndModal: false,
+  activeCallId: null,
 
   setCallStatus: (callStatus) => {
     set({ callStatus });
@@ -70,6 +72,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
       messages: [],
       callStatus: "INACTIVE",
       timeLeft: null,
+      activeCallId: null,
     }),
 
   /* ----------------------------- MESSAGE SAFE ---------------------------- */
@@ -119,21 +122,19 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
     if (callStatus !== "ACTIVE" || timeLeft === null) return;
 
     if (timeLeft <= 1) {
-      getVapiSdk()
-        .then((vapi) => vapi.stop())
-        .catch(() => {});
-
       set({
         timeLeft: 0,
         showEndModal: true,
-        callStatus: "INACTIVE",
       });
-
       broadcastSync({
         timeLeft: 0,
         showEndModal: true,
-        callStatus: "INACTIVE",
       });
+
+      // Let Vapi/Daily end once; call-end listener owns INACTIVE cleanup.
+      getVapiSdk()
+        .then((vapi) => vapi.stop())
+        .catch(() => {});
     } else {
       set((state) => {
         const next = (state.timeLeft ?? 1) - 1;
@@ -160,6 +161,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
       messages: [],
       timeLeft: initialSeconds,
       isMuted: false,
+      activeCallId: null,
     });
 
     broadcastSync({
@@ -170,29 +172,45 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
     try {
       const vapi = await getVapiSdk();
 
-      await vapi.start(assistantId, {
+      const call = await vapi.start(assistantId, {
         maxDurationSeconds: initialSeconds,
       });
+
+      const callId =
+        call &&
+        typeof call === "object" &&
+        "id" in call &&
+        typeof (call as { id?: unknown }).id === "string"
+          ? (call as { id: string }).id
+          : null;
+
+      if (callId) {
+        set({ activeCallId: callId });
+        broadcastSync({ activeCallId: callId });
+      }
     } catch (e) {
       releaseCallOwnership();
-      set({ callStatus: "ERROR" });
+      set({ callStatus: "ERROR", activeCallId: null });
     }
   },
 
   /* ------------------------------- CALL END ------------------------------ */
 
   endCall: async () => {
+    const { callStatus } = get();
+    if (callStatus === "INACTIVE" || callStatus === "ERROR") {
+      releaseCallOwnership();
+      return;
+    }
+
     try {
       const vapi = await getVapiSdk();
       await vapi.stop();
-    } catch (e) {
-      console.error("Error stopping call:", e);
+    } catch {
+      // Daily often throws "Meeting has ended" if already tearing down.
     }
 
     releaseCallOwnership();
-
-    set({ callStatus: "INACTIVE" });
-    broadcastSync({ callStatus: "INACTIVE" });
   },
 }));
 

@@ -10,7 +10,13 @@ import React from "react";
 
 import DeleteCompanionDialog from "./DeleteCompanionDialog";
 
-export default function DeleteCompanionButton({ id }: { id: string }) {
+export default function DeleteCompanionButton({
+  id,
+  variant = "fab",
+}: {
+  id: string;
+  variant?: "fab" | "ghost";
+}) {
   const [open, setOpen] = React.useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -94,6 +100,7 @@ export default function DeleteCompanionButton({ id }: { id: string }) {
       onOpenChange={setOpen}
       isPending={mutation.isPending}
       onConfirm={() => mutation.mutate(id)}
+      variant={variant}
     />
   );
 }

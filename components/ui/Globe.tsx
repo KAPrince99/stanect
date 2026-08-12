@@ -2,11 +2,12 @@
 
 import { fragmentShader, vertexShader } from "@/app/constants";
 import { useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 export const Globe = ({ isActive }: { isActive: boolean }) => {
   const meshRef = useRef<THREE.Mesh>(null);
+  const activeTimeRef = useRef(0);
   // Use useMemo for uniforms to prevent unnecessary re-creations
   const uniforms = useMemo(
     () => ({
@@ -17,8 +18,29 @@ export const Globe = ({ isActive }: { isActive: boolean }) => {
     []
   );
 
+  useEffect(() => {
+    if (!isActive) {
+      // Set an explicit idle look once when the call stops.
+      activeTimeRef.current = 0;
+      uniforms.uVibrationIntensity.value = 0.0;
+      if (meshRef.current) {
+        meshRef.current.scale.set(1, 1, 1);
+      }
+      return;
+    }
+
+    // Start timing fresh when we re-activate.
+    activeTimeRef.current = 0;
+    uniforms.uTime.value = 0;
+  }, [isActive, uniforms]);
+
   useFrame((state) => {
-    const t = state.clock.getElapsedTime();
+    if (!isActive) return;
+
+    // With frameloop="demand", we only animate during invalidated frames.
+    // Use accumulated delta time so animations don't jump after pauses.
+    activeTimeRef.current += state.clock.getDelta();
+    const t = activeTimeRef.current;
 
     // 1. Update time for the shader
     uniforms.uTime.value = t;
@@ -31,27 +53,17 @@ export const Globe = ({ isActive }: { isActive: boolean }) => {
       meshRef.current.rotation.y += 0.003;
 
       // 4. Active/Inactive logic (from original component)
-      if (isActive) {
-        // Active: Gentle vibration and scale pulsing
-        meshRef.current.rotation.x += 0.001 * Math.sin(t * 10);
-        const scale = 1 + 0.02 * Math.sin(t * 5);
-        meshRef.current.scale.set(scale, scale, scale);
-        uniforms.uVibrationIntensity.value = 1.0; // Max intensity for active call
-      } else {
-        // Inactive: Smooth rotation only, reset scale, decrease vibration
-        meshRef.current.scale.set(1, 1, 1);
-        // Gently decrease vibration intensity after call ends
-        uniforms.uVibrationIntensity.value = Math.max(
-          0,
-          uniforms.uVibrationIntensity.value - 0.05
-        );
-      }
+      // Active: Gentle vibration and scale pulsing
+      meshRef.current.rotation.x += 0.001 * Math.sin(t * 10);
+      const scale = 1 + 0.02 * Math.sin(t * 5);
+      meshRef.current.scale.set(scale, scale, scale);
+      uniforms.uVibrationIntensity.value = 1.0; // Max intensity for active call
     }
   });
 
   return (
     <mesh ref={meshRef} rotation={[0.4, 0.6, 0]}>
-      <icosahedronGeometry args={[5.5, 80]} />
+      <icosahedronGeometry args={[5.5, 64]} />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}

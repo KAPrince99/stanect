@@ -27,21 +27,23 @@ function ConvoStatusHero({
   timeLeftDisplay,
   isCallInProgress,
 }: ConvoStatusHeroProps) {
+  const statusLabel =
+    callStatus === "ACTIVE" && timeLeftDisplay
+      ? `Live · ${timeLeftDisplay}`
+      : currentStatus.label;
+
   return (
-    <>
+    <div className="flex w-full min-h-0 flex-1 flex-col items-center">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg shrink-0 space-y-4 pt-2 pb-4 text-center"
+        className="w-full max-w-lg shrink-0 space-y-3 pt-4 pb-2 text-center sm:pt-6"
       >
         <div
-          className={`type-meta inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 backdrop-blur-md transition-colors ${currentStatus.color}`}
+          className={`type-meta inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 backdrop-blur-md transition-colors ${currentStatus.color}`}
         >
           {currentStatus.icon}
-          <span className="tracking-wider uppercase">
-            {currentStatus.label}
-            {callStatus === "ACTIVE" && ` • ${timeLeftDisplay}`}
-          </span>
+          <span className="tracking-wide">{statusLabel}</span>
         </div>
 
         <h1 className="type-display text-[1.75rem] md:text-[2rem]">
@@ -49,16 +51,14 @@ function ConvoStatusHero({
         </h1>
       </motion.div>
 
-      <div
-        className="my-4 mx-auto w-full max-w-2xl overflow-hidden rounded-3xl"
-        style={{ height: "300px" }}
-      >
-        <GlobeCanvas
-          callStatus={callStatus}
-          isCallInProgress={isCallInProgress}
-        />
+      <div className="mx-auto my-2 w-full max-w-2xl min-h-0 flex-1 overflow-hidden rounded-3xl sm:my-4">
+        <div className="relative mx-auto h-full max-h-80 min-h-[220px] w-full">
+          <GlobeCanvas
+            isCallInProgress={isCallInProgress}
+          />
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

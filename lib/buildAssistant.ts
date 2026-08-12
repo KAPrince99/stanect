@@ -12,13 +12,29 @@ const voiceMapping = {
     voiceId: process.env.FEMALE_VOICE_ID,
   },
 };
-export function buildAssistant(companion: AssistantCompanionContext) {
+
+type BuildAssistantInput = AssistantCompanionContext & {
+  id?: string;
+  owner_id?: string;
+};
+
+function resolveVapiServerUrl() {
+  return (
+    process.env.VAPI_SERVER_URL ||
+    (process.env.NEXT_PUBLIC_APP_URL
+      ? `${process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}/api/vapi/webhook`
+      : null)
+  );
+}
+
+export function buildAssistant(companion: BuildAssistantInput) {
   const voiceKey = companion.voice?.toLowerCase() as keyof typeof voiceMapping;
 
   // Fallback to female voice if invalid value
   const voiceConfig = voiceMapping[voiceKey] || voiceMapping["female"];
 
   const systemPrompt = buildPrompt(companion);
+  const serverUrl = resolveVapiServerUrl();
 
   return {
     model: {
@@ -28,7 +44,7 @@ export function buildAssistant(companion: AssistantCompanionContext) {
     },
     voice: {
       provider: voiceConfig.provider,
-      voiceId: voiceConfig.voiceId, // CORRECTED
+      voiceId: voiceConfig.voiceId,
       stability: 0.4,
       similarityBoost: 0.8,
       speed: 1,
@@ -39,7 +55,6 @@ export function buildAssistant(companion: AssistantCompanionContext) {
       provider: "deepgram",
       model: "nova-3",
     },
-    // firstMessage: `Hey ${companion.username}, I'm ${companion.companion_name}. Ready?`,
     clientMessages: [
       "transcript",
       "conversation-update",
@@ -54,6 +69,15 @@ export function buildAssistant(companion: AssistantCompanionContext) {
       "voice-input",
       "workflow.node.started",
     ],
-    serverMessages: [],
+    serverMessages: serverUrl ? ["end-of-call-report"] : [],
+    ...(serverUrl
+      ? {
+          serverUrl,
+        }
+      : {}),
+    metadata: {
+      companion_id: companion.id ?? null,
+      owner_id: companion.owner_id ?? null,
+    },
   };
 }

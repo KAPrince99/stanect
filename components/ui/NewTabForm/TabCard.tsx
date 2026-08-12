@@ -27,13 +27,13 @@ function TabCard({
   return (
     <button
       type="button"
-      className={`type-label relative cursor-pointer rounded-md px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${textClassName}`}
+      className={`type-label relative cursor-pointer rounded-full px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${textClassName}`}
       onClick={() => onTabClick(index)}
     >
       {isCompleted && !isActive && (
         <span
           aria-hidden="true"
-          className="absolute inset-0 rounded-md border border-amber-400/30 bg-amber-400/10"
+          className="absolute inset-0 rounded-full border border-amber-400/30 bg-amber-400/10"
         />
       )}
 
@@ -41,7 +41,7 @@ function TabCard({
         <motion.span
           layoutId="tab-active-pill"
           transition={motionTransition.smooth}
-          className="absolute inset-0 rounded-md border border-white/20 bg-white/15"
+          className="absolute inset-0 rounded-full border border-white/20 bg-white/15"
         />
       )}
 

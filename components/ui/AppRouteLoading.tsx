@@ -45,9 +45,12 @@ export function NewCompanionRouteLoading() {
       aria-label="Loading companion setup"
     >
       <div className="mx-auto w-full max-w-4xl">
-        <div className="mx-auto mb-5 flex min-h-14 w-full max-w-[600px] animate-pulse items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-2">
+        <div className="mx-auto mb-5 flex min-h-14 w-full max-w-[600px] animate-pulse items-center gap-2 rounded-full border border-white/10 bg-white/5 p-2">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="h-10 flex-1 rounded-lg bg-white/10" />
+            <div
+              key={index}
+              className="h-10 flex-1 rounded-full bg-white/10"
+            />
           ))}
         </div>
 
@@ -85,7 +88,7 @@ export function PricingRouteLoading() {
           {Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}
-              className="min-h-[22rem] animate-pulse rounded-3xl border border-white/10 bg-white/5 p-6"
+              className="min-h-88 animate-pulse rounded-3xl border border-white/10 bg-white/5 p-6"
             >
               <Pulse className="h-6 w-24 rounded-md" />
               <Pulse className="mt-4 h-10 w-32 rounded-lg" />

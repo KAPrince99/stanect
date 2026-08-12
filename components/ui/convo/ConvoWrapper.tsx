@@ -8,7 +8,11 @@ const ConvoContainer = dynamic(
   () => import("@/components/ui/convo/ConvoContainer"),
   {
     ssr: false,
-    loading: () => <LoadingSpinner />,
+    loading: () => (
+      <div className="flex h-full flex-1 items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    ),
   },
 );
 
@@ -17,5 +21,9 @@ interface ConvoWrapperProps {
 }
 
 export default function ConvoWrapper({ companionId }: ConvoWrapperProps) {
-  return <ConvoContainer id={companionId} />;
+  return (
+    <div className="flex h-full min-h-0 flex-1 flex-col">
+      <ConvoContainer id={companionId} />
+    </div>
+  );
 }

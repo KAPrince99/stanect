@@ -15,26 +15,42 @@ interface ConvoAccessGateProps {
 }
 
 function ConvoAccessGate({ userId, children }: ConvoAccessGateProps) {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ["userNecessities", userId],
     queryFn: () => fetchUserNecessities(),
     enabled: !!userId,
     staleTime: 1000 * 60,
+    retry: 1,
   });
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex h-full min-h-0 flex-1 items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
-  if (isError) {
-    return children;
+  // Fail closed: never open the call stage if we can't verify plan / limits.
+  if (isError || !data) {
+    return (
+      <div className="flex h-full min-h-0 flex-1 flex-col">
+        <ConvoGuard
+          reason="check_failed"
+          onRetry={() => {
+            void refetch();
+          }}
+          isRetrying={isFetching}
+        />
+      </div>
+    );
   }
 
-  const plan = data?.plan || "free";
+  const plan = data.plan || "free";
   const access = canUserCall({
     plan,
-    created_at: data?.created_at,
-    daily_seconds_used: data?.daily_seconds_used,
+    created_at: data.created_at,
+    daily_seconds_used: data.daily_seconds_used,
   });
 
   if (!access.allowed) {
@@ -44,13 +60,15 @@ function ConvoAccessGate({ userId, children }: ConvoAccessGateProps) {
         : "daily_limit_reached";
 
     return (
-      <div className="min-h-screen bg-transparent px-6 py-16">
+      <div className="flex h-full min-h-0 flex-1 flex-col">
         <ConvoGuard reason={reason} plan={plan} />
       </div>
     );
   }
 
-  return children;
+  return (
+    <div className="flex h-full min-h-0 flex-1 flex-col">{children}</div>
+  );
 }
 
 export default ConvoAccessGate;

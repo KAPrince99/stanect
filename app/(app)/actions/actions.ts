@@ -3,7 +3,7 @@ import { fetchSubscriptionStatus } from "./subs";
 import { buildAssistant } from "@/lib/buildAssistant";
 import type { PlanType } from "@/lib/plan-limits";
 import { PLAN_LIMITS } from "@/lib/plan-limits";
-import { hasReachedCompanionLimit } from "@/lib/plan-utils";
+import { canUserCall, hasReachedCompanionLimit } from "@/lib/plan-utils";
 import { createSupabaseClient } from "@/lib/supabase";
 import {
   AssistantCompanionContext,
@@ -191,10 +191,15 @@ async function createCompanionRecord(
     throw new Error(error?.message || "Failed to create a companion");
   }
 
-  return data as AssistantCompanionContext & { id: string };
+  return data as AssistantCompanionContext & {
+    id: string;
+    owner_id: string;
+  };
 }
 
-async function createAssistant(companion: AssistantCompanionContext) {
+async function createAssistant(
+  companion: AssistantCompanionContext & { id: string; owner_id: string },
+) {
   if (!process.env.VAPI_PRIVATE_KEY) {
     throw new Error("Vapi private key is not configured");
   }
@@ -380,6 +385,96 @@ export async function deleteCompanion(id: string) {
 
 const updateUserSecondsSchema = z.number().finite().min(0).max(3600);
 
+/** Re-check plan / daily limits immediately before a call starts. */
+export async function assertCanStartCall() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const necessities = await fetchUserNecessities();
+  if (!necessities) {
+    throw new Error("Unable to verify call access");
+  }
+
+  const access = canUserCall({
+    plan: necessities.plan,
+    created_at: necessities.created_at,
+    daily_seconds_used: necessities.daily_seconds_used,
+  });
+
+  if (!access.allowed) {
+    throw new Error(
+      access.reason === "TRIAL_EXPIRED"
+        ? "Trial period ended"
+        : "Daily talk limit reached",
+    );
+  }
+
+  return { ok: true as const, plan: necessities.plan || "free" };
+}
+
+/**
+ * Meter a finished call using Vapi's server-side call record (not client clocks).
+ * Idempotent per Vapi call id.
+ */
+export async function finalizeCallUsage(callId: string) {
+  const { userId } = await auth();
+  if (!userId) return { error: "Unauthorized" };
+
+  if (!callId || typeof callId !== "string") {
+    return { error: "Missing call id" };
+  }
+
+  try {
+    const {
+      durationSecondsFromIso,
+      fetchVapiCall,
+      meterVerifiedCallUsage,
+      resolveOwnerForAssistant,
+    } = await import("@/lib/call-metering");
+
+    const call = await fetchVapiCall(callId);
+    const resolvedCall =
+      call.endedAt
+        ? call
+        : await (async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            return fetchVapiCall(callId);
+          })();
+
+    if (!resolvedCall.assistantId) {
+      return { error: "Call missing assistant" };
+    }
+
+    const ownerId = await resolveOwnerForAssistant(resolvedCall.assistantId);
+    if (!ownerId || ownerId !== userId) {
+      return { error: "Call does not belong to this user" };
+    }
+
+    const seconds = durationSecondsFromIso(
+      resolvedCall.startedAt,
+      resolvedCall.endedAt,
+    );
+    if (seconds <= 0) {
+      return { success: true, skipped: "no_duration" as const };
+    }
+
+    const result = await meterVerifiedCallUsage({
+      callId: resolvedCall.id || callId,
+      clerkUserId: userId,
+      seconds,
+      source: "vapi-api",
+    });
+
+    return { success: true, result };
+  } catch (error) {
+    console.error("finalizeCallUsage failed:", error);
+    return {
+      error: error instanceof Error ? error.message : "Failed to finalize usage",
+    };
+  }
+}
+
+/** @deprecated Prefer finalizeCallUsage(callId). Kept as clamped fallback only. */
 export async function updateUserSeconds(secondsUsed: number) {
   const { userId } = await auth();
   if (!userId) return { error: "No user found" };
@@ -389,10 +484,13 @@ export async function updateUserSeconds(secondsUsed: number) {
     return { error: "Invalid usage duration" };
   }
 
+  // Cap client-reported seconds hard; primary path is finalizeCallUsage / webhook.
+  const capped = Math.min(Math.floor(parsed.data), 120);
+
   const supabase = createSupabaseClient();
   const { data, error } = await supabase.rpc("increment_user_stats", {
     user_id: userId,
-    seconds_to_add: Math.floor(parsed.data),
+    seconds_to_add: capped,
   });
 
   if (error) {
@@ -404,7 +502,7 @@ export async function updateUserSeconds(secondsUsed: number) {
     return { error: data.error };
   }
 
-  return { success: true };
+  return { success: true, fallback: true as const };
 }
 
 export async function fetchUserNecessities(_userId?: string) {

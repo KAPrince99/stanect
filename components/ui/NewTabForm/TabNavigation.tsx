@@ -32,7 +32,7 @@ function TabNavigation({
         type="button"
         variant="outline"
         size="icon"
-        className="size-11 rounded-full border-white/12 bg-white/5 text-white hover:bg-white/10"
+        className="size-11 rounded-full border border-white/10 bg-white/8 text-white backdrop-blur-md hover:bg-white/10"
         onClick={onPrevClick}
         disabled={!canGoPrev}
         aria-label="Go to previous tab"
@@ -44,7 +44,7 @@ function TabNavigation({
         type="button"
         variant="outline"
         size="icon"
-        className="size-11 rounded-full border-white/12 bg-white/5 text-white hover:bg-white/10"
+        className="size-11 rounded-full border border-white/10 bg-white/8 text-white backdrop-blur-md hover:bg-white/10"
         onClick={onNextClick}
         disabled={!canGoNext}
         aria-label="Go to next tab"
