@@ -1,12 +1,13 @@
 "use client";
 
 import { createCompanion, getSingleAvatar } from "@/app/(app)/actions/actions";
+import { setLastCompanionId } from "@/lib/last-companion";
 import { companionSchema } from "@/schemas/newCompanionSchema";
 import { useTabFormStore } from "@/store/useTabFormStore";
 import { CompanionProps, CreateCompanionProps } from "@/types/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import LoadingSpinner from "../LoadingSpinner";
@@ -19,6 +20,8 @@ interface PreviewProps {
 function Preview({ onEditStep }: PreviewProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [isNavigating, setIsNavigating] = useState(false);
+  const didCreateSucceedRef = useRef(false);
   const {
     companionName,
     scene,
@@ -67,6 +70,8 @@ function Preview({ onEditStep }: PreviewProps) {
   }, [companionName, scene, voice, sessionLength, selectedAvatar]);
 
   const validationIssues = useMemo(() => {
+    if (isNavigating) return [] as string[];
+
     const result = companionSchema.safeParse({
       avatarId: selectedAvatar?.id ?? selectedAvatarId ?? "",
       companionName,
@@ -84,26 +89,46 @@ function Preview({ onEditStep }: PreviewProps) {
     sessionLength,
     selectedAvatar,
     selectedAvatarId,
+    isNavigating,
   ]);
+
+  // After a successful create, clean up only once this screen unmounts —
+  // so Review never paints empty-form validation or the upgrade gate flash.
+  useEffect(() => {
+    return () => {
+      if (!didCreateSucceedRef.current) return;
+      reset();
+      void queryClient.invalidateQueries({ queryKey: ["companions"] });
+      void queryClient.invalidateQueries({ queryKey: ["createCompanionGate"] });
+    };
+  }, [queryClient, reset]);
 
   const mutation = useMutation({
     mutationFn: (payload: CreateCompanionProps) => createCompanion(payload),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["companions"] });
-      queryClient.invalidateQueries({ queryKey: ["createCompanionGate"] });
-      toast.success("Companion created successfully");
       const createdCompanionId = result?.data?.id;
-      reset();
+      didCreateSucceedRef.current = true;
+      setIsNavigating(true);
+      toast.success("Companion created successfully");
+
+      if (createdCompanionId) {
+        setLastCompanionId(createdCompanionId);
+      }
+
       router.replace(
         createdCompanionId ? `/dashboard/${createdCompanionId}` : "/dashboard",
       );
     },
     onError: (error: Error) => {
+      didCreateSucceedRef.current = false;
+      setIsNavigating(false);
       toast.error(error.message || "Failed to create companion");
     },
   });
 
   const handleCreateCompanion = () => {
+    if (mutation.isPending || isNavigating) return;
+
     if (!selectedAvatar) {
       toast.error("Please select an avatar first");
       onEditStep?.(0);
@@ -134,8 +159,8 @@ function Preview({ onEditStep }: PreviewProps) {
     <PreviewView
       previewCompanion={previewCompanion}
       validationIssues={validationIssues}
-      isCreating={mutation.isPending}
-      onEditStep={onEditStep}
+      isCreating={mutation.isPending || isNavigating}
+      onEditStep={isNavigating ? undefined : onEditStep}
       onCreate={handleCreateCompanion}
     />
   );

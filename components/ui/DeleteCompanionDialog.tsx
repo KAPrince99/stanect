@@ -91,7 +91,10 @@ function DeleteCompanionDialog({
             </AlertDialogHeader>
 
             <AlertDialogFooter className="mt-8 flex flex-col gap-4 sm:flex-row sm:gap-3">
-              <AlertDialogCancel className="w-full cursor-pointer rounded-full border-none bg-white/5 px-8 py-6 text-lg font-medium text-white backdrop-blur-xl transition-all duration-300 hover:bg-white/10 sm:w-auto">
+              <AlertDialogCancel
+                disabled={isPending}
+                className="w-full cursor-pointer rounded-full border-none bg-white/5 px-8 py-6 text-lg font-medium text-white backdrop-blur-xl transition-all duration-300 hover:bg-white/10 disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
+              >
                 Cancel
               </AlertDialogCancel>
 
@@ -99,6 +102,7 @@ function DeleteCompanionDialog({
                 <Button
                   onClick={(event) => {
                     event.preventDefault();
+                    if (isPending) return;
                     onConfirm();
                   }}
                   disabled={isPending}
@@ -107,7 +111,7 @@ function DeleteCompanionDialog({
                   {isPending ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      <span>Deleting...</span>
+                      <span>Deleting…</span>
                     </>
                   ) : (
                     <>

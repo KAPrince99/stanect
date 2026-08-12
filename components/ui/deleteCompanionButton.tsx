@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CompanionProps } from "@/types/types";
-import React from "react";
+import React, { useCallback } from "react";
 
 import DeleteCompanionDialog from "./DeleteCompanionDialog";
 
@@ -30,23 +30,13 @@ export default function DeleteCompanionButton({
         queryKey: ["companions"],
       });
 
+      // Only patch list caches. Leave ["companions", id] alone so the
+      // current detail page stays mounted while the request is in flight.
       queryClient.setQueriesData({ queryKey: ["companions"] }, (old) => {
-        if (Array.isArray(old)) {
-          return old.filter(
-            (companion: CompanionProps) => companion.id !== deletedId,
-          );
-        }
-
-        if (
-          old &&
-          typeof old === "object" &&
-          "id" in old &&
-          (old as CompanionProps).id === deletedId
-        ) {
-          return null;
-        }
-
-        return old;
+        if (!Array.isArray(old)) return old;
+        return old.filter(
+          (companion: CompanionProps) => companion.id !== deletedId,
+        );
       });
 
       return { previousQueries };
@@ -89,15 +79,23 @@ export default function DeleteCompanionButton({
           },
         },
       });
-      router.replace("/dashboard");
       setOpen(false);
+      router.replace("/dashboard");
     },
   });
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (mutation.isPending && !nextOpen) return;
+      setOpen(nextOpen);
+    },
+    [mutation.isPending],
+  );
 
   return (
     <DeleteCompanionDialog
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={handleOpenChange}
       isPending={mutation.isPending}
       onConfirm={() => mutation.mutate(id)}
       variant={variant}
