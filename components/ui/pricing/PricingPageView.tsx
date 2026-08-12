@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import { motion } from "framer-motion";
 
 import { TIERS } from "@/app/constants";
 
@@ -9,7 +10,7 @@ import PricingCurrencyDialog from "./PricingCurrencyDialog";
 import { PricingBackground } from "./PricingBackground";
 import { PricingHeader } from "./PricingHeader";
 import { PricingTierCard } from "./PricingTierCard";
-import type { BillingInterval } from "./pricingShared";
+import { pricingStagger, type BillingInterval } from "./pricingShared";
 
 type TierKey = (typeof TIERS)[number]["key"];
 
@@ -65,7 +66,12 @@ function PricingPageView({
 
       <PricingBackground />
 
-      <div className="relative z-10 mx-auto max-w-6xl">
+      <motion.div
+        className="relative z-10 mx-auto max-w-6xl"
+        variants={pricingStagger}
+        initial="initial"
+        animate="animate"
+      >
         <PricingHeader
           billingInterval={billingInterval}
           onIntervalChange={onIntervalChange}
@@ -84,7 +90,7 @@ function PricingPageView({
             />
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

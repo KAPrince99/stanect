@@ -7,6 +7,7 @@ import { ArrowRight, Plus } from "lucide-react";
 import { memo } from "react";
 
 import { motionTransition, motionVariants } from "@/lib/motion";
+import type { UsageTone } from "@/lib/practice-usage";
 import { usePrefetchRoute } from "@/hooks/usePrefetchRoute";
 
 import { Button } from "../button";
@@ -19,7 +20,17 @@ interface DashboardContinueStripProps {
   continueHref: string;
   welcomeName?: string;
   showCreate?: boolean;
+  /** Shown on the welcome row — Free / Pro / King. */
+  planBadgeLabel?: string;
+  planBadgeTone?: UsageTone;
 }
+
+const usageToneClass: Record<UsageTone, string> = {
+  ok: "border-white/15 bg-white/8 text-white/75",
+  low: "border-amber-300/25 bg-amber-400/10 text-amber-200",
+  blocked: "border-red-400/25 bg-red-500/10 text-red-200",
+  paid: "border-emerald-400/20 bg-emerald-500/10 text-emerald-200",
+};
 
 function DashboardContinueStrip({
   companionName,
@@ -29,8 +40,31 @@ function DashboardContinueStrip({
   continueHref,
   welcomeName,
   showCreate = false,
+  planBadgeLabel,
+  planBadgeTone = "ok",
 }: DashboardContinueStripProps) {
   const prefetchRoute = usePrefetchRoute();
+  // Ghost cards cover create when the row isn't full — Continue sits far right.
+  // When the row is full, Continue stays with identity and Create takes the far right.
+  const continueBesideIdentity = showCreate;
+
+  const continueButton = (className: string) => (
+    <Button
+      asChild
+      className={`type-cta h-9 shrink-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-4 text-sm text-black shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-600 ${className}`}
+    >
+      <Link
+        href={continueHref}
+        prefetch
+        onMouseEnter={() => prefetchRoute(continueHref)}
+        onFocus={() => prefetchRoute(continueHref)}
+        onTouchStart={() => prefetchRoute(continueHref)}
+      >
+        Continue
+        <ArrowRight className="size-3.5" />
+      </Link>
+    </Button>
+  );
 
   return (
     <motion.div
@@ -40,10 +74,24 @@ function DashboardContinueStrip({
       transition={motionTransition.soft}
       className="mb-5 w-full sm:mb-6"
     >
-      {welcomeName ? (
-        <p className="type-meta mb-2 text-white/40">
-          Welcome back, {welcomeName}
-        </p>
+      {welcomeName || planBadgeLabel ? (
+        <div className="mb-2 flex items-center justify-between gap-3">
+          {welcomeName ? (
+            <p className="type-meta min-w-0 truncate text-white/40">
+              Welcome back, {welcomeName}
+            </p>
+          ) : (
+            <span />
+          )}
+
+          {planBadgeLabel ? (
+            <span
+              className={`type-meta inline-flex shrink-0 items-center rounded-full border px-3 py-1 ${usageToneClass[planBadgeTone]}`}
+            >
+              {planBadgeLabel}
+            </span>
+          ) : null}
+        </div>
       ) : null}
 
       <div className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 backdrop-blur-xl sm:gap-4 sm:px-4">
@@ -62,7 +110,7 @@ function DashboardContinueStrip({
             <p className="type-meta text-[0.6875rem] leading-none text-white/40">
               Continue practice
             </p>
-            <h1 className="type-title truncate text-base leading-tight text-white sm:text-md">
+            <h1 className="type-title truncate text-base leading-tight text-white sm:text-lg">
               {companionName}
             </h1>
             <p className="type-meta truncate leading-tight capitalize text-white/50">
@@ -72,39 +120,15 @@ function DashboardContinueStrip({
             </p>
           </div>
 
-          <Button
-            asChild
-            className="type-cta hidden h-9 shrink-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-4 text-sm text-black shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-600 sm:inline-flex"
-          >
-            <Link
-              href={continueHref}
-              prefetch
-              onMouseEnter={() => prefetchRoute(continueHref)}
-              onFocus={() => prefetchRoute(continueHref)}
-              onTouchStart={() => prefetchRoute(continueHref)}
-            >
-              Continue
-              <ArrowRight className="size-3.5" />
-            </Link>
-          </Button>
+          {continueBesideIdentity
+            ? continueButton("hidden sm:inline-flex")
+            : null}
         </div>
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
-          <Button
-            asChild
-            className="type-cta inline-flex h-9 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-4 text-sm text-black shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-600 sm:hidden"
-          >
-            <Link
-              href={continueHref}
-              prefetch
-              onMouseEnter={() => prefetchRoute(continueHref)}
-              onFocus={() => prefetchRoute(continueHref)}
-              onTouchStart={() => prefetchRoute(continueHref)}
-            >
-              Continue
-              <ArrowRight className="size-3.5" />
-            </Link>
-          </Button>
+          {continueBesideIdentity
+            ? continueButton("inline-flex sm:hidden")
+            : continueButton("inline-flex")}
 
           {showCreate ? (
             <Link

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { TIERS } from "@/app/constants";
 import { Button } from "@/components/ui/button";
