@@ -2,16 +2,20 @@
 
 import { memo } from "react";
 
-import { CompanionProps } from "@/types/types";
+import type { CompanionProps } from "@/types/types";
 
 import { DashboardRouteLoading } from "../AppRouteLoading";
-import DashboardCompanionGrid from "./DashboardCompanionGrid";
-import DashboardWelcomeHeader from "./DashboardWelcomeHeader";
+import DashboardCompanionGrid, {
+  TARGET_SLOT_COUNT,
+} from "./DashboardCompanionGrid";
+import DashboardContinueStrip from "./DashboardContinueStrip";
 import EmptyCompanionState from "./EmptyCompanionState";
 
 interface DashboardCompanionsViewProps {
   companions: CompanionProps[];
   welcomeUser: string;
+  continueCompanion: CompanionProps | null;
+  canCreateCompanion: boolean;
   isLoading: boolean;
   onStartSetup: () => void;
   isStartingSetup?: boolean;
@@ -20,6 +24,8 @@ interface DashboardCompanionsViewProps {
 function DashboardCompanionsView({
   companions,
   welcomeUser,
+  continueCompanion,
+  canCreateCompanion,
   isLoading,
   onStartSetup,
   isStartingSetup = false,
@@ -33,11 +39,18 @@ function DashboardCompanionsView({
   return (
     <section className="relative px-4 pt-24 pb-8 sm:px-6 lg:pt-28">
       <div className="mx-auto w-full max-w-4xl">
-        {hasCompanions ? (
+        {hasCompanions && continueCompanion ? (
           <>
-            <DashboardWelcomeHeader
-              welcomeUser={welcomeUser}
-              companionCount={companions.length}
+            <DashboardContinueStrip
+              welcomeName={welcomeUser}
+              companionName={continueCompanion.companion_name}
+              scene={continueCompanion.scene || ""}
+              durationLabel={`${continueCompanion.duration} min session`}
+              avatarUrl={continueCompanion.avatars.image_url}
+              continueHref={`/dashboard/${continueCompanion.id}`}
+              showCreate={
+                canCreateCompanion && companions.length >= TARGET_SLOT_COUNT
+              }
             />
             <DashboardCompanionGrid companions={companions} />
           </>

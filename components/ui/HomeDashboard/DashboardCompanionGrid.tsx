@@ -10,7 +10,7 @@ import CompanionGhostCard from "./CompanionGhostCard";
 import CompanionOverviewCard from "./CompanionOverviewCard";
 
 /** Fill the first row visually until the user has a full set of companions. */
-const TARGET_SLOT_COUNT = 3;
+export const TARGET_SLOT_COUNT = 3;
 
 interface DashboardCompanionGridProps {
   companions: CompanionProps[];

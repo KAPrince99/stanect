@@ -11,9 +11,20 @@ export function DashboardRouteLoading() {
       role="status"
       aria-label="Loading dashboard"
     >
-      <div className="mx-auto mb-10 w-full max-w-4xl text-center">
-        <Pulse className="mx-auto h-9 w-64 max-w-[85%] rounded-lg sm:h-10 sm:w-80 md:h-11" />
-        <Pulse className="mx-auto mt-3 h-4 w-48 max-w-[70%]" />
+      <div className="mx-auto mb-5 w-full max-w-4xl sm:mb-6">
+        <Pulse className="mb-2 h-3 w-32" />
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 sm:gap-6 sm:px-4">
+          <div className="flex items-center gap-3">
+            <div className="size-11 shrink-0 animate-pulse rounded-xl bg-white/10" />
+            <div className="space-y-1.5">
+              <Pulse className="h-2.5 w-20" />
+              <Pulse className="h-4 w-28 rounded-md" />
+              <Pulse className="h-2.5 w-24" />
+            </div>
+            <Pulse className="hidden h-9 w-24 sm:block" />
+          </div>
+          <Pulse className="h-9 w-20" />
+        </div>
       </div>
 
       <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
@@ -47,10 +58,7 @@ export function NewCompanionRouteLoading() {
       <div className="mx-auto w-full max-w-4xl">
         <div className="mx-auto mb-5 flex min-h-14 w-full max-w-[600px] animate-pulse items-center gap-2 rounded-full border border-white/10 bg-white/5 p-2">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-10 flex-1 rounded-full bg-white/10"
-            />
+            <div key={index} className="h-10 flex-1 rounded-full bg-white/10" />
           ))}
         </div>
 

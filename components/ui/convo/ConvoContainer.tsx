@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 
 import { useConvoData } from "@/hooks/useConvoData";
 import { useConvoSession } from "@/hooks/useConvoSession";
+import { setLastCompanionId } from "@/lib/last-companion";
 import { Button } from "@/components/ui/button";
 
 import DeleteCompanionButton from "../deleteCompanionButton";
@@ -19,6 +20,10 @@ interface ConvoContainerProps {
 function ConvoContainer({ id }: ConvoContainerProps) {
   const router = useRouter();
   const { companion, isLoading, userPlan } = useConvoData(id);
+
+  useEffect(() => {
+    if (id) setLastCompanionId(id);
+  }, [id]);
 
   const durationMinutes = Number(companion?.duration) || 2;
 
