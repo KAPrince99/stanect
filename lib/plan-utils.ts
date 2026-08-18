@@ -1,5 +1,11 @@
 import { PLAN_LIMITS, PlanType } from "./plan-limits";
 
+type UserData = {
+  plan?: string | null;
+  created_at?: string | null;
+  daily_seconds_used?: number | null;
+};
+
 export function isTrialExpired(createdAt: string) {
   const signupDate = new Date(createdAt);
   const now = new Date();
@@ -8,11 +14,7 @@ export function isTrialExpired(createdAt: string) {
   return diffInDays > 7;
 }
 
-export function canUserCall(userData: {
-  plan?: string | null;
-  created_at?: string | null;
-  daily_seconds_used?: number | null;
-}) {
+export function canUserCall(userData: UserData) {
   const plan = (userData.plan || "free").toString().toLowerCase();
   const dailySecondsUsed = Number(userData.daily_seconds_used ?? 0);
 

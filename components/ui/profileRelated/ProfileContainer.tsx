@@ -46,6 +46,7 @@ function ProfileContainer({ userId }: { userId: string }) {
     queryFn: () => getUser(userId),
     enabled: !!userId,
     staleTime: 1000 * 60 * 5,
+    refetchOnMount: "always",
   });
 
   const { data: companions = [], isLoading: isCompanionsLoading } = useQuery({

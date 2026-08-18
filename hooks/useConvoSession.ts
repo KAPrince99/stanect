@@ -11,13 +11,30 @@ import {
   finalizeCallUsage,
 } from "@/app/(app)/actions/actions";
 import { isCallOwner, releaseCallOwnership } from "@/lib/tabCallLock";
-import { getVapiSdk, type VapiSDK } from "@/lib/vapiSdk";
+import { extractVapiCallId, getVapiSdk, type VapiSDK } from "@/lib/vapiSdk";
 import { useConvoStore } from "@/store/use-convo-store";
 
 interface UseConvoSessionOptions {
   assistantId?: string | null;
   durationMinutes?: number;
   userId?: string | null;
+}
+
+type CachedUserUsage = {
+  daily_seconds_used?: number | null;
+  total_lifetime_seconds?: number | null;
+};
+
+function applyUsageToCachedUser<T>(
+  old: T,
+  usage: { dailySecondsUsed: number; totalLifetimeSeconds: number },
+): T {
+  if (!old || typeof old !== "object") return old;
+  return {
+    ...(old as CachedUserUsage),
+    daily_seconds_used: usage.dailySecondsUsed,
+    total_lifetime_seconds: usage.totalLifetimeSeconds,
+  } as T;
 }
 
 function formatTimeLeft(timeLeft: number | null) {
@@ -117,6 +134,13 @@ export function useConvoSession({
       setShowTranscript(true);
     };
 
+    const onCallStartSuccess = (event: unknown) => {
+      const callId = extractVapiCallId(event);
+      if (!callId) return;
+      sessionCallIdRef.current = callId;
+      useConvoStore.setState({ activeCallId: callId });
+    };
+
     const onCallEnd = async () => {
       setCallStatus("INACTIVE");
       setMuted(false);
@@ -126,18 +150,37 @@ export function useConvoSession({
       sessionCallIdRef.current = null;
       useConvoStore.setState({ activeCallId: null });
 
-      if (callId) {
-        const result = await finalizeCallUsage(callId);
-        if (result && "error" in result && result.error) {
-          console.error("finalizeCallUsage:", result.error);
-        }
+      const result = await finalizeCallUsage(callId || "", assistantId);
+      if (result && "error" in result && result.error) {
+        console.error("finalizeCallUsage:", result.error);
       }
 
-      if (userId) {
-        await queryClient.invalidateQueries({
-          queryKey: ["userNecessities", userId],
-        });
+      const metered =
+        result &&
+        "result" in result &&
+        result.result &&
+        typeof result.result.dailySecondsUsed === "number" &&
+        typeof result.result.totalLifetimeSeconds === "number"
+          ? {
+              dailySecondsUsed: result.result.dailySecondsUsed,
+              totalLifetimeSeconds: result.result.totalLifetimeSeconds,
+            }
+          : null;
+
+      if (metered) {
+        queryClient.setQueriesData({ queryKey: ["users"] }, (old: unknown) =>
+          applyUsageToCachedUser(old, metered),
+        );
+        queryClient.setQueriesData(
+          { queryKey: ["userNecessities"] },
+          (old: unknown) => applyUsageToCachedUser(old, metered),
+        );
       }
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["userNecessities"] }),
+        queryClient.invalidateQueries({ queryKey: ["users"] }),
+      ]);
     };
 
     const handleVapiMessage = (message: unknown) => {
@@ -170,6 +213,7 @@ export function useConvoSession({
       vapiRef.current = vapi;
 
       vapi.on("call-start", onCallStart);
+      vapi.on("call-start-success", onCallStartSuccess);
       vapi.on("call-end", onCallEnd);
       vapi.on("message", handleVapiMessage);
       vapi.on("error", handleVapiError);
@@ -182,11 +226,20 @@ export function useConvoSession({
       if (!vapi) return;
 
       vapi.off("call-start", onCallStart);
+      vapi.off("call-start-success", onCallStartSuccess);
       vapi.off("call-end", onCallEnd);
       vapi.off("message", handleVapiMessage);
       vapi.off("error", handleVapiError);
     };
-  }, [addMessage, playPop, queryClient, setCallStatus, setMuted, userId]);
+  }, [
+    addMessage,
+    assistantId,
+    playPop,
+    queryClient,
+    setCallStatus,
+    setMuted,
+    userId,
+  ]);
 
   const onStartCall = useCallback(async () => {
     if (!assistantId || isCallInProgress) return;

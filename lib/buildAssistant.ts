@@ -1,6 +1,6 @@
 // buildAssistant.ts
 import { AssistantCompanionContext } from "@/types/types";
-import { buildPrompt } from "./buildPompt";
+import { buildFirstMessage, buildPrompt } from "./buildPompt";
 
 const voiceMapping = {
   male: {
@@ -34,9 +34,11 @@ export function buildAssistant(companion: BuildAssistantInput) {
   const voiceConfig = voiceMapping[voiceKey] || voiceMapping["female"];
 
   const systemPrompt = buildPrompt(companion);
+  const firstMessage = buildFirstMessage(companion);
   const serverUrl = resolveVapiServerUrl();
 
   return {
+    firstMessage,
     model: {
       provider: "openai",
       model: "gpt-4o-mini",

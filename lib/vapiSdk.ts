@@ -1,5 +1,22 @@
 let vapiInstance: VapiSDK | null = null;
 
+export function extractVapiCallId(value: unknown): string | null {
+  if (!value || typeof value !== "object") return null;
+
+  const record = value as Record<string, unknown>;
+  if (typeof record.callId === "string" && record.callId.trim()) {
+    return record.callId.trim();
+  }
+  if (typeof record.id === "string" && record.id.trim()) {
+    return record.id.trim();
+  }
+  if (record.call && typeof record.call === "object") {
+    return extractVapiCallId(record.call);
+  }
+
+  return null;
+}
+
 export interface VapiSDK {
   start: (
     assistantId: string,

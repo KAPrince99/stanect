@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  durationSecondsFromIso,
+  durationSecondsFromVapiPayload,
   meterVerifiedCallUsage,
   resolveOwnerForAssistant,
 } from "@/lib/call-metering";
@@ -56,20 +56,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: "missing_ids" });
   }
 
-  const startedAt =
-    typeof message.startedAt === "string"
-      ? message.startedAt
-      : typeof call.startedAt === "string"
-        ? call.startedAt
-        : null;
-  const endedAt =
-    typeof message.endedAt === "string"
-      ? message.endedAt
-      : typeof call.endedAt === "string"
-        ? call.endedAt
-        : null;
-
-  const seconds = durationSecondsFromIso(startedAt, endedAt);
+  const seconds = durationSecondsFromVapiPayload(message);
   if (seconds <= 0) {
     return NextResponse.json({ ok: true, skipped: "no_duration" });
   }

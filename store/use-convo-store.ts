@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getVapiSdk } from "@/lib/vapiSdk";
+import { extractVapiCallId, getVapiSdk } from "@/lib/vapiSdk";
 import {
   claimCallOwnership,
   releaseCallOwnership,
@@ -176,13 +176,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
         maxDurationSeconds: initialSeconds,
       });
 
-      const callId =
-        call &&
-        typeof call === "object" &&
-        "id" in call &&
-        typeof (call as { id?: unknown }).id === "string"
-          ? (call as { id: string }).id
-          : null;
+      const callId = extractVapiCallId(call);
 
       if (callId) {
         set({ activeCallId: callId });

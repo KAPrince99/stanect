@@ -1,4 +1,5 @@
 "use server";
+import { connection } from "next/server";
 import { fetchSubscriptionStatus } from "./subs";
 import { buildAssistant } from "@/lib/buildAssistant";
 import type { PlanType } from "@/lib/plan-limits";
@@ -33,6 +34,7 @@ const USER_PROFILE_SELECT =
 const AVATAR_SELECT = "id, name, image_url";
 
 export async function getUser(_id?: string) {
+  await connection();
   const { userId } = await auth();
   if (!userId) return null;
 
@@ -416,50 +418,57 @@ export async function assertCanStartCall() {
  * Meter a finished call using Vapi's server-side call record (not client clocks).
  * Idempotent per Vapi call id.
  */
-export async function finalizeCallUsage(callId: string) {
+export async function finalizeCallUsage(
+  callId: string,
+  assistantId?: string | null,
+) {
   const { userId } = await auth();
   if (!userId) return { error: "Unauthorized" };
 
-  if (!callId || typeof callId !== "string") {
+  if (
+    (!callId || typeof callId !== "string") &&
+    (!assistantId || typeof assistantId !== "string")
+  ) {
     return { error: "Missing call id" };
   }
 
   try {
     const {
-      durationSecondsFromIso,
-      fetchVapiCall,
+      durationSecondsFromVapiPayload,
+      fetchVapiCallUntilEnded,
+      findLatestEndedCallForAssistant,
       meterVerifiedCallUsage,
       resolveOwnerForAssistant,
     } = await import("@/lib/call-metering");
 
-    const call = await fetchVapiCall(callId);
-    const resolvedCall =
-      call.endedAt
-        ? call
-        : await (async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            return fetchVapiCall(callId);
-          })();
+    let resolvedCall = callId
+      ? await fetchVapiCallUntilEnded(callId).catch(() => null)
+      : null;
 
-    if (!resolvedCall.assistantId) {
+    if (
+      (!resolvedCall || durationSecondsFromVapiPayload(resolvedCall) <= 0) &&
+      assistantId
+    ) {
+      resolvedCall = await findLatestEndedCallForAssistant(assistantId);
+    }
+
+    const resolvedAssistantId = resolvedCall?.assistantId || assistantId || null;
+    if (!resolvedAssistantId) {
       return { error: "Call missing assistant" };
     }
 
-    const ownerId = await resolveOwnerForAssistant(resolvedCall.assistantId);
+    const ownerId = await resolveOwnerForAssistant(resolvedAssistantId);
     if (!ownerId || ownerId !== userId) {
       return { error: "Call does not belong to this user" };
     }
 
-    const seconds = durationSecondsFromIso(
-      resolvedCall.startedAt,
-      resolvedCall.endedAt,
-    );
+    const seconds = durationSecondsFromVapiPayload(resolvedCall);
     if (seconds <= 0) {
       return { success: true, skipped: "no_duration" as const };
     }
 
     const result = await meterVerifiedCallUsage({
-      callId: resolvedCall.id || callId,
+      callId: resolvedCall?.id || callId,
       clerkUserId: userId,
       seconds,
       source: "vapi-api",
@@ -506,6 +515,7 @@ export async function updateUserSeconds(secondsUsed: number) {
 }
 
 export async function fetchUserNecessities(_userId?: string) {
+  await connection();
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 

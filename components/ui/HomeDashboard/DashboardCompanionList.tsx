@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
-import { memo, useEffect, useMemo, useState, useTransition } from "react";
+import { memo, useMemo, useSyncExternalStore, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { getCompanions, getUser } from "@/app/(app)/actions/actions";
@@ -18,10 +18,12 @@ interface DashboardCompanionListProps {
   userId: string;
 }
 
-function pickContinueCompanion(companions: CompanionProps[]) {
+function pickContinueCompanion(
+  companions: CompanionProps[],
+  lastId: string | null,
+) {
   if (companions.length === 0) return null;
 
-  const lastId = getLastCompanionId();
   if (lastId) {
     const match = companions.find((companion) => companion.id === lastId);
     if (match) return match;
@@ -30,17 +32,20 @@ function pickContinueCompanion(companions: CompanionProps[]) {
   return companions[0];
 }
 
+function subscribeToLastCompanionId(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  return () => window.removeEventListener("storage", onStoreChange);
+}
+
 function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
   const { user } = useUser();
   const router = useRouter();
   const [isStartingSetup, startTransition] = useTransition();
-  const [lastCompanionId, setLastCompanionIdState] = useState<string | null>(
-    null,
+  const lastCompanionId = useSyncExternalStore(
+    subscribeToLastCompanionId,
+    getLastCompanionId,
+    () => null,
   );
-
-  useEffect(() => {
-    setLastCompanionIdState(getLastCompanionId());
-  }, []);
 
   const { data: companions = [], isLoading: isCompanionsLoading } = useQuery({
     queryKey: ["companions", userId],
@@ -61,10 +66,10 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
     [user?.firstName],
   );
 
-  const continueCompanion = useMemo(() => {
-    void lastCompanionId;
-    return pickContinueCompanion(companions);
-  }, [companions, lastCompanionId]);
+  const continueCompanion = useMemo(
+    () => pickContinueCompanion(companions, lastCompanionId),
+    [companions, lastCompanionId],
+  );
 
   const canCreateCompanion = useMemo(() => {
     const plan = (userData?.plan || "free").toString().toLowerCase();

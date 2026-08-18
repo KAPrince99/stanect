@@ -3,6 +3,12 @@ import { canUserCall } from "@/lib/plan-utils";
 
 export type UsageTone = "ok" | "low" | "blocked" | "paid";
 
+type User = {
+  plan?: string | null;
+  created_at?: string | null;
+  daily_seconds_used?: number | null;
+};
+
 export function resolvePlanLabel(plan?: string | null): string {
   const key = (plan || "free").toString().toLowerCase();
   if (key === "pro") return "Pro";
@@ -10,11 +16,11 @@ export function resolvePlanLabel(plan?: string | null): string {
   return "Free";
 }
 
-export function resolvePracticeUsage(user: {
-  plan?: string | null;
-  created_at?: string | null;
-  daily_seconds_used?: number | null;
-}): { label: string; tone: UsageTone; planLabel: string } {
+export function resolvePracticeUsage(user: User): {
+  label: string;
+  tone: UsageTone;
+  planLabel: string;
+} {
   const plan = (user.plan || "free").toString().toLowerCase() as PlanType;
   const planLabel = resolvePlanLabel(plan);
   const access = canUserCall({
