@@ -7,11 +7,13 @@ import { ArrowLeft } from "lucide-react";
 import { useConvoData } from "@/hooks/useConvoData";
 import { useConvoSession } from "@/hooks/useConvoSession";
 import { setLastCompanionId } from "@/lib/last-companion";
+import { useConvoStore } from "@/store/use-convo-store";
 import { Button } from "@/components/ui/button";
 
 import DeleteCompanionButton from "../deleteCompanionButton";
 import LoadingSpinner from "../LoadingSpinner";
 import ConvoPresenter from "./ConvoPresenter";
+import { ConvoStageProvider } from "./ConvoStageContext";
 
 interface ConvoContainerProps {
   id: string;
@@ -20,6 +22,9 @@ interface ConvoContainerProps {
 function ConvoContainer({ id }: ConvoContainerProps) {
   const router = useRouter();
   const { companion, isLoading, userPlan } = useConvoData(id);
+  const callStatus = useConvoStore((s) => s.callStatus);
+  const isCallInProgress =
+    callStatus === "ACTIVE" || callStatus === "CONNECTING";
 
   useEffect(() => {
     if (id) setLastCompanionId(id);
@@ -28,16 +33,7 @@ function ConvoContainer({ id }: ConvoContainerProps) {
   const durationMinutes = Number(companion?.duration) || 2;
 
   const {
-    callStatus,
-    isMuted,
-    isCallInProgress,
-    isCallLive,
     hasAssistantId,
-    timeLeftDisplay,
-    showEndModal,
-    setShowEndModal,
-    showTranscript,
-    setShowTranscript,
     isDesktop,
     loadingMute,
     loadingStart,
@@ -83,6 +79,41 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     [onDashboard],
   );
 
+  const stage = useMemo(
+    () => ({
+      companionName: companion?.companion_name || "Your AI Companion",
+      userPlan,
+      hasAssistantId,
+      isDesktop,
+      loadingMute,
+      loadingStart,
+      loadingEnd,
+      onStartCall,
+      onMuteToggle,
+      onEndCall,
+      onUpgrade,
+      onDashboard,
+      backAction,
+      deleteAction,
+    }),
+    [
+      companion?.companion_name,
+      userPlan,
+      hasAssistantId,
+      isDesktop,
+      loadingMute,
+      loadingStart,
+      loadingEnd,
+      onStartCall,
+      onMuteToggle,
+      onEndCall,
+      onUpgrade,
+      onDashboard,
+      backAction,
+      deleteAction,
+    ],
+  );
+
   if (isLoading) {
     return (
       <div className="flex h-full flex-1 items-center justify-center">
@@ -93,31 +124,9 @@ function ConvoContainer({ id }: ConvoContainerProps) {
   if (!companion) return null;
 
   return (
-    <ConvoPresenter
-      companionName={companion.companion_name || "Your AI Companion"}
-      callStatus={callStatus}
-      showTranscript={showTranscript}
-      setShowTranscript={setShowTranscript}
-      isDesktop={isDesktop}
-      showEndModal={showEndModal}
-      setShowEndModal={setShowEndModal}
-      userPlan={userPlan}
-      isMuted={isMuted}
-      isCallInProgress={isCallInProgress}
-      isCallLive={isCallLive}
-      hasAssistantId={hasAssistantId}
-      timeLeftDisplay={timeLeftDisplay}
-      loadingMute={loadingMute}
-      loadingStart={loadingStart}
-      loadingEnd={loadingEnd}
-      backAction={backAction}
-      deleteAction={deleteAction}
-      onStartCall={onStartCall}
-      onMuteToggle={onMuteToggle}
-      onEndCall={onEndCall}
-      onUpgrade={onUpgrade}
-      onDashboard={onDashboard}
-    />
+    <ConvoStageProvider value={stage}>
+      <ConvoPresenter />
+    </ConvoStageProvider>
   );
 }
 

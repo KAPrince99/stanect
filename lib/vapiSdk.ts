@@ -1,3 +1,5 @@
+import { isBenignVapiHangupError } from "@/lib/vapi-errors";
+
 let vapiInstance: VapiSDK | null = null;
 
 export function extractVapiCallId(value: unknown): string | null {
@@ -36,9 +38,20 @@ export async function getVapiSdk(): Promise<VapiSDK> {
   }
 
   const { default: Vapi } = await import("@vapi-ai/web");
-  vapiInstance = new Vapi(
+  const raw = new Vapi(
     process.env.NEXT_PUBLIC_VAPI_API_KEY!,
   ) as unknown as VapiSDK;
+
+  const originalStop = raw.stop.bind(raw);
+  raw.stop = async () => {
+    try {
+      await originalStop();
+    } catch (error) {
+      if (!isBenignVapiHangupError(error)) throw error;
+    }
+  };
+
+  vapiInstance = raw;
 
   return vapiInstance;
 }

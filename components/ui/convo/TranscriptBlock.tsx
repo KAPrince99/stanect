@@ -9,6 +9,7 @@ import { useConvoStore } from "@/store/use-convo-store";
 
 import { Button } from "../button";
 import LordIcon from "../lordIcon";
+import { useConvoStage } from "./ConvoStageContext";
 
 interface TranscriptPanelProps {
   companionName: string;
@@ -119,18 +120,11 @@ export function TranscriptPanel({
   );
 }
 
-interface MobileTranscriptProps {
-  showTranscript: boolean;
-  setShowTranscript: (value: boolean) => void;
-  companionName: string;
-}
-
 /** Full-screen transcript overlay for small viewports only. */
-export function MobileTranscriptOverlay({
-  showTranscript,
-  setShowTranscript,
-  companionName,
-}: MobileTranscriptProps) {
+export function MobileTranscriptOverlay() {
+  const showTranscript = useConvoStore((s) => s.showTranscript);
+  const setShowTranscript = useConvoStore((s) => s.setShowTranscript);
+  const { companionName } = useConvoStage();
   return (
     <AnimatePresence>
       {showTranscript ? (

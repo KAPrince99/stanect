@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { extractVapiCallId, getVapiSdk } from "@/lib/vapiSdk";
+import { isBenignVapiHangupError } from "@/lib/vapi-errors";
 import {
   claimCallOwnership,
   releaseCallOwnership,
-  isCallOwner,
   recoverStaleLock,
 } from "@/lib/tabCallLock";
 
+let hangupInFlight = false;
 export type CallStatus = "INACTIVE" | "CONNECTING" | "ACTIVE" | "ERROR";
 
 export type Message = {
@@ -15,13 +16,51 @@ export type Message = {
   content: string;
 };
 
+type VapiTranscriptEvent = {
+  type: "transcript" | "speech";
+  role: "assistant" | "user";
+  transcriptType: string;
+  transcript: string;
+  id?: string;
+};
+
+/** Raw event from Vapi `message` listener; narrowed before use. */
+export type VapiMessageEvent = unknown;
+
+function isFinalTranscriptEvent(msg: VapiMessageEvent): msg is VapiTranscriptEvent {
+  if (typeof msg !== "object" || msg === null) return false;
+
+  const { type, transcriptType, transcript, role } = msg as Record<
+    string,
+    unknown
+  >;
+
+  return (
+    (type === "transcript" || type === "speech") &&
+    transcriptType === "final" &&
+    typeof transcript === "string" &&
+    transcript.length > 0 &&
+    (role === "assistant" || role === "user")
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /*                          MULTI TAB SYNC HELPERS                            */
 /* -------------------------------------------------------------------------- */
 
 const SYNC_KEY = "stanect-convo-sync";
 
-function broadcastSync(data: any) {
+type ConvoSyncPayload = Partial<{
+  callStatus: CallStatus;
+  isMuted: boolean;
+  showEndModal: boolean;
+  timeLeft: number | null;
+  activeCallId: string | null;
+}>;
+
+type StoredConvoSyncPayload = ConvoSyncPayload & { ts?: number };
+
+function broadcastSync(data: ConvoSyncPayload) {
   if (typeof window === "undefined") return;
   localStorage.setItem(SYNC_KEY, JSON.stringify({ ...data, ts: Date.now() }));
 }
@@ -32,12 +71,14 @@ interface ConvoState {
   messages: Message[];
   timeLeft: number | null;
   showEndModal: boolean;
+  showTranscript: boolean;
   activeCallId: string | null;
 
   setCallStatus: (status: CallStatus) => void;
   setMuted: (muted: boolean) => void;
   setShowEndModal: (show: boolean) => void;
-  addMessage: (msg: any) => boolean;
+  setShowTranscript: (show: boolean) => void;
+  addMessage: (msg: VapiMessageEvent) => boolean;
   tickTimer: () => void;
   startCall: (assistantId: string, durationMinutes: number) => Promise<void>;
   endCall: () => Promise<void>;
@@ -50,6 +91,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
   messages: [],
   timeLeft: null,
   showEndModal: false,
+  showTranscript: false,
   activeCallId: null,
 
   setCallStatus: (callStatus) => {
@@ -67,51 +109,48 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
     broadcastSync({ showEndModal });
   },
 
+  setShowTranscript: (showTranscript) => set({ showTranscript }),
+
   clearChat: () =>
     set({
       messages: [],
       callStatus: "INACTIVE",
       timeLeft: null,
       activeCallId: null,
+      showTranscript: false,
     }),
 
   /* ----------------------------- MESSAGE SAFE ---------------------------- */
 
   addMessage: (msg) => {
-    if (
-      (msg.type === "transcript" || msg.type === "speech") &&
-      msg.transcriptType === "final" &&
-      msg.transcript
-    ) {
-      const newContent = msg.transcript.trim();
-      let wasAdded = false;
+    if (!isFinalTranscriptEvent(msg)) return false;
 
-      set((state) => {
-        // check LAST 5 messages (not first 5)
-        const isDuplicate = state.messages
-          .slice(-5)
-          .some((m) => m.content === newContent && m.role === msg.role);
+    const newContent = msg.transcript.trim();
+    let wasAdded = false;
 
-        if (isDuplicate) return state;
+    set((state) => {
+      // check LAST 5 messages (not first 5)
+      const isDuplicate = state.messages
+        .slice(-5)
+        .some((m) => m.content === newContent && m.role === msg.role);
 
-        wasAdded = true;
+      if (isDuplicate) return state;
 
-        return {
-          messages: [
-            ...state.messages,
-            {
-              id: msg.id || crypto.randomUUID(),
-              role: msg.role,
-              content: newContent,
-            },
-          ],
-        };
-      });
+      wasAdded = true;
 
-      return wasAdded;
-    }
+      return {
+        messages: [
+          ...state.messages,
+          {
+            id: msg.id || crypto.randomUUID(),
+            role: msg.role,
+            content: newContent,
+          },
+        ],
+      };
+    });
 
-    return false;
+    return wasAdded;
   },
 
   /* ----------------------------- TIMER SAFE ----------------------------- */
@@ -131,10 +170,8 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
         showEndModal: true,
       });
 
-      // Let Vapi/Daily end once; call-end listener owns INACTIVE cleanup.
-      getVapiSdk()
-        .then((vapi) => vapi.stop())
-        .catch(() => {});
+      // Single hangup path — avoids timer + button both calling Daily destroy.
+      void get().endCall();
     } else {
       set((state) => {
         const next = (state.timeLeft ?? 1) - 1;
@@ -182,7 +219,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
         set({ activeCallId: callId });
         broadcastSync({ activeCallId: callId });
       }
-    } catch (e) {
+    } catch {
       releaseCallOwnership();
       set({ callStatus: "ERROR", activeCallId: null });
     }
@@ -197,16 +234,21 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
       return;
     }
 
+    if (hangupInFlight) return;
+    hangupInFlight = true;
+
     try {
       const vapi = await getVapiSdk();
       await vapi.stop();
-    } catch {
-      // Daily often throws "Meeting has ended" if already tearing down.
+    } catch (error) {
+      if (!isBenignVapiHangupError(error)) {
+        console.warn("endCall:", error);
+      }
+    } finally {
+      hangupInFlight = false;
+      releaseCallOwnership();
     }
-
-    releaseCallOwnership();
-  },
-}));
+  },}));
 
 /* -------------------------------------------------------------------------- */
 /*                           MULTI TAB LISTENER                               */
@@ -217,12 +259,14 @@ if (typeof window !== "undefined") {
     if (e.key !== SYNC_KEY || !e.newValue) return;
 
     try {
-      const data = JSON.parse(e.newValue);
+      const data = JSON.parse(e.newValue) as StoredConvoSyncPayload;
 
       useConvoStore.setState((state) => ({
         ...state,
         ...data,
       }));
-    } catch {}
+    } catch {
+      /* ignore malformed sync payloads */
+    }
   });
 }

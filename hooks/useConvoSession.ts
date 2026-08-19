@@ -10,6 +10,7 @@ import {
   assertCanStartCall,
   finalizeCallUsage,
 } from "@/app/(app)/actions/actions";
+import { isBenignVapiHangupError } from "@/lib/vapi-errors";
 import { isCallOwner, releaseCallOwnership } from "@/lib/tabCallLock";
 import { extractVapiCallId, getVapiSdk, type VapiSDK } from "@/lib/vapiSdk";
 import { useConvoStore } from "@/store/use-convo-store";
@@ -37,13 +38,6 @@ function applyUsageToCachedUser<T>(
   } as T;
 }
 
-function formatTimeLeft(timeLeft: number | null) {
-  if (timeLeft === null) return "";
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
 export function useConvoSession({
   assistantId,
   durationMinutes = 2,
@@ -51,7 +45,6 @@ export function useConvoSession({
 }: UseConvoSessionOptions = {}) {
   const queryClient = useQueryClient();
   const [isDesktop, setIsDesktop] = useState(false);
-  const [showTranscript, setShowTranscript] = useState(false);
   const [loadingMute, setLoadingMute] = useState(false);
   const [loadingStart, setLoadingStart] = useState(false);
   const [loadingEnd, setLoadingEnd] = useState(false);
@@ -59,27 +52,24 @@ export function useConvoSession({
   const sessionCallIdRef = useRef<string | null>(null);
   const vapiRef = useRef<VapiSDK | null>(null);
 
-  const {
-    callStatus,
-    isMuted,
-    timeLeft,
-    showEndModal,
-    activeCallId,
-    setCallStatus,
-    addMessage,
-    tickTimer,
-    setMuted,
-    setShowEndModal,
-    startCall,
-    endCall,
-  } = useConvoStore();
+  const callStatus = useConvoStore((s) => s.callStatus);
+  const isMuted = useConvoStore((s) => s.isMuted);
+  const showEndModal = useConvoStore((s) => s.showEndModal);
+  const activeCallId = useConvoStore((s) => s.activeCallId);
+  const setCallStatus = useConvoStore((s) => s.setCallStatus);
+  const addMessage = useConvoStore((s) => s.addMessage);
+  const tickTimer = useConvoStore((s) => s.tickTimer);
+  const setMuted = useConvoStore((s) => s.setMuted);
+  const setShowEndModal = useConvoStore((s) => s.setShowEndModal);
+  const setShowTranscript = useConvoStore((s) => s.setShowTranscript);
+  const startCall = useConvoStore((s) => s.startCall);
+  const endCall = useConvoStore((s) => s.endCall);
 
   const isCallInProgress =
     callStatus === "ACTIVE" || callStatus === "CONNECTING";
   // Timer / live controls only kick in once Vapi fires call-start → ACTIVE.
   const isCallLive = callStatus === "ACTIVE";
   const hasAssistantId = Boolean(assistantId);
-  const timeLeftDisplay = formatTimeLeft(timeLeft);
 
   const [playSound] = useSound("/sounds/bubble-pop.mp3", {
     volume: 0.1,
@@ -189,26 +179,22 @@ export function useConvoSession({
     };
 
     const handleVapiError = (error: unknown) => {
-      const text =
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-            ? error
-            : JSON.stringify(error ?? "");
+      if (isBenignVapiHangupError(error)) return;
 
-      // Daily/Vapi logs this on normal hangup / max-duration end — not a real failure.
-      if (
-        /meeting has ended|meeting ended|ejection|meeting has been destroyed/i.test(
-          text,
-        )
-      ) {
-        return;
-      }
+      const status = useConvoStore.getState().callStatus;
+      if (status === "INACTIVE" || status === "ERROR") return;
 
       setCallStatus("ERROR");
     };
 
     const setupVapiListeners = async () => {
+      const originalConsoleError = console.error;
+      console.error = (...args: unknown[]) => {
+        const text = args.map((arg) => String(arg)).join(" ");
+        if (isBenignVapiHangupError(text)) return;
+        originalConsoleError.apply(console, args);
+      };
+
       const vapi = await getVapiSdk();
       vapiRef.current = vapi;
 
@@ -217,11 +203,27 @@ export function useConvoSession({
       vapi.on("call-end", onCallEnd);
       vapi.on("message", handleVapiMessage);
       vapi.on("error", handleVapiError);
+
+      return () => {
+        console.error = originalConsoleError;
+      };
     };
 
-    setupVapiListeners();
+    let restoreConsoleError: (() => void) | undefined;
+    let cancelled = false;
+
+    setupVapiListeners().then((restore) => {
+      if (cancelled) {
+        restore();
+        return;
+      }
+      restoreConsoleError = restore;
+    });
 
     return () => {
+      cancelled = true;
+      restoreConsoleError?.();
+
       const vapi = vapiRef.current;
       if (!vapi) return;
 
@@ -238,6 +240,7 @@ export function useConvoSession({
     queryClient,
     setCallStatus,
     setMuted,
+    setShowTranscript,
     userId,
   ]);
 
@@ -282,16 +285,7 @@ export function useConvoSession({
   }, [endCall, isCallInProgress]);
 
   return {
-    callStatus,
-    isMuted,
-    isCallInProgress,
-    isCallLive,
     hasAssistantId,
-    timeLeftDisplay,
-    showEndModal,
-    setShowEndModal,
-    showTranscript,
-    setShowTranscript,
     isDesktop,
     loadingMute,
     loadingStart,

@@ -1,38 +1,32 @@
 "use client";
 
+import { Crown, LayoutDashboard, RefreshCw, Zap } from "lucide-react";
+import { memo } from "react";
+
+import { useConvoStore } from "@/store/use-convo-store";
+
+import { useConvoStage } from "./ConvoStageContext";
+import { Button } from "../button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "../dialog";
-import { Button } from "../button";
-import { Crown, LayoutDashboard, Zap, RefreshCw } from "lucide-react";
-import { memo } from "react";
 
-interface SessionEndedModalProps {
-  showEndModal: boolean;
-  setShowEndModal: (show: boolean) => void;
-  userPlan: "free" | "pro" | "king";
-  onUpgrade: () => void;
-  onDashboard: () => void;
-}
+function SessionEndedModal() {
+  const { userPlan, onUpgrade, onDashboard } = useConvoStage();
+  const showEndModal = useConvoStore((s) => s.showEndModal);
+  const setShowEndModal = useConvoStore((s) => s.setShowEndModal);
 
-function SessionEndedModal({
-  showEndModal,
-  setShowEndModal,
-  userPlan,
-  onUpgrade,
-  onDashboard,
-}: SessionEndedModalProps) {
   const config = {
     free: {
       title: "Time's Up!",
       description:
         "You've reached the 2-minute limit for the Free plan. Upgrade for longer conversations.",
       primaryLabel: "Upgrade to Pro",
-      primaryIcon: <Zap className="w-4 h-4 mr-2" />,
+      primaryIcon: <Zap className="mr-2 h-4 w-4" />,
       primaryAction: onUpgrade,
     },
     pro: {
@@ -40,7 +34,7 @@ function SessionEndedModal({
       description:
         "Your session time has ended. Ready to continue the conversation?",
       primaryLabel: "Talk Again",
-      primaryIcon: <RefreshCw className="w-4 h-4 mr-2" />,
+      primaryIcon: <RefreshCw className="mr-2 h-4 w-4" />,
       primaryAction: () => setShowEndModal(false),
     },
     king: {
@@ -48,7 +42,7 @@ function SessionEndedModal({
       description:
         "Your specified session time is up. Ready for another round?",
       primaryLabel: "Talk Again",
-      primaryIcon: <RefreshCw className="w-4 h-4 mr-2" />,
+      primaryIcon: <RefreshCw className="mr-2 h-4 w-4" />,
       primaryAction: () => setShowEndModal(false),
     },
   };
@@ -57,13 +51,13 @@ function SessionEndedModal({
 
   return (
     <Dialog open={showEndModal} onOpenChange={setShowEndModal}>
-      <DialogContent className="bg-zinc-900 border-white/10 text-white sm:max-w-md">
+      <DialogContent className="border-white/10 bg-zinc-900 text-white sm:max-w-md">
         <DialogHeader>
-          <div className="mx-auto bg-amber-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10">
             {userPlan === "king" ? (
-              <Crown className="w-6 h-6 text-amber-500" />
+              <Crown className="h-6 w-6 text-amber-500" />
             ) : (
-              <Zap className="w-6 h-6 text-amber-500" />
+              <Zap className="h-6 w-6 text-amber-500" />
             )}
           </div>
           <DialogTitle className="type-title text-center text-xl">
@@ -88,7 +82,7 @@ function SessionEndedModal({
             className="type-label h-11 w-full rounded-xl border-white/10 bg-transparent text-white transition-all hover:bg-white/5"
             onClick={onDashboard}
           >
-            <LayoutDashboard className="w-4 h-4 mr-2" />
+            <LayoutDashboard className="mr-2 h-4 w-4" />
             Back to Dashboard
           </Button>
         </div>

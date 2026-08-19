@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { memo } from "react";
 
-import { ConvoStatusView } from "./convo-status-config";
+import { useConvoStore } from "@/store/use-convo-store";
+
+import ConvoLiveTimer from "./ConvoLiveTimer";
+import { convoStatusConfig } from "./convo-status-config";
+import { useConvoStage } from "./ConvoStageContext";
 
 const GlobeCanvas = dynamic(() => import("../GlobeCanvas"), {
   ssr: false,
@@ -14,7 +18,6 @@ const GlobeCanvas = dynamic(() => import("../GlobeCanvas"), {
 function ConvoOrbStage({ isCallLive }: { isCallLive: boolean }) {
   return (
     <div className="mx-auto my-2 w-full max-w-2xl min-h-0 flex-1 overflow-hidden rounded-3xl sm:my-4">
-      {/* Fixed stage size so status-label width changes cannot resize WebGL. */}
       <div className="relative mx-auto h-[220px] w-full max-h-80 sm:h-80">
         <GlobeCanvas isCallLive={isCallLive} />
       </div>
@@ -24,23 +27,11 @@ function ConvoOrbStage({ isCallLive }: { isCallLive: boolean }) {
 
 const MemoConvoOrbStage = memo(ConvoOrbStage);
 
-interface ConvoStatusHeroProps {
-  companionName: string;
-  currentStatus: ConvoStatusView;
-  timeLeftDisplay: string;
-  isCallLive: boolean;
-}
-
-function ConvoStatusHero({
-  companionName,
-  currentStatus,
-  timeLeftDisplay,
-  isCallLive,
-}: ConvoStatusHeroProps) {
-  const statusLabel =
-    isCallLive && timeLeftDisplay
-      ? `Live · ${timeLeftDisplay}`
-      : currentStatus.label;
+function ConvoStatusHero() {
+  const { companionName } = useConvoStage();
+  const callStatus = useConvoStore((s) => s.callStatus);
+  const isCallLive = callStatus === "ACTIVE";
+  const currentStatus = convoStatusConfig[callStatus];
 
   return (
     <div className="flex w-full min-h-0 flex-1 flex-col items-center">
@@ -53,7 +44,15 @@ function ConvoStatusHero({
           className={`type-meta inline-flex min-w-42 items-center justify-center gap-2 rounded-full border px-3.5 py-1.5 backdrop-blur-md transition-colors ${currentStatus.color}`}
         >
           {currentStatus.icon}
-          <span className="tracking-wide tabular-nums">{statusLabel}</span>
+          <span className="tracking-wide">
+            {isCallLive ? (
+              <>
+                Live · <ConvoLiveTimer />
+              </>
+            ) : (
+              currentStatus.label
+            )}
+          </span>
         </div>
 
         <h1 className="type-display text-[1.75rem] md:text-[2rem]">

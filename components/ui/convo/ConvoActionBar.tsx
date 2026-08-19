@@ -5,39 +5,27 @@ import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { memo } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useConvoStore } from "@/store/use-convo-store";
 
 import LordIcon from "../lordIcon";
 import TranscriptToggle from "../TranscriptToggle";
+import { useConvoStage } from "./ConvoStageContext";
 
-interface ConvoActionBarProps {
-  isDesktop: boolean;
-  isCallLive: boolean;
-  isStarting: boolean;
-  isMuted: boolean;
-  hasAssistantId: boolean;
-  loadingMute: boolean;
-  loadingStart: boolean;
-  loadingEnd: boolean;
-  setShowTranscript: (value: boolean) => void;
-  onStartCall: () => void | Promise<void>;
-  onMuteToggle: () => void | Promise<void>;
-  onEndCall: () => void | Promise<void>;
-}
-
-function ConvoActionBar({
-  isDesktop,
-  isCallLive,
-  isStarting,
-  isMuted,
-  hasAssistantId,
-  loadingMute,
-  loadingStart,
-  loadingEnd,
-  setShowTranscript,
-  onStartCall,
-  onMuteToggle,
-  onEndCall,
-}: ConvoActionBarProps) {
+function ConvoActionBar() {
+  const {
+    isDesktop,
+    hasAssistantId,
+    loadingMute,
+    loadingStart,
+    loadingEnd,
+    onStartCall,
+    onMuteToggle,
+    onEndCall,
+  } = useConvoStage();
+  const callStatus = useConvoStore((s) => s.callStatus);
+  const isMuted = useConvoStore((s) => s.isMuted);
+  const isCallLive = callStatus === "ACTIVE";
+  const isStarting = callStatus === "CONNECTING";
   const showStarting = loadingStart || isStarting;
 
   return (
@@ -90,7 +78,7 @@ function ConvoActionBar({
       {!isDesktop && (
         <AnimatePresence>
           {!isCallLive && !showStarting && (
-            <TranscriptToggle setShowTranscript={setShowTranscript} />
+            <TranscriptToggle />
           )}
         </AnimatePresence>
       )}
