@@ -173,6 +173,7 @@ export function useConvoSession({
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["userNecessities"] }),
         queryClient.invalidateQueries({ queryKey: ["users"] }),
+        queryClient.invalidateQueries({ queryKey: ["sessions"] }),
       ]);
     };
 

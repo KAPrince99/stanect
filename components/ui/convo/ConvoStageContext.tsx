@@ -3,6 +3,7 @@
 import { createContext, useContext, type ReactNode } from "react";
 
 export type ConvoStageContextValue = {
+  companionId: string;
   companionName: string;
   userPlan: "free" | "pro" | "king";
   hasAssistantId: boolean;

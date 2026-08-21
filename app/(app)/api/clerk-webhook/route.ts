@@ -78,6 +78,16 @@ export async function POST(req: Request) {
     // 4. Handle Delete
     if (eventType === "user.deleted") {
       console.log("Attempting Supabase Delete...");
+
+      const { error: sessionsError } = await supabase
+        .from("sessions")
+        .delete()
+        .eq("owner_id", clerkId);
+
+      if (sessionsError) {
+        console.error("Supabase sessions delete error:", sessionsError.message);
+      }
+
       const { error } = await supabase
         .from("users")
         .delete()

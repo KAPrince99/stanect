@@ -495,8 +495,9 @@ export async function finalizeCallUsage(
       fetchVapiCallUntilEnded,
       findLatestEndedCallForAssistant,
       meterVerifiedCallUsage,
-      resolveOwnerForAssistant,
+      resolveCompanionForAssistant,
     } = await import("@/lib/call-metering");
+    const { upsertSession } = await import("@/lib/sessions");
 
     let resolvedCall = callId
       ? await fetchVapiCallUntilEnded(callId).catch(() => null)
@@ -514,24 +515,39 @@ export async function finalizeCallUsage(
       return { error: "Call missing assistant" };
     }
 
-    const ownerId = await resolveOwnerForAssistant(resolvedAssistantId);
-    if (!ownerId || ownerId !== userId) {
+    const companion = await resolveCompanionForAssistant(resolvedAssistantId);
+    if (!companion || companion.owner_id !== userId) {
       return { error: "Call does not belong to this user" };
+    }
+
+    const resolvedCallId = resolvedCall?.id || callId;
+    const persist = resolvedCallId
+      ? await upsertSession({
+          vapiCallId: resolvedCallId,
+          ownerId: userId,
+          companionId: companion.id,
+          assistantId: resolvedAssistantId,
+          payload: resolvedCall ?? {},
+        })
+      : { success: false as const, reason: "missing_call_id" };
+
+    if (!persist.success) {
+      console.error("finalizeCallUsage persist:", persist.reason);
     }
 
     const seconds = durationSecondsFromVapiPayload(resolvedCall);
     if (seconds <= 0) {
-      return { success: true, skipped: "no_duration" as const };
+      return { success: true, skipped: "no_duration" as const, persist };
     }
 
     const result = await meterVerifiedCallUsage({
-      callId: resolvedCall?.id || callId,
+      callId: resolvedCallId,
       clerkUserId: userId,
       seconds,
       source: "vapi-api",
     });
 
-    return { success: true, result };
+    return { success: true, result, persist };
   } catch (error) {
     console.error("finalizeCallUsage failed:", error);
     return {

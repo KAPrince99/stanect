@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   durationSecondsFromVapiPayload,
   meterVerifiedCallUsage,
-  resolveOwnerForAssistant,
+  resolveCompanionForAssistant,
 } from "@/lib/call-metering";
+import { upsertSession } from "@/lib/sessions";
 
 function verifyVapiWebhook(req: NextRequest) {
   const secret = process.env.VAPI_WEBHOOK_SECRET;
@@ -56,22 +57,41 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: "missing_ids" });
   }
 
-  const seconds = durationSecondsFromVapiPayload(message);
-  if (seconds <= 0) {
-    return NextResponse.json({ ok: true, skipped: "no_duration" });
+  const companion = await resolveCompanionForAssistant(assistantId);
+  if (!companion) {
+    return NextResponse.json({ ok: true, skipped: "unknown_assistant" });
   }
 
-  const ownerId = await resolveOwnerForAssistant(assistantId);
-  if (!ownerId) {
-    return NextResponse.json({ ok: true, skipped: "unknown_assistant" });
+  const persist = await upsertSession({
+    vapiCallId: callId,
+    ownerId: companion.owner_id,
+    companionId: companion.id,
+    assistantId,
+    payload: message,
+  });
+
+  if (!persist.success) {
+    console.error("vapi webhook persist:", persist.reason);
+  }
+
+  const seconds = durationSecondsFromVapiPayload(message);
+  if (seconds <= 0) {
+    if (!persist.success) {
+      return NextResponse.json({ ok: false, persist }, { status: 500 });
+    }
+    return NextResponse.json({
+      ok: true,
+      persist,
+      skipped: "no_duration",
+    });
   }
 
   const result = await meterVerifiedCallUsage({
     callId,
-    clerkUserId: ownerId,
+    clerkUserId: companion.owner_id,
     seconds,
     source: "vapi-webhook",
   });
 
-  return NextResponse.json({ ok: true, result });
+  return NextResponse.json({ ok: true, persist, result });
 }

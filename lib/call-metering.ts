@@ -47,14 +47,24 @@ export function durationSecondsFromIso(
   return clampSeconds((end - start) / 1000);
 }
 
+export function callTimestampsFromVapiPayload(payload: unknown): {
+  startedAt: string | null;
+  endedAt: string | null;
+} {
+  const root = asRecord(payload) ?? {};
+  const call = asRecord(root.call) ?? root;
+  return {
+    startedAt: readString(root.startedAt) ?? readString(call.startedAt),
+    endedAt: readString(root.endedAt) ?? readString(call.endedAt),
+  };
+}
+
 export function durationSecondsFromVapiPayload(payload: unknown) {
   const root = asRecord(payload) ?? {};
   const call = asRecord(root.call) ?? root;
+  const { startedAt, endedAt } = callTimestampsFromVapiPayload(payload);
 
-  const fromIso = durationSecondsFromIso(
-    readString(root.startedAt) ?? readString(call.startedAt),
-    readString(root.endedAt) ?? readString(call.endedAt),
-  );
+  const fromIso = durationSecondsFromIso(startedAt, endedAt);
   if (fromIso > 0) return fromIso;
 
   const durationSeconds =
@@ -166,17 +176,25 @@ export async function meterVerifiedCallUsage(input: {
   };
 }
 
-export async function resolveOwnerForAssistant(assistantId: string) {
+export async function resolveCompanionForAssistant(assistantId: string) {
   if (!assistantId) return null;
 
   const { data, error } = await serviceSupabase
     .from("companions")
-    .select("owner_id")
+    .select("id, owner_id")
     .eq("assistant_id", assistantId)
     .maybeSingle();
 
-  if (error || !data?.owner_id) return null;
-  return data.owner_id as string;
+  if (error || !data?.id || !data?.owner_id) return null;
+  return {
+    id: data.id as string,
+    owner_id: data.owner_id as string,
+  };
+}
+
+export async function resolveOwnerForAssistant(assistantId: string) {
+  const companion = await resolveCompanionForAssistant(assistantId);
+  return companion?.owner_id ?? null;
 }
 
 export async function fetchVapiCall(callId: string) {

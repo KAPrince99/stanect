@@ -50,6 +50,26 @@ export interface Userprops {
   created_at?: string;
   metadata?: Record<string, unknown>;
 }
+
+export type SessionTranscriptLine = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export interface SessionProps {
+  id: string;
+  vapi_call_id: string;
+  owner_id: string;
+  companion_id: string;
+  assistant_id: string | null;
+  duration_seconds: number;
+  transcript: SessionTranscriptLine[];
+  recap: Record<string, unknown> | null;
+  started_at: string | null;
+  ended_at: string | null;
+  created_at: string;
+}
+
 export interface VoiceProps {
   male: string;
   female: string;

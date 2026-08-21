@@ -15,7 +15,8 @@ import {
 } from "./TranscriptBlock";
 
 function ConvoPresenter() {
-  const { companionName, backAction, deleteAction } = useConvoStage();
+  const { companionId, companionName, backAction, deleteAction } =
+    useConvoStage();
 
   return (
     <div className="relative flex h-full min-h-0 w-full flex-1 flex-col">
@@ -43,7 +44,10 @@ function ConvoPresenter() {
         </div>
 
         <div className="hidden h-full min-h-0 border-l border-white/10 lg:block">
-          <TranscriptPanel companionName={companionName} />
+          <TranscriptPanel
+            companionId={companionId}
+            companionName={companionName}
+          />
         </div>
       </motion.main>
 

@@ -12,6 +12,7 @@ import LordIcon from "../lordIcon";
 import { useConvoStage } from "./ConvoStageContext";
 
 interface TranscriptPanelProps {
+  companionId: string;
   companionName: string;
   showClose?: boolean;
   onClose?: () => void;
@@ -19,27 +20,34 @@ interface TranscriptPanelProps {
 }
 
 export function TranscriptPanel({
+  companionId,
   companionName,
   showClose = false,
   onClose,
   className,
 }: TranscriptPanelProps) {
-  const { messages } = useConvoStore();
+  const boundCompanionId = useConvoStore((s) => s.companionId);
+  const allMessages = useConvoStore((s) => s.messages);
+  const messages =
+    boundCompanionId === companionId ? allMessages : [];
   const parentRef = useRef<HTMLDivElement>(null);
 
   // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Virtual is intentional for transcript rendering performance.
   const rowVirtualizer = useVirtualizer({
     count: messages.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 90,
-    overscan: 5,
+    estimateSize: () => 96,
+    overscan: 8,
+    measureElement:
+      typeof window === "undefined"
+        ? undefined
+        : (element) => element.getBoundingClientRect().height,
   });
 
   useEffect(() => {
-    if (parentRef.current) {
-      parentRef.current.scrollTop = parentRef.current.scrollHeight;
-    }
-  }, [messages]);
+    if (messages.length === 0) return;
+    rowVirtualizer.scrollToIndex(messages.length - 1, { align: "end" });
+  }, [messages.length, rowVirtualizer]);
 
   return (
     <aside
@@ -81,9 +89,12 @@ export function TranscriptPanel({
           >
             {rowVirtualizer.getVirtualItems().map((virtualRow) => {
               const msg = messages[virtualRow.index];
+              if (!msg) return null;
               return (
                 <div
                   key={msg.id}
+                  data-index={virtualRow.index}
+                  ref={rowVirtualizer.measureElement}
                   style={{
                     position: "absolute",
                     top: 0,
@@ -93,7 +104,7 @@ export function TranscriptPanel({
                   }}
                 >
                   <div
-                    className={`flex ${
+                    className={`flex pb-3 ${
                       msg.role === "user" ? "justify-end" : "justify-start"
                     }`}
                   >
@@ -124,7 +135,7 @@ export function TranscriptPanel({
 export function MobileTranscriptOverlay() {
   const showTranscript = useConvoStore((s) => s.showTranscript);
   const setShowTranscript = useConvoStore((s) => s.setShowTranscript);
-  const { companionName } = useConvoStage();
+  const { companionId, companionName } = useConvoStage();
   return (
     <AnimatePresence>
       {showTranscript ? (
@@ -135,6 +146,7 @@ export function MobileTranscriptOverlay() {
           className="absolute inset-0 z-30 h-full w-full lg:hidden"
         >
           <TranscriptPanel
+            companionId={companionId}
             companionName={companionName}
             showClose
             onClose={() => setShowTranscript(false)}

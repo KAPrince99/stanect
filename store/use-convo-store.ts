@@ -73,12 +73,15 @@ interface ConvoState {
   showEndModal: boolean;
   showTranscript: boolean;
   activeCallId: string | null;
+  companionId: string | null;
 
   setCallStatus: (status: CallStatus) => void;
   setMuted: (muted: boolean) => void;
   setShowEndModal: (show: boolean) => void;
   setShowTranscript: (show: boolean) => void;
   addMessage: (msg: VapiMessageEvent) => boolean;
+  bindCompanion: (companionId: string) => void;
+  replaceMessages: (messages: Message[]) => void;
   tickTimer: () => void;
   startCall: (assistantId: string, durationMinutes: number) => Promise<void>;
   endCall: () => Promise<void>;
@@ -93,6 +96,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
   showEndModal: false,
   showTranscript: false,
   activeCallId: null,
+  companionId: null,
 
   setCallStatus: (callStatus) => {
     set({ callStatus });
@@ -118,7 +122,29 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
       timeLeft: null,
       activeCallId: null,
       showTranscript: false,
+      showEndModal: false,
+      isMuted: false,
     }),
+
+  bindCompanion: (companionId) => {
+    const state = get();
+    const live =
+      state.callStatus === "ACTIVE" || state.callStatus === "CONNECTING";
+    if (live && state.companionId === companionId) return;
+
+    set({
+      companionId,
+      messages: [],
+      callStatus: "INACTIVE",
+      timeLeft: null,
+      activeCallId: null,
+      showTranscript: false,
+      showEndModal: false,
+      isMuted: false,
+    });
+  },
+
+  replaceMessages: (messages) => set({ messages }),
 
   /* ----------------------------- MESSAGE SAFE ---------------------------- */
 

@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { useConvoData } from "@/hooks/useConvoData";
 import { useConvoSession } from "@/hooks/useConvoSession";
+import { useCompanionTranscript } from "@/hooks/useCompanionTranscript";
 import { setLastCompanionId } from "@/lib/last-companion";
 import { useConvoStore } from "@/store/use-convo-store";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,8 @@ function ConvoContainer({ id }: ConvoContainerProps) {
   useEffect(() => {
     if (id) setLastCompanionId(id);
   }, [id]);
+
+  useCompanionTranscript(id);
 
   const durationMinutes = Number(companion?.duration) || 2;
 
@@ -81,6 +84,7 @@ function ConvoContainer({ id }: ConvoContainerProps) {
 
   const stage = useMemo(
     () => ({
+      companionId: id,
       companionName: companion?.companion_name || "Your AI Companion",
       userPlan,
       hasAssistantId,
@@ -97,6 +101,7 @@ function ConvoContainer({ id }: ConvoContainerProps) {
       deleteAction,
     }),
     [
+      id,
       companion?.companion_name,
       userPlan,
       hasAssistantId,
