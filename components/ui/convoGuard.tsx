@@ -30,7 +30,7 @@ export default function ConvoGuard({
     ? "We couldn't confirm your plan or talk credit right now. Retry before starting a call."
     : isTrial
       ? "Your 7-day exploration of Stanect has finished. Upgrade to Pro to keep practicing."
-      : "You've used your free daily talk credit. Conversations reset every 24 hours.";
+      : "You've used your free daily talk credit. It resets at midnight";
 
   return (
     <div className="flex w-full flex-1 items-center justify-center p-4">

@@ -85,8 +85,14 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
         plan: userData?.plan,
         created_at: userData?.created_at,
         daily_seconds_used: userData?.daily_seconds_used,
+        last_usage_date: userData?.last_usage_date,
       }),
-    [userData?.created_at, userData?.daily_seconds_used, userData?.plan],
+    [
+      userData?.created_at,
+      userData?.daily_seconds_used,
+      userData?.last_usage_date,
+      userData?.plan,
+    ],
   );
 
   return (

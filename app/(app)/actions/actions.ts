@@ -2,9 +2,13 @@
 import { connection } from "next/server";
 import { fetchSubscriptionStatus } from "./subs";
 import { buildAssistant } from "@/lib/buildAssistant";
-import type { PlanType } from "@/lib/plan-limits";
-import { PLAN_LIMITS } from "@/lib/plan-limits";
-import { canUserCall, hasReachedCompanionLimit } from "@/lib/plan-utils";
+import { PLAN_LIMITS, type PlanType } from "@/lib/plan-limits";
+import {
+  canUserCall,
+  effectiveDailySecondsUsed,
+  hasReachedCompanionLimit,
+  readLastUsageDate,
+} from "@/lib/plan-utils";
 import { createSupabaseClient } from "@/lib/supabase";
 import {
   AssistantCompanionContext,
@@ -29,9 +33,38 @@ function getMaxSessionMinutes(plan: string) {
 }
 
 const USER_PROFILE_SELECT =
-  "id, clerk_user_id, name, email, status, profile_picture, country, plan, total_lifetime_seconds, daily_seconds_used, created_at";
+  "id, clerk_user_id, name, email, status, profile_picture, country, plan, total_lifetime_seconds, daily_seconds_used, created_at, metadata";
 
 const AVATAR_SELECT = "id, name, image_url";
+
+async function syncStaleDailySeconds(input: {
+  supabase: ReturnType<typeof createSupabaseClient>;
+  clerkUserId: string;
+  dailySecondsUsed: number | null | undefined;
+  lastUsageDate: string | null;
+}) {
+  const stored = Math.max(0, Number(input.dailySecondsUsed ?? 0));
+  const effective = effectiveDailySecondsUsed({
+    daily_seconds_used: stored,
+    last_usage_date: input.lastUsageDate,
+  });
+
+  if (stored > 0 && effective === 0) {
+    const { error } = await input.supabase
+      .from("users")
+      .update({
+        daily_seconds_used: 0,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("clerk_user_id", input.clerkUserId);
+
+    if (error) {
+      console.error("Failed to reset stale daily credit:", error.message);
+    }
+  }
+
+  return effective;
+}
 
 export async function getUser(_id?: string) {
   await connection();
@@ -51,7 +84,30 @@ export async function getUser(_id?: string) {
     throw error;
   }
 
-  return data;
+  if (!data) return null;
+
+  const lastUsageDate = readLastUsageDate(data.metadata);
+  const dailySecondsUsed = await syncStaleDailySeconds({
+    supabase,
+    clerkUserId: userId,
+    dailySecondsUsed: data.daily_seconds_used,
+    lastUsageDate,
+  });
+
+  return {
+    id: data.id,
+    clerk_user_id: data.clerk_user_id,
+    name: data.name,
+    email: data.email,
+    status: data.status,
+    profile_picture: data.profile_picture,
+    country: data.country,
+    plan: data.plan,
+    total_lifetime_seconds: data.total_lifetime_seconds,
+    daily_seconds_used: dailySecondsUsed,
+    created_at: data.created_at,
+    last_usage_date: lastUsageDate,
+  };
 }
 
 export async function getAvatars(): Promise<AvatarProps[]> {
@@ -401,6 +457,7 @@ export async function assertCanStartCall() {
     plan: necessities.plan,
     created_at: necessities.created_at,
     daily_seconds_used: necessities.daily_seconds_used,
+    last_usage_date: necessities.last_usage_date,
   });
 
   if (!access.allowed) {
@@ -522,9 +579,24 @@ export async function fetchUserNecessities(_userId?: string) {
   const supabase = createSupabaseClient();
   const { data: userNeccesities, error } = await supabase
     .from("users")
-    .select("plan, created_at, daily_seconds_used")
+    .select("plan, created_at, daily_seconds_used, metadata")
     .eq("clerk_user_id", userId)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return userNeccesities;
+  if (!userNeccesities) return null;
+
+  const lastUsageDate = readLastUsageDate(userNeccesities.metadata);
+  const dailySecondsUsed = await syncStaleDailySeconds({
+    supabase,
+    clerkUserId: userId,
+    dailySecondsUsed: userNeccesities.daily_seconds_used,
+    lastUsageDate,
+  });
+
+  return {
+    plan: userNeccesities.plan,
+    created_at: userNeccesities.created_at,
+    daily_seconds_used: dailySecondsUsed,
+    last_usage_date: lastUsageDate,
+  };
 }

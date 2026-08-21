@@ -46,6 +46,7 @@ export interface Userprops {
   plan: string;
   total_lifetime_seconds?: number;
   daily_seconds_used?: number;
+  last_usage_date?: string | null;
   created_at?: string;
   metadata?: Record<string, unknown>;
 }

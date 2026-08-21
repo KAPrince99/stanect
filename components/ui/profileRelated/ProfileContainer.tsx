@@ -7,6 +7,7 @@ import { memo, useMemo } from "react";
 
 import { getCompanions, getUser } from "@/app/(app)/actions/actions";
 import { fetchSubscriptionStatus } from "@/app/(app)/actions/subs";
+import { effectiveDailySecondsUsed } from "@/lib/plan-utils";
 import LoadingSpinner from "../LoadingSpinner";
 import UpdateProfile from "./updateProfile";
 import UpdatePlan from "./updatePlan";
@@ -88,7 +89,10 @@ function ProfileContainer({ userId }: { userId: string }) {
       userPlan,
       planLabel: getPlanLabel(userPlan),
       userFirstNameInitial: userFullName.charAt(0),
-      dailySecondsUsed: Number(data?.daily_seconds_used ?? 0),
+      dailySecondsUsed: effectiveDailySecondsUsed({
+        daily_seconds_used: data?.daily_seconds_used,
+        last_usage_date: data?.last_usage_date,
+      }),
       subscriptionStatus: (subscription?.status || data?.status || "active")
         .toString()
         .toLowerCase(),

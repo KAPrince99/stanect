@@ -51,6 +51,7 @@ function ConvoAccessGate({ userId, children }: ConvoAccessGateProps) {
     plan,
     created_at: data.created_at,
     daily_seconds_used: data.daily_seconds_used,
+    last_usage_date: data.last_usage_date,
   });
 
   if (!access.allowed) {

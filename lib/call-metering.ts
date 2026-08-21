@@ -1,7 +1,7 @@
+import { LAST_USAGE_DATE_KEY, readLastUsageDate, utcDateKey } from "@/lib/plan-utils";
 import { supabase as serviceSupabase } from "@/lib/supa-service";
 
 const METERED_CALLS_KEY = "metered_call_ids";
-const LAST_USAGE_DATE_KEY = "last_usage_date";
 const METERED_CALLS_MAX = 40;
 
 export type VapiCallRecord = {
@@ -18,12 +18,6 @@ export type VapiCallRecord = {
 function clampSeconds(seconds: number) {
   if (!Number.isFinite(seconds) || seconds <= 0) return 0;
   return Math.min(Math.floor(seconds), 3600);
-}
-
-function utcDateKey(iso?: string | null) {
-  const date = iso ? new Date(iso) : new Date();
-  if (!Number.isFinite(date.getTime())) return new Date().toISOString().slice(0, 10);
-  return date.toISOString().slice(0, 10);
 }
 
 function readString(value: unknown): string | null {
@@ -133,10 +127,7 @@ export async function meterVerifiedCallUsage(input: {
   }
 
   const today = utcDateKey();
-  const lastUsageDate =
-    typeof metadata[LAST_USAGE_DATE_KEY] === "string"
-      ? metadata[LAST_USAGE_DATE_KEY]
-      : null;
+  const lastUsageDate = readLastUsageDate(metadata);
   const nextDaily =
     lastUsageDate === today ? currentDaily + seconds : seconds;
   const nextLifetime = currentLifetime + seconds;

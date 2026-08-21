@@ -1,5 +1,5 @@
 import { PLAN_LIMITS, type PlanType } from "@/lib/plan-limits";
-import { canUserCall } from "@/lib/plan-utils";
+import { canUserCall, effectiveDailySecondsUsed } from "@/lib/plan-utils";
 
 export type UsageTone = "ok" | "low" | "blocked" | "paid";
 
@@ -7,6 +7,7 @@ type User = {
   plan?: string | null;
   created_at?: string | null;
   daily_seconds_used?: number | null;
+  last_usage_date?: string | null;
 };
 
 export function resolvePlanLabel(plan?: string | null): string {
@@ -27,6 +28,7 @@ export function resolvePracticeUsage(user: User): {
     plan,
     created_at: user.created_at,
     daily_seconds_used: user.daily_seconds_used,
+    last_usage_date: user.last_usage_date,
   });
 
   if (plan === "pro" || plan === "king") {
@@ -45,7 +47,10 @@ export function resolvePracticeUsage(user: User): {
     };
   }
 
-  const used = Math.max(0, Number(user.daily_seconds_used ?? 0));
+  const used = effectiveDailySecondsUsed({
+    daily_seconds_used: user.daily_seconds_used,
+    last_usage_date: user.last_usage_date,
+  });
   const remaining = Math.max(0, PLAN_LIMITS.free.dailyLimit - used);
   const minutesLeft = Math.ceil(remaining / 60);
 

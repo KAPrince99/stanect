@@ -13,6 +13,7 @@ import {
 import { isBenignVapiHangupError } from "@/lib/vapi-errors";
 import { isCallOwner, releaseCallOwnership } from "@/lib/tabCallLock";
 import { extractVapiCallId, getVapiSdk, type VapiSDK } from "@/lib/vapiSdk";
+import { utcDateKey } from "@/lib/plan-utils";
 import { useConvoStore } from "@/store/use-convo-store";
 
 interface UseConvoSessionOptions {
@@ -23,6 +24,7 @@ interface UseConvoSessionOptions {
 
 type CachedUserUsage = {
   daily_seconds_used?: number | null;
+  last_usage_date?: string | null;
   total_lifetime_seconds?: number | null;
 };
 
@@ -34,6 +36,7 @@ function applyUsageToCachedUser<T>(
   return {
     ...(old as CachedUserUsage),
     daily_seconds_used: usage.dailySecondsUsed,
+    last_usage_date: utcDateKey(),
     total_lifetime_seconds: usage.totalLifetimeSeconds,
   } as T;
 }
