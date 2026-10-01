@@ -48,7 +48,7 @@ function PricingPageView({
   currencyIntervalLabel,
 }: PricingPageViewProps) {
   return (
-    <div className="mt-3 min-h-screen bg-transparent px-4 py-25 text-white sm:px-6">
+    <div className="app-column-x mt-3 min-h-screen bg-transparent py-25 text-white">
       <PricingCancelDialog
         open={isCancelDialogOpen}
         onOpenChange={onCancelDialogOpenChange}

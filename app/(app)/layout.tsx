@@ -16,7 +16,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
         </div>
 
-        {/* On /dashboard the pill shares the column inset. Other routes stay centered on the full page. */}
+        {/* On /dashboard and /pricing the pill shares the column beside the sidebar. */}
         <Navbar />
 
         <div className="pointer-events-none fixed inset-y-0 left-0 z-40 hidden lg:block">

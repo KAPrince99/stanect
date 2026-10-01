@@ -85,7 +85,7 @@ export function NewCompanionRouteLoading() {
 export function PricingRouteLoading() {
   return (
     <div
-      className="mt-3 min-h-screen bg-transparent px-4 py-25 text-white sm:px-6"
+      className="app-column-x mt-3 min-h-screen bg-transparent py-25 text-white"
       role="status"
       aria-label="Loading pricing"
     >
