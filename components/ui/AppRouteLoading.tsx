@@ -21,9 +21,9 @@ export function DashboardRouteLoading() {
               <Pulse className="h-4 w-28 rounded-md" />
               <Pulse className="h-2.5 w-24" />
             </div>
-            <Pulse className="hidden h-9 w-24 sm:block" />
+            <Pulse className="hidden h-11 w-24 sm:block md:h-10" />
           </div>
-          <Pulse className="h-9 w-20" />
+          <Pulse className="h-11 w-24 md:h-10" />
         </div>
       </div>
 

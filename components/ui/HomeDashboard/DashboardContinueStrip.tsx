@@ -6,9 +6,10 @@ import { motion } from "framer-motion";
 import { ArrowRight, Plus } from "lucide-react";
 import { memo } from "react";
 
+import { usePrefetchRoute } from "@/hooks/usePrefetchRoute";
 import { motionTransition, motionVariants } from "@/lib/motion";
 import type { UsageTone } from "@/lib/practice-usage";
-import { usePrefetchRoute } from "@/hooks/usePrefetchRoute";
+import { cn } from "@/lib/utils";
 
 import { Button } from "../button";
 
@@ -47,11 +48,17 @@ function DashboardContinueStrip({
   // Ghost cards cover create when the row isn't full — Continue sits far right.
   // When the row is full, Continue stays with identity and Create takes the far right.
   const continueBesideIdentity = showCreate;
+  // 44px on phones, 40px from tablet up. Same radius on both actions.
+  const actionHeight = "h-11 md:h-10";
 
   const continueButton = (className: string) => (
     <Button
       asChild
-      className={`type-cta h-8 shrink-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-4 text-sm text-black shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-600 ${className}`}
+      className={cn(
+        "type-cta shrink-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-4 text-[0.9375rem] text-black shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-600 has-[>svg]:px-3 sm:px-4 sm:has-[>svg]:px-4 ",
+        actionHeight,
+        className,
+      )}
     >
       <Link
         href={continueHref}
@@ -61,7 +68,7 @@ function DashboardContinueStrip({
         onTouchStart={() => prefetchRoute(continueHref)}
       >
         Continue
-        <ArrowRight className="size-3.5" />
+        <ArrowRight className="size-4" />
       </Link>
     </Button>
   );
@@ -94,8 +101,8 @@ function DashboardContinueStrip({
         </div>
       ) : null}
 
-      <div className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 backdrop-blur-xl sm:gap-4 sm:px-4">
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="flex w-full items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-2.5 py-2.5 backdrop-blur-xl sm:gap-4 sm:px-4">
+        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
           <div className="relative size-11 shrink-0 overflow-hidden rounded-xl border border-white/10">
             <Image
               src={avatarUrl}
@@ -134,13 +141,17 @@ function DashboardContinueStrip({
             <Link
               href="/new"
               prefetch
-              className="type-cta hidden h-9 items-center justify-center gap-1 rounded-full border border-white/15 bg-white/8 px-3.5 text-sm text-white/80 transition hover:border-amber-400/35 hover:bg-white/12 hover:text-white sm:inline-flex"
+              aria-label="Create companion"
+              className={cn(
+                "type-cta inline-flex w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/8 text-[0.9375rem] text-white/80 transition outline-none hover:border-amber-400/35 hover:bg-white/12 hover:text-white focus-visible:ring-2 focus-visible:ring-amber-400/40 sm:w-auto sm:gap-1 sm:px-4",
+                actionHeight,
+              )}
               onMouseEnter={() => prefetchRoute("/new")}
               onFocus={() => prefetchRoute("/new")}
               onTouchStart={() => prefetchRoute("/new")}
             >
-              <Plus className="size-3.5" />
-              Create companion
+              <Plus className="size-4" />
+              <span className="hidden sm:inline">Create companion</span>
             </Link>
           ) : null}
         </div>
