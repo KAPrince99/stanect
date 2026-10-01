@@ -17,8 +17,8 @@ const GlobeCanvas = dynamic(() => import("../GlobeCanvas"), {
 /** Only mounts/updates when call liveness flips — never on timer ticks. */
 function ConvoOrbStage({ isCallLive }: { isCallLive: boolean }) {
   return (
-    <div className="mx-auto my-2 w-full max-w-2xl min-h-0 flex-1 overflow-hidden rounded-3xl sm:my-4">
-      <div className="relative mx-auto h-[220px] w-full max-h-80 sm:h-80">
+    <div className="mx-auto my-2 flex w-full items-center justify-center sm:my-4">
+      <div className="relative aspect-square w-[220px] sm:w-72 xl:w-[23rem] 2xl:w-[26rem]">
         <GlobeCanvas isCallLive={isCallLive} />
       </div>
     </div>
@@ -34,7 +34,7 @@ function ConvoStatusHero() {
   const currentStatus = convoStatusConfig[callStatus];
 
   return (
-    <div className="flex w-full min-h-0 flex-1 flex-col items-center">
+    <div className="flex w-full min-h-0 flex-col items-center">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

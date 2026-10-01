@@ -9,7 +9,7 @@ import Pill from "./pill";
 export default function Navbar() {
   const pathname = usePathname();
   const alignToContentColumn =
-    pathname === "/dashboard" || pathname === "/pricing";
+    pathname === "/pricing" || pathname.startsWith("/dashboard");
 
   return (
     <nav

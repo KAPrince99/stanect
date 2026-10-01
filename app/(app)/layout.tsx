@@ -16,7 +16,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
         </div>
 
-        {/* On /dashboard and /pricing the pill shares the column beside the sidebar. */}
+        {/* Dashboard, conversation, and pricing share the column beside the sidebar. */}
         <Navbar />
 
         <div className="pointer-events-none fixed inset-y-0 left-0 z-40 hidden lg:block">
@@ -26,7 +26,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         <div className="flex h-screen flex-col overflow-hidden">
-          <main className="flex-1 overflow-y-auto scrollbar-hide will-change-scroll">
+          <main className="flex min-h-0 flex-1 flex-col overflow-y-auto scrollbar-hide will-change-scroll">
             <ScrollToTop />
             {children}
           </main>
