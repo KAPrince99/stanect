@@ -12,18 +12,20 @@ export function DashboardRouteLoading() {
       aria-label="Loading dashboard"
     >
       <div className="mx-auto mb-5 w-full max-w-4xl sm:mb-6">
-        <Pulse className="mb-2 h-3 w-32" />
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 sm:gap-6 sm:px-4">
-          <div className="flex items-center gap-3">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <Pulse className="h-3 w-32" />
+          <Pulse className="h-6 w-14" />
+        </div>
+        <div className="flex w-full items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-2.5 py-2.5 sm:gap-4 sm:px-4">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
             <div className="size-11 shrink-0 animate-pulse rounded-xl bg-white/10" />
-            <div className="space-y-1.5">
+            <div className="min-w-0 space-y-1.5">
               <Pulse className="h-2.5 w-20" />
               <Pulse className="h-4 w-28 rounded-md" />
               <Pulse className="h-2.5 w-24" />
             </div>
-            <Pulse className="hidden h-11 w-24 sm:block md:h-10" />
           </div>
-          <Pulse className="h-11 w-24 md:h-10" />
+          <Pulse className="ml-auto h-11 w-24 shrink-0 md:h-10" />
         </div>
       </div>
 
@@ -31,13 +33,15 @@ export function DashboardRouteLoading() {
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className={`overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl ${index === 2 ? "hidden lg:block" : ""}`}
+            className={`flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl ${index === 2 ? "hidden lg:block" : ""}`}
             style={{ animationDelay: `${index * 80}ms` }}
           >
-            <div className="aspect-4/5 animate-pulse bg-white/10 md:aspect-square" />
-            <div className="space-y-2.5 p-3 text-center sm:p-4">
+            <div className="aspect-4/5 shrink-0 animate-pulse bg-white/10 md:aspect-square" />
+            <div className="flex flex-1 flex-col p-3 text-center sm:p-4">
               <Pulse className="mx-auto h-4 w-24 rounded-md" />
-              <div className="h-9 w-full animate-pulse rounded-md bg-amber-400/25 md:h-10" />
+              <div className="mt-auto pt-2.5">
+                <div className="h-9 w-full animate-pulse rounded-md bg-amber-400/25 md:h-10" />
+              </div>
             </div>
           </div>
         ))}
