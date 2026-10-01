@@ -27,15 +27,15 @@ export function DashboardRouteLoading() {
         </div>
       </div>
 
-      <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+      <div className="mx-auto grid w-full max-w-4xl grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl"
+            className={`overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl ${index === 2 ? "hidden lg:block" : ""}`}
             style={{ animationDelay: `${index * 80}ms` }}
           >
-            <div className="aspect-square animate-pulse bg-white/10" />
-            <div className="space-y-2.5 p-3.5 text-center sm:p-4">
+            <div className="aspect-4/5 animate-pulse bg-white/10 md:aspect-square" />
+            <div className="space-y-2.5 p-3 text-center sm:p-4">
               <Pulse className="mx-auto h-4 w-24 rounded-md" />
               <div className="h-9 w-full animate-pulse rounded-md bg-amber-400/25 md:h-10" />
             </div>

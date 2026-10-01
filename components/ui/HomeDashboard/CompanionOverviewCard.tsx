@@ -36,7 +36,7 @@ function CompanionOverviewCard({
     <motion.article
       whileHover={enableHoverLift ? { y: -6 } : undefined}
       transition={{ type: "spring", stiffness: 120, damping: 20 }}
-      className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl"
+      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl"
       style={{ willChange: "transform" }}
       {...intentHandlers}
     >
@@ -51,7 +51,6 @@ function CompanionOverviewCard({
       <CompanionOverviewCardContent
         cardHref={cardHref}
         companionName={companion.companion_name}
-        scene={companion.scene}
         showConvoButton={showConvoButton}
         enableNavigation={enableNavigation}
       />
