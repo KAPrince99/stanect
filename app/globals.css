@@ -359,6 +359,57 @@ h6 {
   }
 }
 
+/*
+  Dashboard column inset. Shared by the home dashboard and its navbar pill.
+  Desktop sidebar occupies lg:ml-8 (2rem) + w-24 (6rem) = 8rem.
+  The extra 1.5rem matches the right inset from sm up.
+  Phone and tablet keep the previous page padding (1rem / 1.5rem).
+*/
+.app-column-x {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .app-column-x {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-column-x {
+    padding-left: calc(8rem + 1.5rem);
+    padding-right: 1.5rem;
+  }
+}
+
+/* Fixed dock. Padding sits under the icon row, above the home indicator. */
+.dock-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/*
+  Scroll clearance while the dock is visible.
+  7rem / 4rem are the previous pb-28 / md:pb-16 values, plus the safe area.
+  At lg the dock is hidden, so the safe area is dropped.
+*/
+.dashboard-dock-pad {
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  .dashboard-dock-pad {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-dock-pad {
+    padding-bottom: 4rem;
+  }
+}
+
 /* performance friendly: reduce backdrop-filter scope */
 .backdrop-blur-lite {
   backdrop-filter: blur(6px);

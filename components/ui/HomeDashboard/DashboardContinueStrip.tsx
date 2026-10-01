@@ -51,7 +51,7 @@ function DashboardContinueStrip({
   const continueButton = (className: string) => (
     <Button
       asChild
-      className={`type-cta h-9 shrink-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-4 text-sm text-black shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-600 ${className}`}
+      className={`type-cta h-8 shrink-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-4 text-sm text-black shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-600 ${className}`}
     >
       <Link
         href={continueHref}

@@ -7,7 +7,7 @@ function Pulse({ className }: { className: string }) {
 export function DashboardRouteLoading() {
   return (
     <div
-      className="relative px-4 pt-24 pb-8 sm:px-6 lg:pt-28"
+      className="app-column-x relative pt-24 pb-8 lg:pt-28"
       role="status"
       aria-label="Loading dashboard"
     >

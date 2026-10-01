@@ -44,7 +44,7 @@ function DashboardCompanionsView({
     canCreateCompanion && companions.length >= TARGET_SLOT_COUNT;
 
   return (
-    <section className="relative px-4 pt-24 pb-8 sm:px-6 lg:pt-28">
+    <section className="app-column-x relative pt-24 pb-8 lg:pt-28">
       <div className="mx-auto w-full max-w-4xl">
         {hasCompanions && continueCompanion ? (
           <>

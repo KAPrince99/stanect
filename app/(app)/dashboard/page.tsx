@@ -8,7 +8,7 @@ export default async function Dashboard() {
   if (!userId) redirect("/login");
 
   return (
-    <main className="overflow-y-auto pb-28 md:pb-16">
+    <main className="dashboard-dock-pad overflow-y-auto">
       <DashboardCompanionList userId={userId} />
     </main>
   );

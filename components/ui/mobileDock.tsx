@@ -51,7 +51,7 @@ export default function MobileDock() {
   }, [prefetchRoute]);
 
   return (
-    <div className="fixed right-0 bottom-0 left-0 z-50 w-full border-t border-white/20 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] lg:hidden">
+    <div className="dock-safe-bottom fixed right-0 bottom-0 left-0 z-50 w-full border-t border-white/20 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] lg:hidden">
       <div className="mx-auto flex h-20 max-w-xl items-start justify-around px-4 pt-3">
         {dockItems.map((item) => (
           <Link
