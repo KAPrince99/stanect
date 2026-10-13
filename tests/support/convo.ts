@@ -8,6 +8,8 @@ export function resetConvoStore() {
   useConvoStore.setState({
     callStatus: "INACTIVE",
     isMuted: false,
+    speaker: null,
+    localVoiceActive: false,
     messages: [],
     timeLeft: null,
     showEndModal: false,

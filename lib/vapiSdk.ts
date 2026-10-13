@@ -28,6 +28,8 @@ export interface VapiSDK {
   setMuted: (muted: boolean) => Promise<void>;
   on: (event: string, cb: (...args: unknown[]) => void) => void;
   off: (event: string, cb: (...args: unknown[]) => void) => void;
+  getDailyCallObject?: () => unknown;
+  startLocalAudioLevelObserver?: (interval?: number) => Promise<void>;
 }
 
 export async function getVapiSdk(): Promise<VapiSDK> {

@@ -3,9 +3,10 @@
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { memo } from "react";
+import { memo, useEffect, useRef } from "react";
 
-import { useConvoStore } from "@/store/use-convo-store";
+import { subscribeVoiceLevel } from "@/lib/voice-level";
+import { useConvoStore, type Speaker } from "@/store/use-convo-store";
 
 import ConvoLiveTimer from "./ConvoLiveTimer";
 import { convoStatusConfig } from "./convo-status-config";
@@ -30,20 +31,72 @@ function GlobePortrait({
   src,
   alt,
   side,
+  role,
 }: {
   src: string;
   alt: string;
   side: "left" | "right";
+  /** Whose voice this portrait stands for. */
+  role: Speaker;
 }) {
+  // Boolean selector: only re-renders when this portrait starts or stops speaking.
+  const speaking = useConvoStore((s) => s.speaker === role);
+  const portraitRef = useRef<HTMLDivElement>(null);
+
+  // Loudness goes straight into a CSS variable, never through React state,
+  // so a reading ten times a second re-renders nothing.
+  useEffect(() => {
+    const el = portraitRef.current;
+    if (!el) return;
+
+    el.style.setProperty("--voice-level", "0");
+    if (!speaking) return;
+
+    return subscribeVoiceLevel(role, (level) => {
+      el.style.setProperty("--voice-level", level.toFixed(2));
+    });
+  }, [speaking, role]);
+
   return (
     <div
-      className={`absolute top-1/2 z-10 size-10 -translate-y-1/2 overflow-hidden rounded-full border border-white/25 bg-black/20 shadow-lg ring-2 ring-white/10 sm:size-16 lg:size-20 ${
+      ref={portraitRef}
+      data-speaking={speaking}
+      className={`absolute top-1/2 z-10 size-10 -translate-y-1/2 sm:size-16 lg:size-20 ${
         side === "left"
           ? "left-0 sm:left-16 lg:left-2"
           : "right-0 sm:right-[18px]"
       }`}
     >
-      <Image src={src} alt={alt} fill sizes="80px" className="object-cover" />
+      {speaking ? (
+        <>
+          {/* Soft halo that swells with how loud the voice is (see
+              --voice-level above). Hidden for reduced motion. */}
+          <span
+            aria-hidden
+            className="speaking-halo pointer-events-none absolute inset-0 rounded-full bg-brand-accent [--halo-gain:0.2] sm:[--halo-gain:0.3] motion-reduce:hidden"
+          />
+          {/* Two staggered rings that grow outward like bubbles. Reduced
+              motion keeps only the static orange border below. */}
+          <span
+            aria-hidden
+            className="animate-speaking-pulse pointer-events-none absolute inset-0 rounded-full border-2 border-brand-accent [--speaking-scale:1.25] sm:[--speaking-scale:1.4] motion-reduce:hidden"
+          />
+          <span
+            aria-hidden
+            className="animate-speaking-pulse animation-delay-800 pointer-events-none absolute inset-0 rounded-full border-2 border-brand-accent opacity-0 [--speaking-scale:1.25] sm:[--speaking-scale:1.4] motion-reduce:hidden"
+          />
+        </>
+      ) : null}
+
+      <div
+        className={`relative size-full overflow-hidden rounded-full border bg-black/20 shadow-lg ring-2 transition-[border-color,box-shadow] duration-200 ${
+          speaking
+            ? "border-brand-accent shadow-brand-accent/40 ring-brand-accent/40"
+            : "border-white/25 ring-white/10"
+        }`}
+      >
+        <Image src={src} alt={alt} fill sizes="80px" className="object-cover" />
+      </div>
     </div>
   );
 }
@@ -67,6 +120,7 @@ function ConvoOrbStage({
           src={companionAvatarUrl}
           alt={companionName}
           side="left"
+          role="assistant"
         />
       ) : null}
       {userAvatarUrl ? (
@@ -74,6 +128,7 @@ function ConvoOrbStage({
           src={userAvatarUrl}
           alt="Your profile picture"
           side="right"
+          role="user"
         />
       ) : null}
       <div className="relative aspect-square w-[220px] sm:w-72 xl:w-[23rem] 2xl:w-[26rem]">

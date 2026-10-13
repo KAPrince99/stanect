@@ -44,6 +44,35 @@ function isFinalTranscriptEvent(msg: VapiMessageEvent): msg is VapiTranscriptEve
   );
 }
 
+/** Who is talking right now, or null when it is quiet. */
+export type Speaker = "assistant" | "user";
+
+type SpeechUpdateEvent = {
+  type: "speech-update";
+  status: "started" | "stopped";
+  role: Speaker;
+};
+
+function isSpeechUpdateEvent(msg: VapiMessageEvent): msg is SpeechUpdateEvent {
+  if (typeof msg !== "object" || msg === null) return false;
+
+  const { type, status, role } = msg as Record<string, unknown>;
+
+  return (
+    type === "speech-update" &&
+    (status === "started" || status === "stopped") &&
+    (role === "assistant" || role === "user")
+  );
+}
+
+function isUserInterruptedEvent(msg: VapiMessageEvent): boolean {
+  return (
+    typeof msg === "object" &&
+    msg !== null &&
+    (msg as Record<string, unknown>).type === "user-interrupted"
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /*                          MULTI TAB SYNC HELPERS                            */
 /* -------------------------------------------------------------------------- */
@@ -68,6 +97,10 @@ function broadcastSync(data: ConvoSyncPayload) {
 interface ConvoState {
   callStatus: CallStatus;
   isMuted: boolean;
+  /** Who is speaking right now. Local to this tab, never synced. */
+  speaker: Speaker | null;
+  /** True while the mic level says the user is talking (faster than Vapi). */
+  localVoiceActive: boolean;
   messages: Message[];
   timeLeft: number | null;
   showEndModal: boolean;
@@ -77,6 +110,12 @@ interface ConvoState {
 
   setCallStatus: (status: CallStatus) => void;
   setMuted: (muted: boolean) => void;
+  /** Feed raw Vapi `message` events; only speech updates change `speaker`. */
+  applySpeechEvent: (msg: VapiMessageEvent) => void;
+  /** Fed by the mic-level detector. Makes the user's ring react right away. */
+  setUserSpeaking: (active: boolean) => void;
+  /** Drop the speaking ring without waiting for Vapi (stuck-ring safety net). */
+  clearSpeaker: () => void;
   setShowEndModal: (show: boolean) => void;
   setShowTranscript: (show: boolean) => void;
   addMessage: (msg: VapiMessageEvent) => boolean;
@@ -91,6 +130,8 @@ interface ConvoState {
 export const useConvoStore = create<ConvoState>()((set, get) => ({
   callStatus: "INACTIVE",
   isMuted: false,
+  speaker: null,
+  localVoiceActive: false,
   messages: [],
   timeLeft: null,
   showEndModal: false,
@@ -99,13 +140,70 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
   companionId: null,
 
   setCallStatus: (callStatus) => {
-    set({ callStatus });
+    // Nobody speaks once the call is over.
+    const callOver = callStatus === "INACTIVE" || callStatus === "ERROR";
+    set(
+      callOver
+        ? { callStatus, speaker: null, localVoiceActive: false }
+        : { callStatus },
+    );
     broadcastSync({ callStatus });
   },
 
   setMuted: (isMuted) => {
-    set({ isMuted });
+    // A muted mic is never "speaking", even if a late event is still in flight.
+    set((state) => ({
+      isMuted,
+      speaker: isMuted && state.speaker === "user" ? null : state.speaker,
+      localVoiceActive: isMuted ? false : state.localVoiceActive,
+    }));
     broadcastSync({ isMuted });
+  },
+
+  clearSpeaker: () => set({ speaker: null, localVoiceActive: false }),
+
+  setUserSpeaking: (active) => {
+    if (!active) {
+      set((state) => ({
+        localVoiceActive: false,
+        speaker: state.speaker === "user" ? null : state.speaker,
+      }));
+      return;
+    }
+
+    // The mic only counts during a live, unmuted call.
+    const { callStatus, isMuted } = get();
+    if (callStatus !== "ACTIVE" || isMuted) return;
+
+    set({ localVoiceActive: true, speaker: "user" });
+  },
+
+  applySpeechEvent: (msg) => {
+    const { callStatus, isMuted, speaker, localVoiceActive } = get();
+    if (callStatus === "INACTIVE" || callStatus === "ERROR") return;
+
+    if (isUserInterruptedEvent(msg)) {
+      // The user cut in, so the assistant is no longer talking.
+      if (speaker === "assistant") set({ speaker: null });
+      return;
+    }
+
+    if (!isSpeechUpdateEvent(msg)) return;
+
+    if (msg.status === "started") {
+      if (msg.role === "user" && isMuted) return;
+      set({ speaker: msg.role });
+      return;
+    }
+
+    // The server's "user stopped" lands after the mic already went quiet in
+    // the usual case, but can also land mid-sentence. While the mic still hears
+    // the user, the mic decides; it clears the ring itself when it goes quiet.
+    if (msg.role === "user" && localVoiceActive) return;
+
+    // "stopped": only clear if that same side is the current speaker, so a late
+    // stop from the previous speaker cannot wipe out the one who just started.
+    if (speaker === msg.role) set({ speaker: null });
   },
 
   setShowEndModal: (showEndModal) => {
@@ -119,6 +217,8 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
     set({
       messages: [],
       callStatus: "INACTIVE",
+      speaker: null,
+      localVoiceActive: false,
       timeLeft: null,
       activeCallId: null,
       showTranscript: false,
@@ -136,6 +236,8 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
       companionId,
       messages: [],
       callStatus: "INACTIVE",
+      speaker: null,
+      localVoiceActive: false,
       timeLeft: null,
       activeCallId: null,
       showTranscript: false,
@@ -222,6 +324,8 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
     set({
       callStatus: "CONNECTING",
       messages: [],
+      speaker: null,
+      localVoiceActive: false,
       timeLeft: initialSeconds,
       isMuted: false,
       activeCallId: null,
@@ -247,7 +351,12 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
       }
     } catch {
       releaseCallOwnership();
-      set({ callStatus: "ERROR", activeCallId: null });
+      set({
+        callStatus: "ERROR",
+        speaker: null,
+        localVoiceActive: false,
+        activeCallId: null,
+      });
     }
   },
 

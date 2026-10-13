@@ -20,6 +20,15 @@ export function getVapiErrorText(error: unknown): string {
   }
 }
 
+/**
+ * Vapi asks Daily for noise cancellation when a call starts. In a browser or
+ * on a platform that can't run it, Daily logs this via console.error and
+ * carries on without it. The call is fine; it is only a warning.
+ */
+export function isUnsupportedAudioProcessorWarning(error: unknown) {
+  return /unsupported input processor/i.test(getVapiErrorText(error));
+}
+
 /** Daily/Vapi noise on normal hangup, max-duration end, or double-destroy. */
 export function isBenignVapiHangupError(error: unknown) {
   const text = getVapiErrorText(error).toLowerCase();

@@ -10,10 +10,29 @@ import {
   assertCanStartCall,
   finalizeCallUsage,
 } from "@/app/(app)/actions/actions";
-import { isBenignVapiHangupError } from "@/lib/vapi-errors";
+import {
+  isBenignVapiHangupError,
+  isUnsupportedAudioProcessorWarning,
+} from "@/lib/vapi-errors";
 import { isCallOwner, releaseCallOwnership } from "@/lib/tabCallLock";
 import { extractVapiCallId, getVapiSdk, type VapiSDK } from "@/lib/vapiSdk";
 import { utcDateKey } from "@/lib/plan-utils";
+import {
+  REMOTE_AUDIO_ACTIVE_LEVEL,
+  createSpeakerWatchdog,
+  transcriptRole,
+} from "@/lib/speaker-watchdog";
+import {
+  VOICE_ACTIVITY,
+  createVoiceActivityDetector,
+} from "@/lib/voice-activity";
+import {
+  ASSISTANT_FULL_SCALE_LEVEL,
+  USER_FULL_SCALE_LEVEL,
+  createLevelSmoother,
+  publishVoiceLevel,
+} from "@/lib/voice-level";
+import { createMicLevelMonitor, localAudioTrack } from "@/lib/mic-level";
 import { useConvoStore } from "@/store/use-convo-store";
 
 interface UseConvoSessionOptions {
@@ -61,6 +80,9 @@ export function useConvoSession({
   const activeCallId = useConvoStore((s) => s.activeCallId);
   const setCallStatus = useConvoStore((s) => s.setCallStatus);
   const addMessage = useConvoStore((s) => s.addMessage);
+  const applySpeechEvent = useConvoStore((s) => s.applySpeechEvent);
+  const setUserSpeaking = useConvoStore((s) => s.setUserSpeaking);
+  const clearSpeaker = useConvoStore((s) => s.clearSpeaker);
   const tickTimer = useConvoStore((s) => s.tickTimer);
   const setMuted = useConvoStore((s) => s.setMuted);
   const setShowEndModal = useConvoStore((s) => s.setShowEndModal);
@@ -122,9 +144,12 @@ export function useConvoSession({
   }, [callStatus, tickTimer]);
 
   useEffect(() => {
+    const attachOwnMicRef = { current: () => {} };
+
     const onCallStart = () => {
       setCallStatus("ACTIVE");
       setShowTranscript(true);
+      attachOwnMicRef.current();
     };
 
     const onCallStartSuccess = (event: unknown) => {
@@ -177,10 +202,109 @@ export function useConvoSession({
       ]);
     };
 
+    // The user's ring follows the mic directly: Vapi's own "user started
+    // speaking" message only arrives after a server round trip (1-2s).
+    const voiceDetector = createVoiceActivityDetector(setUserSpeaking);
+
+    // Safety net: if a "stopped" message is ever lost, a ring that shows no
+    // sign of life for a few seconds is cleared rather than glowing forever.
+    const speakerWatchdog = createSpeakerWatchdog(() => {
+      voiceDetector.reset();
+      clearSpeaker();
+    });
+
+    const touchWatchdogFor = (role: "assistant" | "user") => {
+      if (useConvoStore.getState().speaker === role) speakerWatchdog.touch();
+    };
+
     const handleVapiMessage = (message: unknown) => {
+      applySpeechEvent(message);
+
+      const talkingRole = transcriptRole(message);
+      if (talkingRole) touchWatchdogFor(talkingRole);
+
       const wasAdded = addMessage(message);
       if (wasAdded) playPop();
     };
+
+    // Loudness for the avatars' halo. Goes through lib/voice-level, not React
+    // state: readings arrive many times a second.
+    const userLevel = createLevelSmoother(USER_FULL_SCALE_LEVEL);
+    const assistantLevel = createLevelSmoother(ASSISTANT_FULL_SCALE_LEVEL);
+
+    const handleLocalVolume = (level: unknown) => {
+      if (typeof level !== "number") return;
+      publishVoiceLevel("user", userLevel.next(level));
+      if (level >= VOICE_ACTIVITY.offLevel) touchWatchdogFor("user");
+      voiceDetector.push(level, {
+        assistantSpeaking: useConvoStore.getState().speaker === "assistant",
+      });
+    };
+
+    // Daily's local-audio-level observer never fired in this browser (the
+    // companion's did). Read the same microphone track ourselves.
+    const micMonitor = createMicLevelMonitor((level) => handleLocalVolume(level));
+    let stopWatchingDailyTrack: (() => void) | undefined;
+
+    const attachOwnMicMonitor = () => {
+      const vapi = vapiRef.current;
+      const daily = vapi?.getDailyCallObject?.() as
+        | {
+            on?: (event: string, cb: (event: unknown) => void) => void;
+            off?: (event: string, cb: (event: unknown) => void) => void;
+          }
+        | null
+        | undefined;
+
+      const takeTrack = (track: MediaStreamTrack | null) => {
+        if (!track) return false;
+        micMonitor.attach(track);
+        return true;
+      };
+
+      takeTrack(localAudioTrack(daily));
+
+      const onTrackStarted = (event: unknown) => {
+        if (typeof event !== "object" || event === null) return;
+        const { track, participant } = event as {
+          track?: MediaStreamTrack;
+          participant?: { local?: boolean };
+        };
+        if (!participant?.local) return;
+        if (!(track instanceof MediaStreamTrack) || track.kind !== "audio") return;
+        takeTrack(track);
+      };
+
+      daily?.on?.("track-started", onTrackStarted);
+      stopWatchingDailyTrack = () => daily?.off?.("track-started", onTrackStarted);
+
+      void vapi?.startLocalAudioLevelObserver?.(100).catch(() => {
+        /* Daily's observer is a bonus if it ever starts working. */
+      });
+    };
+    attachOwnMicRef.current = attachOwnMicMonitor;
+
+    const handleRemoteVolume = (level: unknown) => {
+      if (typeof level !== "number") return;
+      publishVoiceLevel("assistant", assistantLevel.next(level));
+      if (level >= REMOTE_AUDIO_ACTIVE_LEVEL) touchWatchdogFor("assistant");
+    };
+
+    const isOver = (status: string) => status === "INACTIVE" || status === "ERROR";
+    const stopWatchingStore = useConvoStore.subscribe((state, prev) => {
+      const justMuted = state.isMuted && !prev.isMuted;
+      const callJustEnded = isOver(state.callStatus) && !isOver(prev.callStatus);
+      if (justMuted || callJustEnded) voiceDetector.reset();
+      if (callJustEnded) {
+        micMonitor.detach();
+        stopWatchingDailyTrack?.();
+      }
+
+      if (state.speaker !== prev.speaker) {
+        if (state.speaker) speakerWatchdog.touch();
+        else speakerWatchdog.cancel();
+      }
+    });
 
     const handleVapiError = (error: unknown) => {
       if (isBenignVapiHangupError(error)) return;
@@ -196,16 +320,33 @@ export function useConvoSession({
       console.error = (...args: unknown[]) => {
         const text = args.map((arg) => String(arg)).join(" ");
         if (isBenignVapiHangupError(text)) return;
+        if (isUnsupportedAudioProcessorWarning(text)) {
+          // Not an error: the call carries on without noise cancellation.
+          // Keep it visible as a warning instead of a dev error overlay.
+          console.warn(...args);
+          return;
+        }
         originalConsoleError.apply(console, args);
       };
 
       const vapi = await getVapiSdk();
+
+      // The effect was cleaned up while the SDK was loading (Strict Mode, or
+      // deps changing). Attaching now would leave listeners nothing removes.
+      if (cancelled) {
+        return () => {
+          console.error = originalConsoleError;
+        };
+      }
+
       vapiRef.current = vapi;
 
       vapi.on("call-start", onCallStart);
       vapi.on("call-start-success", onCallStartSuccess);
       vapi.on("call-end", onCallEnd);
       vapi.on("message", handleVapiMessage);
+      vapi.on("local-volume-level", handleLocalVolume);
+      vapi.on("volume-level", handleRemoteVolume);
       vapi.on("error", handleVapiError);
 
       return () => {
@@ -227,6 +368,11 @@ export function useConvoSession({
     return () => {
       cancelled = true;
       restoreConsoleError?.();
+      stopWatchingStore();
+      voiceDetector.dispose();
+      speakerWatchdog.cancel();
+      micMonitor.detach();
+      stopWatchingDailyTrack?.();
 
       const vapi = vapiRef.current;
       if (!vapi) return;
@@ -235,16 +381,21 @@ export function useConvoSession({
       vapi.off("call-start-success", onCallStartSuccess);
       vapi.off("call-end", onCallEnd);
       vapi.off("message", handleVapiMessage);
+      vapi.off("local-volume-level", handleLocalVolume);
+      vapi.off("volume-level", handleRemoteVolume);
       vapi.off("error", handleVapiError);
     };
   }, [
     addMessage,
+    applySpeechEvent,
     assistantId,
+    clearSpeaker,
     playPop,
     queryClient,
     setCallStatus,
     setMuted,
     setShowTranscript,
+    setUserSpeaking,
     userId,
   ]);
 

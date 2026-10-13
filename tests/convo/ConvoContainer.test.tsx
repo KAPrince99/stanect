@@ -128,12 +128,12 @@ describe("ConvoContainer", () => {
 
     expect(companion).toHaveAttribute("src", "/avatars/mia.jpg");
     expect(you).toHaveAttribute("src", "/avatars/ada.jpg");
-    expect(companion.parentElement).toHaveClass(
+    expect(companion.parentElement?.parentElement).toHaveClass(
       "left-0",
       "top-1/2",
       "-translate-y-1/2",
     );
-    expect(you.parentElement).toHaveClass(
+    expect(you.parentElement?.parentElement).toHaveClass(
       "right-0",
       "top-1/2",
       "-translate-y-1/2",
@@ -155,9 +155,10 @@ describe("ConvoContainer", () => {
 
     const sceneRow = screen.getByText("Gym").closest("div");
     const deleteBox = screen.getByRole("button", { name: "Delete" }).parentElement;
-    const companion = screen.getByRole("img", { name: "Mia" }).parentElement;
+    const companion = screen.getByRole("img", { name: "Mia" }).parentElement
+      ?.parentElement;
     const you = screen.getByRole("img", { name: "Your profile picture" })
-      .parentElement;
+      .parentElement?.parentElement;
 
     // Portraits sit 0.5rem inside the call area (its padding), so each offset
     // is the corner row's offset minus 0.5rem.

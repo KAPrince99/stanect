@@ -294,6 +294,32 @@ h6 {
   animation-delay: 1s;
 }
 
+/* Speaking ring on the call avatars: a ring that grows outward and fades. */
+@keyframes speaking-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(var(--speaking-scale, 1.4));
+    opacity: 0;
+  }
+}
+.animate-speaking-pulse {
+  animation: speaking-pulse 1.6s ease-out infinite;
+}
+/* Halo behind the avatar that swells with voice loudness. --voice-level is
+   0 to 1 and is written by the avatar itself; --halo-gain is how much bigger
+   it gets at full volume. The short transition fills the gap between the
+   ten-a-second readings. */
+.speaking-halo {
+  transform: scale(calc(1 + var(--voice-level, 0) * var(--halo-gain, 0.3)));
+  opacity: calc(0.12 + var(--voice-level, 0) * 0.43);
+  transition:
+    transform 100ms linear,
+    opacity 100ms linear;
+}
+
 @keyframes fadeIn {
   to {
     opacity: 1;
