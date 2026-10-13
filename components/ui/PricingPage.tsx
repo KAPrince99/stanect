@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { fetchSubscriptionStatus } from "@/app/(app)/actions/subs";
 import { TIERS } from "@/app/constants";
 
-import LoadingSpinner from "./LoadingSpinner";
+import { PricingRouteLoading } from "./AppRouteLoading";
 import PricingPageView from "./pricing/PricingPageView";
 import type { BillingInterval } from "./pricing/pricingShared";
 
@@ -106,11 +106,11 @@ function PricingPage() {
   }, [refetchSubscriptionStatus]);
 
   if (!isClerkLoaded) {
-    return <LoadingSpinner />;
+    return <PricingRouteLoading />;
   }
 
   if (clerkUserId && isLoading && !subscriptionData) {
-    return <LoadingSpinner />;
+    return <PricingRouteLoading />;
   }
 
   const currencyTier = TIERS.find((tier) => tier.key === currencyDialogTier);

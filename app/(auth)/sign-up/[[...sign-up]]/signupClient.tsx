@@ -1,14 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+
+import { AuthRouteLoading } from "@/components/ui/auth/AuthSkeleton";
 
 const SignupComponent = dynamic(
   () => import("@/components/ui/SignupComponent"),
   {
     ssr: false,
-    loading: () => <LoadingSpinner />,
-  }
+    loading: () => <AuthRouteLoading mode="signup" />,
+  },
 );
 
 export default function SignupClient() {

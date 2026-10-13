@@ -35,6 +35,21 @@ describe("PaymentHandler", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("shows the live verifying screen while Paystack is contacted", () => {
+    testMocks.searchParams = new URLSearchParams({ reference: "ref_hang" });
+    fetchMock.mockReturnValue(new Promise(() => {}));
+
+    const { container } = renderWithProviders(<PaymentHandler />);
+
+    expect(
+      screen.getByRole("heading", { name: "Verifying Transaction" }),
+    ).toBeInTheDocument();
+    expect(container.querySelector(".animate-spin")).toBeTruthy();
+    expect(
+      screen.queryByRole("status", { name: "Verifying payment" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("accepts trxref when reference is missing", async () => {
     testMocks.searchParams = new URLSearchParams({ trxref: "trx_1" });
     fetchMock.mockResolvedValue({

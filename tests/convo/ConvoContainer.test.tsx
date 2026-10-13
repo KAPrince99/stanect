@@ -86,13 +86,16 @@ describe("ConvoContainer", () => {
     resetConvoStore();
   });
 
-  it("shows a spinner while the companion is loading", () => {
+  it("shows the conversation skeleton while the companion is loading", () => {
     convoData.isLoading = true;
     convoData.companion = null;
 
     const { container } = renderWithProviders(<ConvoContainer id="c1" />);
 
-    expect(container.querySelector(".animate-spin")).toBeTruthy();
+    expect(
+      screen.getByRole("status", { name: "Loading conversation" }),
+    ).toBeInTheDocument();
+    expect(container.querySelector(".animate-spin")).toBeNull();
     expect(screen.queryByRole("heading", { name: "Mia" })).not.toBeInTheDocument();
   });
 

@@ -47,14 +47,17 @@ describe("ProfileContainer", () => {
     fetchSubscriptionStatus.mockResolvedValue({ plan: "free", status: "active" });
   });
 
-  it("shows a spinner while the profile is loading", () => {
+  it("shows the profile skeleton while the profile is loading", () => {
     getUser.mockReturnValue(new Promise(() => {}));
 
     const { container } = renderWithProviders(
       <ProfileContainer userId="user_test" />,
     );
 
-    expect(container.querySelector(".animate-spin")).toBeTruthy();
+    expect(
+      screen.getByRole("status", { name: "Loading profile" }),
+    ).toBeInTheDocument();
+    expect(container.querySelector(".animate-spin")).toBeNull();
     expect(screen.queryByRole("heading", { name: "Plan & billing" })).not.toBeInTheDocument();
   });
 

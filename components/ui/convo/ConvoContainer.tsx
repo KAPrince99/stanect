@@ -10,8 +10,8 @@ import { useConvoStore } from "@/store/use-convo-store";
 import BackButton from "@/components/ui/BackButton";
 
 import DeleteCompanionButton from "../deleteCompanionButton";
-import LoadingSpinner from "../LoadingSpinner";
 import ConvoPresenter from "./ConvoPresenter";
+import { ConvoRouteLoading } from "./ConvoSkeleton";
 import { ConvoStageProvider } from "./ConvoStageContext";
 
 interface ConvoContainerProps {
@@ -113,11 +113,7 @@ function ConvoContainer({ id }: ConvoContainerProps) {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex h-full flex-1 items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
+    return <ConvoRouteLoading />;
   }
   if (!companion) return null;
 

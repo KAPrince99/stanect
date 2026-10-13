@@ -2,17 +2,13 @@
 
 import dynamic from "next/dynamic";
 
-import LoadingSpinner from "../LoadingSpinner";
+import { ConvoRouteLoading } from "./ConvoSkeleton";
 
 const ConvoContainer = dynamic(
   () => import("@/components/ui/convo/ConvoContainer"),
   {
     ssr: false,
-    loading: () => (
-      <div className="flex h-full flex-1 items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    ),
+    loading: () => <ConvoRouteLoading />,
   },
 );
 

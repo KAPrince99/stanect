@@ -35,7 +35,7 @@ describe("Avatar", () => {
     resetTabFormStore();
   });
 
-  it("shows a spinner until the avatar list loads", async () => {
+  it("shows the avatar skeleton until the avatar list loads", async () => {
     let resolveAvatars: (value: typeof mia[]) => void = () => {};
     getAvatars.mockReturnValue(
       new Promise((resolve) => {
@@ -45,6 +45,9 @@ describe("Avatar", () => {
 
     renderWithProviders(<Avatar />);
 
+    expect(
+      screen.getByRole("status", { name: "Loading avatars" }),
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: "Choose Your Muse" }),
     ).not.toBeInTheDocument();

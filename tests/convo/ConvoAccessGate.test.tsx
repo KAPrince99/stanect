@@ -37,7 +37,10 @@ describe("ConvoAccessGate", () => {
     );
 
     expect(screen.queryByText("Call stage")).not.toBeInTheDocument();
-    expect(container.querySelector(".animate-spin")).toBeTruthy();
+    expect(
+      screen.getByRole("status", { name: "Loading conversation" }),
+    ).toBeInTheDocument();
+    expect(container.querySelector(".animate-spin")).toBeNull();
   });
 
   it("fails closed when the access check errors", async () => {

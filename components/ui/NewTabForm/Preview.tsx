@@ -10,8 +10,8 @@ import { useRouter } from "next/navigation";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import LoadingSpinner from "../LoadingSpinner";
 import PreviewView from "./PreviewView";
+import { PreviewSkeleton } from "./PreviewSkeleton";
 
 interface PreviewProps {
   onEditStep?: (index: number) => void;
@@ -149,7 +149,7 @@ function Preview({ onEditStep }: PreviewProps) {
     });
   };
 
-  if (isLoading && !selectedAvatar) return <LoadingSpinner />;
+  if (isLoading && !selectedAvatar) return <PreviewSkeleton />;
   if (error) return <p className="text-red-300">Unable to load preview.</p>;
   if (!previewCompanion) {
     return <p className="text-white/70">No avatar available for preview.</p>;

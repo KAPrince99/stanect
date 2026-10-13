@@ -46,9 +46,12 @@ describe("PricingPage", () => {
     const { container } = renderWithProviders(<PricingPage />);
 
     expect(
+      screen.getByRole("status", { name: "Loading pricing" }),
+    ).toBeInTheDocument();
+    expect(
       screen.queryByRole("heading", { name: "Choose your plan" }),
     ).not.toBeInTheDocument();
-    expect(container.querySelector(".animate-spin")).toBeTruthy();
+    expect(container.querySelector(".animate-spin")).toBeNull();
   });
 
   it("waits for the current subscription before showing plans", () => {
@@ -57,9 +60,12 @@ describe("PricingPage", () => {
     const { container } = renderWithProviders(<PricingPage />);
 
     expect(
+      screen.getByRole("status", { name: "Loading pricing" }),
+    ).toBeInTheDocument();
+    expect(
       screen.queryByRole("heading", { name: "Choose your plan" }),
     ).not.toBeInTheDocument();
-    expect(container.querySelector(".animate-spin")).toBeTruthy();
+    expect(container.querySelector(".animate-spin")).toBeNull();
   });
 
   it("asks a paid account to confirm before downgrading to free", async () => {

@@ -6,8 +6,8 @@ import type { AvatarProps } from "@/types/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect } from "react";
 
-import LoadingSpinner from "../LoadingSpinner";
 import AvatarGrid from "./AvatarGrid";
+import { AvatarSkeleton } from "./AvatarSkeleton";
 import TabContentHeader from "./TabContentHeader";
 
 function seedAvatarQueries(
@@ -65,7 +65,7 @@ function Avatar() {
     }
   }, [avatars, queryClient, selectedAvatarId]);
 
-  if (avatarsLoading && !avatars) return <LoadingSpinner />;
+  if (avatarsLoading && !avatars) return <AvatarSkeleton />;
   if (error) return <div>Error loading avatars</div>;
 
   return (

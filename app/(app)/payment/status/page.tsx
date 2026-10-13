@@ -10,6 +10,7 @@ import {
   clearPendingPaymentStatus,
   fetchSubscriptionStatus,
 } from "@/app/(app)/actions/subs";
+import { PaymentStatusSkeleton } from "@/components/payments/PaymentSkeleton";
 import SuccessView from "@/components/payments/SuccessView";
 import ErrorView from "@/components/payments/ErrorView";
 
@@ -100,7 +101,7 @@ function StatusContent() {
 export default function PaymentStatusPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl items-center justify-center px-4 py-20">
-      <Suspense fallback={<Loader2 className="animate-spin text-amber-500" />}>
+      <Suspense fallback={<PaymentStatusSkeleton />}>
         <StatusContent />
       </Suspense>
     </main>

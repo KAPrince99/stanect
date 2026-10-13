@@ -59,6 +59,9 @@ describe("Preview", () => {
     renderWithProviders(<Preview />);
 
     expect(
+      screen.getByRole("status", { name: "Loading preview" }),
+    ).toBeInTheDocument();
+    expect(
       screen.queryByRole("heading", { name: "Review companion" }),
     ).not.toBeInTheDocument();
 

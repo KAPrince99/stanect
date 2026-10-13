@@ -8,7 +8,7 @@ import { memo, useMemo } from "react";
 import { getCompanions, getUser } from "@/app/(app)/actions/actions";
 import { fetchSubscriptionStatus } from "@/app/(app)/actions/subs";
 import { effectiveDailySecondsUsed } from "@/lib/plan-utils";
-import LoadingSpinner from "../LoadingSpinner";
+import { ProfileRouteLoading } from "../AppRouteLoading";
 import UpdateProfile from "./updateProfile";
 import UpdatePlan from "./updatePlan";
 import { buildProfileInfoItems } from "./profileInfoItems";
@@ -151,7 +151,7 @@ function ProfileContainer({ userId }: { userId: string }) {
   );
 
   if (isUserLoading || isCompanionsLoading || isSubLoading) {
-    return <LoadingSpinner />;
+    return <ProfileRouteLoading />;
   }
 
   if (isUserError) {
