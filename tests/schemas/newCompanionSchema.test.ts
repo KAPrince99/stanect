@@ -5,7 +5,7 @@ import {
   companionSchema,
   sceneSchema,
   sessionLengthSchema,
-} from "./newCompanionSchema";
+} from "@/schemas/newCompanionSchema";
 
 const validCompanion = {
   avatarId: "avatar_1",

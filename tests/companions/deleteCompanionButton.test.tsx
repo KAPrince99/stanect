@@ -3,10 +3,10 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { testMocks } from "@/test/mocks";
-import { renderWithProviders } from "@/test/render";
+import { testMocks } from "@/tests/support/mocks";
+import { renderWithProviders } from "@/tests/support/render";
 
-import DeleteCompanionButton from "./deleteCompanionButton";
+import DeleteCompanionButton from "@/components/ui/deleteCompanionButton";
 
 const { deleteCompanion } = vi.hoisted(() => ({
   deleteCompanion: vi.fn(),

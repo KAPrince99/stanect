@@ -1,9 +1,9 @@
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { renderWithProviders } from "@/test/render";
+import { renderWithProviders } from "@/tests/support/render";
 
-import ProfileContainer from "./ProfileContainer";
+import ProfileContainer from "@/components/ui/profileRelated/ProfileContainer";
 
 const { getUser, getCompanions, fetchSubscriptionStatus } = vi.hoisted(() => ({
   getUser: vi.fn(),

@@ -2,11 +2,11 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { installLocationStub } from "@/test/location";
-import { testMocks } from "@/test/mocks";
-import { renderWithProviders } from "@/test/render";
+import { installLocationStub } from "@/tests/support/location";
+import { testMocks } from "@/tests/support/mocks";
+import { renderWithProviders } from "@/tests/support/render";
 
-import PricingPage from "./PricingPage";
+import PricingPage from "@/components/ui/PricingPage";
 
 const { fetchSubscriptionStatus } = vi.hoisted(() => ({
   fetchSubscriptionStatus: vi.fn(),

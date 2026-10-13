@@ -2,9 +2,9 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { renderWithProviders } from "@/test/render";
+import { renderWithProviders } from "@/tests/support/render";
 
-import ConvoGuard from "./convoGuard";
+import ConvoGuard from "@/components/ui/convoGuard";
 
 describe("ConvoGuard", () => {
   it("offers an upgrade when the trial has ended", () => {

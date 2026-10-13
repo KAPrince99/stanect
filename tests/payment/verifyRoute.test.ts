@@ -26,7 +26,7 @@ vi.mock("@/lib/supa-service", () => ({
   supabase: { from },
 }));
 
-import { GET } from "./route";
+import { GET } from "@/app/(app)/api/paystack/verify/route";
 
 function request(reference = "ref_1") {
   return new NextRequest(

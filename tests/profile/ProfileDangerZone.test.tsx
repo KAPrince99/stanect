@@ -2,10 +2,10 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import { testMocks } from "@/test/mocks";
-import { renderWithProviders } from "@/test/render";
+import { testMocks } from "@/tests/support/mocks";
+import { renderWithProviders } from "@/tests/support/render";
 
-import ProfileDangerZone from "./ProfileDangerZone";
+import ProfileDangerZone from "@/components/ui/profileRelated/ProfileDangerZone";
 
 describe("ProfileDangerZone", () => {
   it("deletes the Clerk user and leaves the app", async () => {

@@ -2,9 +2,9 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { renderWithProviders } from "@/test/render";
+import { renderWithProviders } from "@/tests/support/render";
 
-import ConvoAccessGate from "./ConvoAccessGate";
+import ConvoAccessGate from "@/components/ui/convo/ConvoAccessGate";
 
 const { fetchUserNecessities } = vi.hoisted(() => ({
   fetchUserNecessities: vi.fn(),

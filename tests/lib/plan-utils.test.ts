@@ -8,7 +8,7 @@ import {
   isTrialExpired,
   readLastUsageDate,
   utcDateKey,
-} from "./plan-utils";
+} from "@/lib/plan-utils";
 
 const NOW = new Date("2026-10-12T12:00:00.000Z");
 

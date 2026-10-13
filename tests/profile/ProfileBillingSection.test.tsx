@@ -2,11 +2,11 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { installLocationStub } from "@/test/location";
-import { testMocks } from "@/test/mocks";
-import { renderWithProviders } from "@/test/render";
+import { installLocationStub } from "@/tests/support/location";
+import { testMocks } from "@/tests/support/mocks";
+import { renderWithProviders } from "@/tests/support/render";
 
-import ProfileBillingSection from "./ProfileBillingSection";
+import ProfileBillingSection from "@/components/ui/profileRelated/ProfileBillingSection";
 
 function jsonResponse(body: unknown, ok = true) {
   return {

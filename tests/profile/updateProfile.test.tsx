@@ -2,10 +2,10 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { testMocks } from "@/test/mocks";
-import { renderWithProviders } from "@/test/render";
+import { testMocks } from "@/tests/support/mocks";
+import { renderWithProviders } from "@/tests/support/render";
 
-import UpdateProfile from "./updateProfile";
+import UpdateProfile from "@/components/ui/profileRelated/updateProfile";
 
 const { updateProfile } = vi.hoisted(() => ({
   updateProfile: vi.fn(),

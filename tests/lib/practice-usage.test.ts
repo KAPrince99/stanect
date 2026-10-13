@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { resolvePlanLabel, resolvePracticeUsage } from "./practice-usage";
+import { resolvePlanLabel, resolvePracticeUsage } from "@/lib/practice-usage";
 
 const NOW = new Date("2026-10-12T12:00:00.000Z");
 

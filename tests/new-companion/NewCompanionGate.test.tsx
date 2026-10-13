@@ -1,9 +1,9 @@
 import { screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { renderWithProviders } from "@/test/render";
+import { renderWithProviders } from "@/tests/support/render";
 
-import NewCompanionGate from "./NewCompanionGate";
+import NewCompanionGate from "@/components/ui/NewTabForm/NewCompanionGate";
 
 const { getCreateCompanionGate } = vi.hoisted(() => ({
   getCreateCompanionGate: vi.fn(),

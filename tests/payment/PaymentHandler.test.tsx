@@ -3,11 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { installLocationStub } from "@/test/location";
-import { testMocks } from "@/test/mocks";
-import { renderWithProviders } from "@/test/render";
+import { installLocationStub } from "@/tests/support/location";
+import { testMocks } from "@/tests/support/mocks";
+import { renderWithProviders } from "@/tests/support/render";
 
-import PaymentHandler from "./PaymentHandler";
+import PaymentHandler from "@/app/(app)/payment/callback/PaymentHandler";
 
 describe("PaymentHandler", () => {
   const fetchMock = vi.fn();

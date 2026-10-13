@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { updateProfileSchema } from "./updateProfileSchema";
+import { updateProfileSchema } from "@/schemas/updateProfileSchema";
 
 describe("update profile schema", () => {
   it("trims the name and defaults a missing country to Earth", () => {

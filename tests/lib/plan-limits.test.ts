@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { PLAN_LIMITS } from "./plan-limits";
+import { PLAN_LIMITS } from "@/lib/plan-limits";
 
 describe("PLAN_LIMITS", () => {
   it("caps free accounts at one companion, 6 daily minutes, and a 2 minute session", () => {
