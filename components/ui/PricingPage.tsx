@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { memo, useCallback, useState } from "react";
 import { toast } from "sonner";
 
@@ -17,7 +16,6 @@ type TierKey = (typeof TIERS)[number]["key"];
 
 function PricingPage() {
   const { user, isLoaded: isClerkLoaded } = useUser();
-  const router = useRouter();
 
   const [billingInterval, setBillingInterval] =
     useState<BillingInterval>("monthly");
@@ -39,6 +37,8 @@ function PricingPage() {
     queryFn: () => fetchSubscriptionStatus(),
     staleTime: 1000 * 60 * 5,
   });
+
+  const currentPlan = subscriptionData?.plan || "free";
 
   const startCheckout = useCallback(
     async (tierKey: TierKey) => {
@@ -67,21 +67,14 @@ function PricingPage() {
 
   const handleSubscribe = useCallback(
     async (tierKey: TierKey) => {
-      const currentPlan = subscriptionData?.plan;
-
-      if (tierKey === "free" && currentPlan && currentPlan !== "free") {
-        setIsCancelDialogOpen(true);
-        return;
-      }
-
       if (tierKey === "free") {
-        router.push("/dashboard");
+        if (currentPlan !== "free") setIsCancelDialogOpen(true);
         return;
       }
 
       setCurrencyDialogTier(tierKey);
     },
-    [router, subscriptionData],
+    [currentPlan],
   );
 
   const confirmCurrencyAndPay = useCallback(async () => {
@@ -133,7 +126,7 @@ function PricingPage() {
     <PricingPageView
       billingInterval={billingInterval}
       onIntervalChange={setBillingInterval}
-      currentPlan={subscriptionData?.plan}
+      currentPlan={currentPlan}
       pendingTierKey={pendingTierKey}
       onSelectTier={handleSubscribe}
       isCancelDialogOpen={isCancelDialogOpen}

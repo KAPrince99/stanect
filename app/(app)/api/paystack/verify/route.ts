@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import { supabase } from "@/lib/supa-service";
 
+const PENDING_PAYSTACK_STATUSES = new Set([
+  "pending",
+  "ongoing",
+  "processing",
+  "queued",
+]);
+
+function outcomeStatus(status: unknown) {
+  if (typeof status === "string" && PENDING_PAYSTACK_STATUSES.has(status)) {
+    return "pending";
+  }
+  return "failed";
+}
+
 export async function GET(req: NextRequest) {
   const reference = req.nextUrl.searchParams.get("reference");
 
@@ -36,12 +50,24 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ data: verifyRes.data.data });
     }
 
-    return NextResponse.json(
-      { error: "Transaction not successful" },
-      { status: 400 },
-    );
-  } catch (error: any) {
-    console.error("Verification Error:", error.response?.data || error.message);
-    return NextResponse.json({ error: "Verification failed" }, { status: 500 });
+    return NextResponse.json({
+      data: { status: outcomeStatus(status), metadata },
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      const paystackData = error.response.data?.data as
+        | { status?: unknown; metadata?: unknown }
+        | undefined;
+      return NextResponse.json({
+        data: {
+          status: outcomeStatus(paystackData?.status),
+          metadata: paystackData?.metadata,
+        },
+      });
+    }
+
+    const message = error instanceof Error ? error.message : "Verification failed";
+    console.error("Verification Error:", message);
+    return NextResponse.json({ error: "Verification failed" }, { status: 503 });
   }
 }
