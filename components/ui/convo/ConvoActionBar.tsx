@@ -34,8 +34,9 @@ function ConvoActionBar() {
       {!isCallLive ? (
         <Button
           variant="success"
-          size="lg"
-          className="shadow-lg shadow-emerald-500/25 hover:scale-[1.02] hover:shadow-emerald-500/40"
+          size="md"
+          // Same size as Continue / Create companion on the dashboard.
+          className="sm:w-48 sm:gap-2 sm:px-4 sm:has-[>svg]:px-4"
           onClick={onStartCall}
           disabled={showStarting || !hasAssistantId}
         >

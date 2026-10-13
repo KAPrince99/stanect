@@ -48,11 +48,16 @@ describe("ConvoActionBar", () => {
     expect(stage.onStartCall).not.toHaveBeenCalled();
   });
 
-  it("uses the shared button styles: green start, red end, 48px height for start and transcript", () => {
+  it("uses the shared button styles: green start (same size as the dashboard buttons), red end", () => {
     const { unmount } = renderBar(convoStage({ isDesktop: false }));
 
     const start = screen.getByRole("button", { name: "Start Call" });
-    expect(start).toHaveClass("from-success-from", "h-12", "rounded-full");
+    expect(start).toHaveClass(
+      "from-success-from",
+      "h-11",
+      "sm:w-48",
+      "rounded-full",
+    );
     expect(screen.getByRole("button", { name: "Show transcript" })).toHaveClass(
       "size-12",
       "rounded-full",
