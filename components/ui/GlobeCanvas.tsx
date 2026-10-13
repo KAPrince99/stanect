@@ -1,6 +1,6 @@
 "use client";
 import { Globe } from "./Globe";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { memo, useEffect, useRef } from "react";
 
@@ -23,6 +23,32 @@ function DemandInvalidator({ enabled }: { enabled: boolean }) {
   return null;
 }
 
+/** Draws two frames, then tells the call screen the globe is actually on screen. */
+function FirstPaint({ onReady }: { onReady?: () => void }) {
+  const { invalidate } = useThree();
+  const frames = useRef(0);
+  const signalled = useRef(false);
+
+  useEffect(() => {
+    invalidate();
+  }, [invalidate]);
+
+  useFrame(() => {
+    if (signalled.current) return;
+
+    frames.current += 1;
+    if (frames.current < 2) {
+      invalidate();
+      return;
+    }
+
+    signalled.current = true;
+    requestAnimationFrame(() => onReady?.());
+  });
+
+  return null;
+}
+
 function GlobeCanvas({
   isCallLive,
   onReady,
@@ -30,8 +56,6 @@ function GlobeCanvas({
   isCallLive: boolean;
   onReady?: () => void;
 }) {
-  const signalled = useRef(false);
-
   return (
     <Canvas
       camera={{ position: [8, 8, 8], fov: 50 }}
@@ -40,20 +64,11 @@ function GlobeCanvas({
       dpr={[1, 1.25]}
       // Avoid tearing down the GL context when React reconciles parents.
       gl={{ antialias: true, powerPreference: "high-performance" }}
-      onCreated={(state) => {
-        state.invalidate();
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            if (signalled.current) return;
-            signalled.current = true;
-            onReady?.();
-          });
-        });
-      }}
     >
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 5, 5]} />
       <Globe isActive={isCallLive} />
+      <FirstPaint onReady={onReady} />
       <DemandInvalidator enabled={isCallLive} />
       <OrbitControls
         enableZoom={false}

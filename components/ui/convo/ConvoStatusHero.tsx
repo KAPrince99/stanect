@@ -151,7 +151,7 @@ function ConvoStatusHero({ onGlobeReady }: { onGlobeReady?: () => void }) {
   return (
     <div className="flex w-full min-h-0 flex-col items-center">
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-lg shrink-0 space-y-3 pt-4 pb-2 text-center sm:pt-6"
       >

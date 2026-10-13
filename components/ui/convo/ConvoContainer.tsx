@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { memo, useCallback, useEffect, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useConvoData } from "@/hooks/useConvoData";
 import { useConvoSession } from "@/hooks/useConvoSession";
 import { useCompanionTranscript } from "@/hooks/useCompanionTranscript";
@@ -24,6 +24,10 @@ function ConvoContainer({ id }: ConvoContainerProps) {
   const callStatus = useConvoStore((s) => s.callStatus);
   const isCallInProgress =
     callStatus === "ACTIVE" || callStatus === "CONNECTING";
+  const [readyForId, setReadyForId] = useState<string | null>(null);
+  const globeReady = readyForId === id;
+  const onGlobeReady = useCallback(() => setReadyForId(id), [id]);
+  const showSkeleton = isLoading || !globeReady;
 
   useEffect(() => {
     if (id) setLastCompanionId(id);
@@ -116,15 +120,31 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     ],
   );
 
-  if (isLoading) {
-    return <ConvoRouteLoading />;
-  }
-  if (!companion) return null;
+  if (!companion && !isLoading) return null;
 
   return (
-    <ConvoStageProvider value={stage}>
-      <ConvoPresenter />
-    </ConvoStageProvider>
+    <div className="relative flex h-full min-h-0 w-full flex-1 flex-col">
+      {companion ? (
+        <div
+          aria-hidden={!globeReady}
+          className="flex h-full min-h-0 w-full flex-1 flex-col"
+        >
+          <ConvoStageProvider value={stage}>
+            <ConvoPresenter onGlobeReady={onGlobeReady} />
+          </ConvoStageProvider>
+        </div>
+      ) : null}
+
+      {showSkeleton ? (
+        <div className="absolute inset-0 z-40 flex flex-col">
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-backdrop-from via-backdrop-via to-backdrop-to" />
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
+          <div className="relative flex h-full min-h-0 flex-1 flex-col">
+            <ConvoRouteLoading />
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }
 

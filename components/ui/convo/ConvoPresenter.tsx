@@ -2,12 +2,11 @@
 
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
-import { memo, useCallback, useState } from "react";
+import { memo } from "react";
 
 import { motionVariants } from "@/lib/motion";
 
 import ConvoActionBar from "./ConvoActionBar";
-import { ConvoRouteLoading } from "./ConvoSkeleton";
 import { useConvoStage } from "./ConvoStageContext";
 import ConvoStatusHero from "./ConvoStatusHero";
 import SessionEndedModal from "./sessionEndedModal";
@@ -16,7 +15,7 @@ import {
   TranscriptPanel,
 } from "./TranscriptBlock";
 
-function ConvoPresenter() {
+function ConvoPresenter({ onGlobeReady }: { onGlobeReady?: () => void }) {
   const {
     companionId,
     companionName,
@@ -25,18 +24,12 @@ function ConvoPresenter() {
     deleteAction,
   } = useConvoStage();
   const scene = companionScene?.trim();
-  const [globeReady, setGlobeReady] = useState(false);
-  const onGlobeReady = useCallback(() => setGlobeReady(true), []);
 
   return (
     <div className="relative flex h-full min-h-0 w-full flex-1 flex-col">
-      <div
-        aria-hidden={!globeReady}
-        className="relative flex h-full min-h-0 w-full flex-1 flex-col"
-      >
       <motion.main
         variants={motionVariants.fadeUp}
-        initial="hidden"
+        initial={false}
         animate="visible"
         className="relative grid h-full min-h-0 w-full flex-1 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden text-white md:rounded-3xl md:border md:border-white/10 md:bg-white/5 md:shadow-2xl md:backdrop-blur-xl lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_24rem]"
       >
@@ -82,13 +75,6 @@ function ConvoPresenter() {
 
       <MobileTranscriptOverlay />
       <SessionEndedModal />
-      </div>
-
-      {globeReady ? null : (
-        <div className="absolute inset-0 z-40 flex flex-col">
-          <ConvoRouteLoading />
-        </div>
-      )}
     </div>
   );
 }
