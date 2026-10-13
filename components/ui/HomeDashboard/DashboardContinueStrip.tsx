@@ -26,6 +26,11 @@ interface DashboardContinueStripProps {
   planBadgeTone?: UsageTone;
 }
 
+// Continue and Create companion share one size from `sm` up: same height (md, 44px),
+// same width, same padding and gap, so neither looks bigger than the other.
+const SHARED_ACTION_SIZE =
+  "sm:w-48 sm:gap-2 sm:px-4 sm:has-[>svg]:px-4";
+
 const usageToneClass: Record<UsageTone, string> = {
   ok: "border-white/15 bg-white/8 text-white/75",
   low: "border-amber-300/25 bg-amber-400/10 text-amber-200",
@@ -54,7 +59,7 @@ function DashboardContinueStrip({
       asChild
       variant="primary"
       size="md"
-      className={cn("shadow-md shadow-amber-500/20", className)}
+      className={cn(SHARED_ACTION_SIZE, className)}
     >
       <Link
         href={continueHref}
@@ -138,8 +143,8 @@ function DashboardContinueStrip({
               asChild
               variant="secondary"
               size="md"
-              // Icon-only square on phones, labelled pill from `sm`.
-              className="w-11 px-0 has-[>svg]:px-0 sm:w-auto sm:gap-1 sm:px-4 sm:has-[>svg]:px-4"
+              // Icon-only square on phones, labelled pill from `sm` (same size as Continue).
+              className={cn("w-11 px-0 has-[>svg]:px-0", SHARED_ACTION_SIZE)}
             >
               <Link
                 href="/new"
