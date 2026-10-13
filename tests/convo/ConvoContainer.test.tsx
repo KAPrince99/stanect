@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { testMocks } from "@/tests/support/mocks";
 import { renderWithProviders } from "@/tests/support/render";
 import { resetConvoStore } from "@/tests/support/convo";
+import { useGlobeRuntime } from "@/components/ui/GlobeRuntime";
 import { useConvoStore } from "@/store/use-convo-store";
 
 import ConvoContainer from "@/components/ui/convo/ConvoContainer";
@@ -21,20 +22,6 @@ const convoData = vi.hoisted(() => ({
   isLoading: false,
   userPlan: "free" as "free" | "pro" | "king",
   userAvatarUrl: "/avatars/ada.jpg" as string | undefined,
-}));
-
-const globeGate = vi.hoisted(() => ({
-  hold: false,
-  pending: null as null | (() => void),
-  reset() {
-    globeGate.hold = false;
-    globeGate.pending = null;
-  },
-  release() {
-    globeGate.hold = false;
-    globeGate.pending?.();
-    globeGate.pending = null;
-  },
 }));
 
 const convoSession = vi.hoisted(() => ({
@@ -65,22 +52,6 @@ vi.mock("@/hooks/useCompanionTranscript", () => ({
   useCompanionTranscript: () => {},
 }));
 
-vi.mock("@/components/ui/GlobeCanvas", async () => {
-  const { useEffect } = await import("react");
-  return {
-    default: function MockGlobeCanvas({ onReady }: { onReady?: () => void }) {
-      useEffect(() => {
-        if (globeGate.hold) {
-          globeGate.pending = onReady ?? null;
-          return;
-        }
-        onReady?.();
-      }, [onReady]);
-      return null;
-    },
-  };
-});
-
 vi.mock("@/app/(app)/actions/actions", () => ({
   deleteCompanion: vi.fn(),
 }));
@@ -97,7 +68,8 @@ const mia = {
 describe("ConvoContainer", () => {
   beforeEach(() => {
     resetConvoStore();
-    globeGate.reset();
+    useGlobeRuntime.getState().reset();
+    useGlobeRuntime.setState({ painted: true });
     convoData.companion = mia;
     convoData.isLoading = false;
     convoData.userPlan = "free";
@@ -111,6 +83,7 @@ describe("ConvoContainer", () => {
 
   afterEach(() => {
     resetConvoStore();
+    useGlobeRuntime.getState().reset();
   });
 
   it("shows the conversation skeleton while the companion is loading", () => {
@@ -135,7 +108,7 @@ describe("ConvoContainer", () => {
   });
 
   it("keeps the conversation skeleton until the globe is ready", async () => {
-    globeGate.hold = true;
+    useGlobeRuntime.setState({ painted: false });
     renderWithProviders(<ConvoContainer id="c1" />);
 
     expect(
@@ -144,12 +117,22 @@ describe("ConvoContainer", () => {
     expect(screen.queryByRole("heading", { name: "Mia" })).not.toBeInTheDocument();
 
     act(() => {
-      globeGate.release();
+      useGlobeRuntime.getState().markPainted();
     });
 
     expect(
       await screen.findByRole("heading", { name: "Mia" }),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("status", { name: "Loading conversation" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not wait on the globe again after it has already painted", () => {
+    useGlobeRuntime.setState({ painted: true });
+    renderWithProviders(<ConvoContainer id="c1" />);
+
+    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
     expect(
       screen.queryByRole("status", { name: "Loading conversation" }),
     ).not.toBeInTheDocument();

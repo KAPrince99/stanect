@@ -49,11 +49,24 @@ function FirstPaint({ onReady }: { onReady?: () => void }) {
   return null;
 }
 
+/** Kick one frame when the parked globe is shown again (demand loop is idle). */
+function Wake({ awake }: { awake: boolean }) {
+  const { invalidate } = useThree();
+
+  useEffect(() => {
+    if (awake) invalidate();
+  }, [awake, invalidate]);
+
+  return null;
+}
+
 function GlobeCanvas({
   isCallLive,
+  awake = true,
   onReady,
 }: {
   isCallLive: boolean;
+  awake?: boolean;
   onReady?: () => void;
 }) {
   return (
@@ -69,6 +82,7 @@ function GlobeCanvas({
       <directionalLight position={[5, 5, 5]} />
       <Globe isActive={isCallLive} />
       <FirstPaint onReady={onReady} />
+      <Wake awake={awake} />
       <DemandInvalidator enabled={isCallLive} />
       <OrbitControls
         enableZoom={false}
@@ -83,5 +97,7 @@ function GlobeCanvas({
 export default memo(
   GlobeCanvas,
   (prev, next) =>
-    prev.isCallLive === next.isCallLive && prev.onReady === next.onReady,
+    prev.isCallLive === next.isCallLive &&
+    prev.awake === next.awake &&
+    prev.onReady === next.onReady,
 );

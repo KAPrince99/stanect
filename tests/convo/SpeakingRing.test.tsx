@@ -1,11 +1,13 @@
 import { act, render, screen } from "@testing-library/react";
 import { Profiler } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import ConvoStatusHero from "@/components/ui/convo/ConvoStatusHero";
 import { ConvoStageProvider } from "@/components/ui/convo/ConvoStageContext";
 import { publishVoiceLevel } from "@/lib/voice-level";
 import { useConvoStore } from "@/store/use-convo-store";
+
+import { useGlobeRuntime } from "@/components/ui/GlobeRuntime";
 
 import { convoStage, resetConvoStore } from "../support/convo";
 
@@ -51,7 +53,12 @@ function setSpeaker(speaker: "assistant" | "user" | null) {
 
 beforeEach(() => {
   resetConvoStore();
+  useGlobeRuntime.getState().reset();
   useConvoStore.setState({ callStatus: "ACTIVE" });
+});
+
+afterEach(() => {
+  useGlobeRuntime.getState().reset();
 });
 
 describe("speaking ring on the avatars", () => {

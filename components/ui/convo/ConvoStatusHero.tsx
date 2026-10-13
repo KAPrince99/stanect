@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { memo, useEffect, useRef } from "react";
+
+import { useGlobeSlot } from "../GlobeRuntime";
 
 import { subscribeVoiceLevel } from "@/lib/voice-level";
 import { useConvoStore, type Speaker } from "@/store/use-convo-store";
@@ -11,10 +12,6 @@ import { useConvoStore, type Speaker } from "@/store/use-convo-store";
 import ConvoLiveTimer from "./ConvoLiveTimer";
 import { convoStatusConfig } from "./convo-status-config";
 import { useConvoStage } from "./ConvoStageContext";
-
-const GlobeCanvas = dynamic(() => import("../GlobeCanvas"), {
-  ssr: false,
-});
 
 /**
  * Round portrait pinned to the far left or far right edge of the call area,
@@ -103,18 +100,17 @@ function GlobePortrait({
 
 /** Only mounts/updates when call liveness flips — never on timer ticks. */
 function ConvoOrbStage({
-  isCallLive,
   companionName,
   companionAvatarUrl,
   userAvatarUrl,
-  onGlobeReady,
 }: {
-  isCallLive: boolean;
   companionName: string;
   companionAvatarUrl?: string | null;
   userAvatarUrl?: string | null;
-  onGlobeReady?: () => void;
 }) {
+  const globeSlotRef = useRef<HTMLDivElement>(null);
+  useGlobeSlot(globeSlotRef);
+
   return (
     <div className="relative mx-auto my-2 flex w-full items-center justify-center sm:my-4 lg:mb-10">
       {companionAvatarUrl ? (
@@ -133,16 +129,17 @@ function ConvoOrbStage({
           role="user"
         />
       ) : null}
-      <div className="relative aspect-square w-[220px] sm:w-72 xl:w-[23rem] 2xl:w-[26rem]">
-        <GlobeCanvas isCallLive={isCallLive} onReady={onGlobeReady} />
-      </div>
+      <div
+        ref={globeSlotRef}
+        className="relative aspect-square w-[220px] sm:w-72 xl:w-[23rem] 2xl:w-[26rem]"
+      />
     </div>
   );
 }
 
 const MemoConvoOrbStage = memo(ConvoOrbStage);
 
-function ConvoStatusHero({ onGlobeReady }: { onGlobeReady?: () => void }) {
+function ConvoStatusHero() {
   const { companionName, companionAvatarUrl, userAvatarUrl } = useConvoStage();
   const callStatus = useConvoStore((s) => s.callStatus);
   const isCallLive = callStatus === "ACTIVE";
@@ -176,11 +173,9 @@ function ConvoStatusHero({ onGlobeReady }: { onGlobeReady?: () => void }) {
       </motion.div>
 
       <MemoConvoOrbStage
-        isCallLive={isCallLive}
         companionName={companionName || "Your AI Companion"}
         companionAvatarUrl={companionAvatarUrl}
         userAvatarUrl={userAvatarUrl}
-        onGlobeReady={onGlobeReady}
       />
     </div>
   );

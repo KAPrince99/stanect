@@ -15,7 +15,7 @@ import {
   TranscriptPanel,
 } from "./TranscriptBlock";
 
-function ConvoPresenter({ onGlobeReady }: { onGlobeReady?: () => void }) {
+function ConvoPresenter() {
   const {
     companionId,
     companionName,
@@ -61,7 +61,7 @@ function ConvoPresenter({ onGlobeReady }: { onGlobeReady?: () => void }) {
             </div>
           ) : null}
 
-          <ConvoStatusHero onGlobeReady={onGlobeReady} />
+          <ConvoStatusHero />
           <ConvoActionBar />
         </div>
 

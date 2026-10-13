@@ -1,3 +1,4 @@
+import { GlobeRuntime } from "@/components/ui/GlobeRuntime";
 import MobileDock from "@/components/ui/mobileDock";
 import Navbar from "@/components/ui/navbar";
 import Sidebar from "@/components/ui/sidebar";
@@ -35,6 +36,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <MobileDock />
           </div>
         </div>
+
+        <GlobeRuntime />
 
         <Toaster
           position="bottom-right"

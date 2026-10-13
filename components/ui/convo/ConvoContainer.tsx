@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
+
+import { useGlobeRuntime } from "../GlobeRuntime";
 import { useConvoData } from "@/hooks/useConvoData";
 import { useConvoSession } from "@/hooks/useConvoSession";
 import { useCompanionTranscript } from "@/hooks/useCompanionTranscript";
@@ -24,10 +26,8 @@ function ConvoContainer({ id }: ConvoContainerProps) {
   const callStatus = useConvoStore((s) => s.callStatus);
   const isCallInProgress =
     callStatus === "ACTIVE" || callStatus === "CONNECTING";
-  const [readyForId, setReadyForId] = useState<string | null>(null);
-  const globeReady = readyForId === id;
-  const onGlobeReady = useCallback(() => setReadyForId(id), [id]);
-  const showSkeleton = isLoading || !globeReady;
+  const globePainted = useGlobeRuntime((state) => state.painted);
+  const showSkeleton = isLoading || !globePainted;
 
   useEffect(() => {
     if (id) setLastCompanionId(id);
@@ -126,11 +126,11 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     <div className="relative flex h-full min-h-0 w-full flex-1 flex-col">
       {companion ? (
         <div
-          aria-hidden={!globeReady}
+          aria-hidden={!globePainted}
           className="flex h-full min-h-0 w-full flex-1 flex-col"
         >
           <ConvoStageProvider value={stage}>
-            <ConvoPresenter onGlobeReady={onGlobeReady} />
+            <ConvoPresenter />
           </ConvoStageProvider>
         </div>
       ) : null}
