@@ -22,7 +22,7 @@ interface ConvoContainerProps {
 
 function ConvoContainer({ id }: ConvoContainerProps) {
   const router = useRouter();
-  const { companion, isLoading, userPlan } = useConvoData(id);
+  const { companion, isLoading, userPlan, userAvatarUrl } = useConvoData(id);
   const callStatus = useConvoStore((s) => s.callStatus);
   const isCallInProgress =
     callStatus === "ACTIVE" || callStatus === "CONNECTING";
@@ -86,6 +86,9 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     () => ({
       companionId: id,
       companionName: companion?.companion_name || "Your AI Companion",
+      companionScene: companion?.scene ?? null,
+      companionAvatarUrl: companion?.avatars?.image_url ?? null,
+      userAvatarUrl: userAvatarUrl ?? null,
       userPlan,
       hasAssistantId,
       isDesktop,
@@ -103,6 +106,9 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     [
       id,
       companion?.companion_name,
+      companion?.scene,
+      companion?.avatars?.image_url,
+      userAvatarUrl,
       userPlan,
       hasAssistantId,
       isDesktop,

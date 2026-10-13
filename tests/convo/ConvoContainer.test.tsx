@@ -15,9 +15,12 @@ const convoData = vi.hoisted(() => ({
     duration: string;
     assistant_id: string;
     owner_id: string;
+    avatars?: { image_url: string };
+    scene?: string;
   },
   isLoading: false,
   userPlan: "free" as "free" | "pro" | "king",
+  userAvatarUrl: "/avatars/ada.jpg" as string | undefined,
 }));
 
 const convoSession = vi.hoisted(() => ({
@@ -36,6 +39,7 @@ vi.mock("@/hooks/useConvoData", () => ({
     companion: convoData.companion,
     isLoading: convoData.isLoading,
     userPlan: convoData.userPlan,
+    userAvatarUrl: convoData.userAvatarUrl,
   }),
 }));
 
@@ -60,6 +64,8 @@ const mia = {
   duration: "2",
   assistant_id: "asst_1",
   owner_id: "user_test",
+  avatars: { image_url: "/avatars/mia.jpg" },
+  scene: "Gym",
 };
 
 describe("ConvoContainer", () => {
@@ -68,6 +74,7 @@ describe("ConvoContainer", () => {
     convoData.companion = mia;
     convoData.isLoading = false;
     convoData.userPlan = "free";
+    convoData.userAvatarUrl = "/avatars/ada.jpg";
     convoSession.hasAssistantId = true;
     convoSession.isDesktop = true;
     convoSession.loadingMute = false;
@@ -111,6 +118,77 @@ describe("ConvoContainer", () => {
 
     await user.click(screen.getByRole("button", { name: "Back to dashboard" }));
     expect(testMocks.router.push).toHaveBeenCalledWith("/dashboard");
+  });
+
+  it("shows the companion on the left of the globe and the user on the right", () => {
+    renderWithProviders(<ConvoContainer id="c1" />);
+
+    const companion = screen.getByRole("img", { name: "Mia" });
+    const you = screen.getByRole("img", { name: "Your profile picture" });
+
+    expect(companion).toHaveAttribute("src", "/avatars/mia.jpg");
+    expect(you).toHaveAttribute("src", "/avatars/ada.jpg");
+    expect(companion.parentElement).toHaveClass(
+      "left-0",
+      "top-1/2",
+      "-translate-y-1/2",
+    );
+    expect(you.parentElement).toHaveClass(
+      "right-0",
+      "top-1/2",
+      "-translate-y-1/2",
+    );
+  });
+
+  it("shows the scene in the top corner on the same line as Delete", () => {
+    renderWithProviders(<ConvoContainer id="c1" />);
+
+    const scene = screen.getByText("Gym");
+    const deleteButton = screen.getByRole("button", { name: "Delete" });
+
+    expect(scene.closest("div")).toHaveClass("top-3", "sm:top-4", "h-9");
+    expect(deleteButton.parentElement).toHaveClass("top-3", "sm:top-4");
+  });
+
+  it("lines the portraits up with the scene on the left and Delete on the right", () => {
+    renderWithProviders(<ConvoContainer id="c1" />);
+
+    const sceneRow = screen.getByText("Gym").closest("div");
+    const deleteBox = screen.getByRole("button", { name: "Delete" }).parentElement;
+    const companion = screen.getByRole("img", { name: "Mia" }).parentElement;
+    const you = screen.getByRole("img", { name: "Your profile picture" })
+      .parentElement;
+
+    // Portraits sit 0.5rem inside the call area (its padding), so each offset
+    // is the corner row's offset minus 0.5rem.
+    expect(sceneRow).toHaveClass("sm:left-[4.5rem]", "lg:left-4");
+    expect(companion).toHaveClass("sm:left-16", "lg:left-2");
+    // Delete: 1rem box inset + 0.625rem button padding = 1.625rem (26px),
+    // minus 0.5rem = 18px.
+    expect(deleteBox).toHaveClass("sm:right-4");
+    expect(you).toHaveClass("sm:right-[18px]");
+  });
+
+  it("leaves out the scene when it is empty", () => {
+    convoData.companion = { ...mia, scene: "   " };
+
+    renderWithProviders(<ConvoContainer id="c1" />);
+
+    expect(screen.queryByText("Gym")).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+  });
+
+  it("leaves out a portrait that has no picture", () => {
+    convoData.companion = { ...mia, avatars: undefined };
+    convoData.userAvatarUrl = undefined;
+
+    renderWithProviders(<ConvoContainer id="c1" />);
+
+    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: "Mia" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("img", { name: "Your profile picture" }),
+    ).not.toBeInTheDocument();
   });
 
   it("uses a fallback name when the companion name is missing", () => {

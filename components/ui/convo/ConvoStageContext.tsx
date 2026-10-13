@@ -5,6 +5,9 @@ import { createContext, useContext, type ReactNode } from "react";
 export type ConvoStageContextValue = {
   companionId: string;
   companionName: string;
+  companionScene?: string | null;
+  companionAvatarUrl?: string | null;
+  userAvatarUrl?: string | null;
   userPlan: "free" | "pro" | "king";
   hasAssistantId: boolean;
   isDesktop: boolean;
