@@ -2,7 +2,7 @@
 import { Globe } from "./Globe";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useRef } from "react";
 
 function DemandInvalidator({ enabled }: { enabled: boolean }) {
   const { invalidate } = useThree();
@@ -23,7 +23,15 @@ function DemandInvalidator({ enabled }: { enabled: boolean }) {
   return null;
 }
 
-function GlobeCanvas({ isCallLive }: { isCallLive: boolean }) {
+function GlobeCanvas({
+  isCallLive,
+  onReady,
+}: {
+  isCallLive: boolean;
+  onReady?: () => void;
+}) {
+  const signalled = useRef(false);
+
   return (
     <Canvas
       camera={{ position: [8, 8, 8], fov: 50 }}
@@ -32,6 +40,16 @@ function GlobeCanvas({ isCallLive }: { isCallLive: boolean }) {
       dpr={[1, 1.25]}
       // Avoid tearing down the GL context when React reconciles parents.
       gl={{ antialias: true, powerPreference: "high-performance" }}
+      onCreated={(state) => {
+        state.invalidate();
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (signalled.current) return;
+            signalled.current = true;
+            onReady?.();
+          });
+        });
+      }}
     >
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 5, 5]} />
@@ -47,4 +65,8 @@ function GlobeCanvas({ isCallLive }: { isCallLive: boolean }) {
   );
 }
 
-export default memo(GlobeCanvas, (prev, next) => prev.isCallLive === next.isCallLive);
+export default memo(
+  GlobeCanvas,
+  (prev, next) =>
+    prev.isCallLive === next.isCallLive && prev.onReady === next.onReady,
+);

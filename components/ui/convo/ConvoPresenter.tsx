@@ -2,11 +2,12 @@
 
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
-import { memo } from "react";
+import { memo, useCallback, useState } from "react";
 
 import { motionVariants } from "@/lib/motion";
 
 import ConvoActionBar from "./ConvoActionBar";
+import { ConvoRouteLoading } from "./ConvoSkeleton";
 import { useConvoStage } from "./ConvoStageContext";
 import ConvoStatusHero from "./ConvoStatusHero";
 import SessionEndedModal from "./sessionEndedModal";
@@ -24,9 +25,15 @@ function ConvoPresenter() {
     deleteAction,
   } = useConvoStage();
   const scene = companionScene?.trim();
+  const [globeReady, setGlobeReady] = useState(false);
+  const onGlobeReady = useCallback(() => setGlobeReady(true), []);
 
   return (
     <div className="relative flex h-full min-h-0 w-full flex-1 flex-col">
+      <div
+        aria-hidden={!globeReady}
+        className="relative flex h-full min-h-0 w-full flex-1 flex-col"
+      >
       <motion.main
         variants={motionVariants.fadeUp}
         initial="hidden"
@@ -61,7 +68,7 @@ function ConvoPresenter() {
             </div>
           ) : null}
 
-          <ConvoStatusHero />
+          <ConvoStatusHero onGlobeReady={onGlobeReady} />
           <ConvoActionBar />
         </div>
 
@@ -75,6 +82,13 @@ function ConvoPresenter() {
 
       <MobileTranscriptOverlay />
       <SessionEndedModal />
+      </div>
+
+      {globeReady ? null : (
+        <div className="absolute inset-0 z-40 flex flex-col">
+          <ConvoRouteLoading />
+        </div>
+      )}
     </div>
   );
 }

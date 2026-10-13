@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -21,6 +21,20 @@ const convoData = vi.hoisted(() => ({
   isLoading: false,
   userPlan: "free" as "free" | "pro" | "king",
   userAvatarUrl: "/avatars/ada.jpg" as string | undefined,
+}));
+
+const globeGate = vi.hoisted(() => ({
+  hold: false,
+  pending: null as null | (() => void),
+  reset() {
+    globeGate.hold = false;
+    globeGate.pending = null;
+  },
+  release() {
+    globeGate.hold = false;
+    globeGate.pending?.();
+    globeGate.pending = null;
+  },
 }));
 
 const convoSession = vi.hoisted(() => ({
@@ -51,9 +65,21 @@ vi.mock("@/hooks/useCompanionTranscript", () => ({
   useCompanionTranscript: () => {},
 }));
 
-vi.mock("@/components/ui/GlobeCanvas", () => ({
-  default: () => null,
-}));
+vi.mock("@/components/ui/GlobeCanvas", async () => {
+  const { useEffect } = await import("react");
+  return {
+    default: function MockGlobeCanvas({ onReady }: { onReady?: () => void }) {
+      useEffect(() => {
+        if (globeGate.hold) {
+          globeGate.pending = onReady ?? null;
+          return;
+        }
+        onReady?.();
+      }, [onReady]);
+      return null;
+    },
+  };
+});
 
 vi.mock("@/app/(app)/actions/actions", () => ({
   deleteCompanion: vi.fn(),
@@ -71,6 +97,7 @@ const mia = {
 describe("ConvoContainer", () => {
   beforeEach(() => {
     resetConvoStore();
+    globeGate.reset();
     convoData.companion = mia;
     convoData.isLoading = false;
     convoData.userPlan = "free";
@@ -107,11 +134,32 @@ describe("ConvoContainer", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it("keeps the conversation skeleton until the globe is ready", async () => {
+    globeGate.hold = true;
+    renderWithProviders(<ConvoContainer id="c1" />);
+
+    expect(
+      screen.getByRole("status", { name: "Loading conversation" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Mia" })).not.toBeInTheDocument();
+
+    act(() => {
+      globeGate.release();
+    });
+
+    expect(
+      await screen.findByRole("heading", { name: "Mia" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("status", { name: "Loading conversation" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows the companion as ready and remembers them for later", async () => {
     const user = userEvent.setup();
     renderWithProviders(<ConvoContainer id="c1" />);
 
-    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Mia" })).toBeInTheDocument();
     expect(screen.getByText("Ready")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Delete" })).toBeInTheDocument();
 
@@ -123,10 +171,10 @@ describe("ConvoContainer", () => {
     expect(testMocks.router.push).toHaveBeenCalledWith("/dashboard");
   });
 
-  it("shows the companion on the left of the globe and the user on the right", () => {
+  it("shows the companion on the left of the globe and the user on the right", async () => {
     renderWithProviders(<ConvoContainer id="c1" />);
 
-    const companion = screen.getByRole("img", { name: "Mia" });
+    const companion = await screen.findByRole("img", { name: "Mia" });
     const you = screen.getByRole("img", { name: "Your profile picture" });
 
     expect(companion).toHaveAttribute("src", "/avatars/mia.jpg");
@@ -143,20 +191,20 @@ describe("ConvoContainer", () => {
     );
   });
 
-  it("shows the scene in the top corner on the same line as Delete", () => {
+  it("shows the scene in the top corner on the same line as Delete", async () => {
     renderWithProviders(<ConvoContainer id="c1" />);
 
-    const scene = screen.getByText("Gym");
+    const scene = await screen.findByText("Gym");
     const deleteButton = screen.getByRole("button", { name: "Delete" });
 
     expect(scene.closest("div")).toHaveClass("top-3", "sm:top-4", "h-9");
     expect(deleteButton.parentElement).toHaveClass("top-3", "sm:top-4");
   });
 
-  it("lines the portraits up with the scene on the left and Delete on the right", () => {
+  it("lines the portraits up with the scene on the left and Delete on the right", async () => {
     renderWithProviders(<ConvoContainer id="c1" />);
 
-    const sceneRow = screen.getByText("Gym").closest("div");
+    const sceneRow = (await screen.findByText("Gym")).closest("div");
     const deleteBox = screen.getByRole("button", { name: "Delete" }).parentElement;
     const companion = screen.getByRole("img", { name: "Mia" }).parentElement
       ?.parentElement;
@@ -173,50 +221,50 @@ describe("ConvoContainer", () => {
     expect(you).toHaveClass("sm:right-[18px]");
   });
 
-  it("leaves out the scene when it is empty", () => {
+  it("leaves out the scene when it is empty", async () => {
     convoData.companion = { ...mia, scene: "   " };
 
     renderWithProviders(<ConvoContainer id="c1" />);
 
+    expect(await screen.findByRole("heading", { name: "Mia" })).toBeInTheDocument();
     expect(screen.queryByText("Gym")).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
   });
 
-  it("leaves out a portrait that has no picture", () => {
+  it("leaves out a portrait that has no picture", async () => {
     convoData.companion = { ...mia, avatars: undefined };
     convoData.userAvatarUrl = undefined;
 
     renderWithProviders(<ConvoContainer id="c1" />);
 
-    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Mia" })).toBeInTheDocument();
     expect(screen.queryByRole("img", { name: "Mia" })).not.toBeInTheDocument();
     expect(
       screen.queryByRole("img", { name: "Your profile picture" }),
     ).not.toBeInTheDocument();
   });
 
-  it("uses a fallback name when the companion name is missing", () => {
+  it("uses a fallback name when the companion name is missing", async () => {
     convoData.companion = { ...mia, companion_name: "" };
 
     renderWithProviders(<ConvoContainer id="c1" />);
 
     expect(
-      screen.getByRole("heading", { name: "Your AI Companion" }),
+      await screen.findByRole("heading", { name: "Your AI Companion" }),
     ).toBeInTheDocument();
   });
 
-  it("hides delete while a call is connecting or live", () => {
+  it("hides delete while a call is connecting or live", async () => {
     useConvoStore.setState({ callStatus: "CONNECTING" });
     const view = renderWithProviders(<ConvoContainer id="c1" />);
 
-    expect(screen.getByRole("button", { name: "Starting…" })).toBeDisabled();
+    expect(await screen.findByRole("button", { name: "Starting…" })).toBeDisabled();
     expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument();
 
     view.unmount();
     useConvoStore.setState({ callStatus: "ACTIVE", timeLeft: 90 });
     renderWithProviders(<ConvoContainer id="c1" />);
 
-    expect(screen.getByText("1:30")).toBeInTheDocument();
+    expect(await screen.findByText("1:30")).toBeInTheDocument();
     expect(screen.getByText(/Live ·/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Mute" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "End call" })).toBeInTheDocument();

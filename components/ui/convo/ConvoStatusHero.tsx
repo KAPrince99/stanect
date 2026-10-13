@@ -107,11 +107,13 @@ function ConvoOrbStage({
   companionName,
   companionAvatarUrl,
   userAvatarUrl,
+  onGlobeReady,
 }: {
   isCallLive: boolean;
   companionName: string;
   companionAvatarUrl?: string | null;
   userAvatarUrl?: string | null;
+  onGlobeReady?: () => void;
 }) {
   return (
     <div className="relative mx-auto my-2 flex w-full items-center justify-center sm:my-4 lg:mb-10">
@@ -132,7 +134,7 @@ function ConvoOrbStage({
         />
       ) : null}
       <div className="relative aspect-square w-[220px] sm:w-72 xl:w-[23rem] 2xl:w-[26rem]">
-        <GlobeCanvas isCallLive={isCallLive} />
+        <GlobeCanvas isCallLive={isCallLive} onReady={onGlobeReady} />
       </div>
     </div>
   );
@@ -140,7 +142,7 @@ function ConvoOrbStage({
 
 const MemoConvoOrbStage = memo(ConvoOrbStage);
 
-function ConvoStatusHero() {
+function ConvoStatusHero({ onGlobeReady }: { onGlobeReady?: () => void }) {
   const { companionName, companionAvatarUrl, userAvatarUrl } = useConvoStage();
   const callStatus = useConvoStore((s) => s.callStatus);
   const isCallLive = callStatus === "ACTIVE";
@@ -178,6 +180,7 @@ function ConvoStatusHero() {
         companionName={companionName || "Your AI Companion"}
         companionAvatarUrl={companionAvatarUrl}
         userAvatarUrl={userAvatarUrl}
+        onGlobeReady={onGlobeReady}
       />
     </div>
   );

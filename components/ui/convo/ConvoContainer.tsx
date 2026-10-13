@@ -29,6 +29,10 @@ function ConvoContainer({ id }: ConvoContainerProps) {
     if (id) setLastCompanionId(id);
   }, [id]);
 
+  useEffect(() => {
+    void import("@/components/ui/GlobeCanvas");
+  }, []);
+
   useCompanionTranscript(id);
 
   const durationMinutes = Number(companion?.duration) || 2;
