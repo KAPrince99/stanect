@@ -51,7 +51,7 @@ function SessionEndedModal() {
 
   return (
     <Dialog open={showEndModal} onOpenChange={setShowEndModal}>
-      <DialogContent className="border-white/10 bg-zinc-900 text-white sm:max-w-md">
+      <DialogContent className="rounded-3xl border-white/10 bg-zinc-900 text-white sm:max-w-md">
         <DialogHeader>
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10">
             {userPlan === "king" ? (
@@ -70,7 +70,9 @@ function SessionEndedModal() {
 
         <div className="space-y-3 pt-6">
           <Button
-            className="type-cta h-11 w-full rounded-xl bg-amber-500 text-black transition-all hover:bg-amber-600 active:scale-95"
+            variant="primary"
+            size="md"
+            className="w-full"
             onClick={active.primaryAction}
           >
             {active.primaryIcon}
@@ -78,8 +80,9 @@ function SessionEndedModal() {
           </Button>
 
           <Button
-            variant="outline"
-            className="type-label h-11 w-full rounded-xl border-white/10 bg-transparent text-white transition-all hover:bg-white/5"
+            variant="secondary"
+            size="md"
+            className="w-full"
             onClick={onDashboard}
           >
             <LayoutDashboard className="mr-2 h-4 w-4" />

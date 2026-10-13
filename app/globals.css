@@ -46,6 +46,37 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/*
+  Brand colors. Literal values (the Tailwind amber/orange/emerald/green/red
+  shades we already used), so they stay valid even when those palette shades
+  are not used elsewhere. Used by the Button variants: bg-linear-to-r
+  from-brand-from to-brand-to, etc. Change a color here and every button
+  follows.
+*/
+@theme {
+  --color-brand-from: oklch(0.828 0.189 84.429); /* amber-400 */
+  --color-brand-to: oklch(0.705 0.213 47.604); /* orange-500 */
+  --color-brand-from-hover: oklch(0.769 0.188 70.08); /* amber-500 */
+  --color-brand-to-hover: oklch(0.646 0.222 41.116); /* orange-600 */
+
+  --color-success-from: oklch(0.765 0.177 163.223); /* emerald-400 */
+  --color-success-to: oklch(0.723 0.219 149.579); /* green-500 */
+  --color-success-from-hover: oklch(0.696 0.17 162.48); /* emerald-500 */
+  --color-success-to-hover: oklch(0.627 0.194 149.214); /* green-600 */
+
+  --color-danger: oklch(0.637 0.237 25.331); /* red-500 */
+  --color-danger-hover: oklch(0.577 0.245 27.325); /* red-600 */
+
+  /* Page backdrop gradient: bg-linear-to-br from-backdrop-from via-backdrop-via to-backdrop-to */
+  --color-backdrop-from: #0b1a36;
+  --color-backdrop-via: #1a3a80;
+  --color-backdrop-via-deep: #0f2a5c; /* marketing pages */
+  --color-backdrop-to: #1e4ea8;
+
+  /* Orange for highlights and progress fills. */
+  --color-brand-accent: #e88c30;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);

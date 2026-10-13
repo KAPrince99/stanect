@@ -1,6 +1,8 @@
 import { XCircleIcon } from "lucide-react";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+
 interface ErrorViewProps {
   message?: string;
 }
@@ -17,18 +19,17 @@ export default function ErrorView({ message }: ErrorViewProps) {
           "We couldn't process your transaction. Try again or use a different card."}
       </p>
       <div className="flex w-full max-w-xs flex-col gap-3 sm:flex-row">
-        <Link
-          href="/pricing"
-          className="type-cta w-full rounded-full bg-linear-to-r from-amber-400 to-orange-500 py-3 text-center text-black transition-opacity hover:opacity-95"
+        <Button asChild variant="primary" size="md" className="w-full sm:flex-1">
+          <Link href="/pricing">Try Again</Link>
+        </Button>
+        <Button
+          asChild
+          variant="secondary"
+          size="md"
+          className="w-full sm:flex-1"
         >
-          Try Again
-        </Link>
-        <Link
-          href="/dashboard"
-          className="type-label w-full rounded-full border border-white/12 py-3 text-center text-white/80 transition-colors hover:bg-white/10"
-        >
-          Dashboard
-        </Link>
+          <Link href="/dashboard">Dashboard</Link>
+        </Button>
       </div>
     </div>
   );

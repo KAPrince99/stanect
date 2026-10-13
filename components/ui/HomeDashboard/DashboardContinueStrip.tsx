@@ -48,17 +48,13 @@ function DashboardContinueStrip({
   // Ghost cards cover create when the row isn't full — Continue sits far right.
   // When the row is full, Continue stays with identity and Create takes the far right.
   const continueBesideIdentity = showCreate;
-  // 44px on phones, 40px from tablet up. Same radius on both actions.
-  const actionHeight = "h-11 md:h-10";
 
   const continueButton = (className: string) => (
     <Button
       asChild
-      className={cn(
-        "type-cta shrink-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-4 text-[0.9375rem] text-black shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-600 has-[>svg]:px-3 sm:px-4 sm:has-[>svg]:px-4 ",
-        actionHeight,
-        className,
-      )}
+      variant="primary"
+      size="md"
+      className={cn("shadow-md shadow-amber-500/20", className)}
     >
       <Link
         href={continueHref}
@@ -138,21 +134,25 @@ function DashboardContinueStrip({
             : continueButton("inline-flex")}
 
           {showCreate ? (
-            <Link
-              href="/new"
-              prefetch
-              aria-label="Create companion"
-              className={cn(
-                "type-cta inline-flex w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/8 text-[0.9375rem] text-white/80 transition outline-none hover:border-amber-400/35 hover:bg-white/12 hover:text-white focus-visible:ring-2 focus-visible:ring-amber-400/40 sm:w-auto sm:gap-1 sm:px-4",
-                actionHeight,
-              )}
-              onMouseEnter={() => prefetchRoute("/new")}
-              onFocus={() => prefetchRoute("/new")}
-              onTouchStart={() => prefetchRoute("/new")}
+            <Button
+              asChild
+              variant="secondary"
+              size="md"
+              // Icon-only square on phones, labelled pill from `sm`.
+              className="w-11 px-0 has-[>svg]:px-0 sm:w-auto sm:gap-1 sm:px-4 sm:has-[>svg]:px-4"
             >
-              <Plus className="size-4" />
-              <span className="hidden sm:inline">Create companion</span>
-            </Link>
+              <Link
+                href="/new"
+                prefetch
+                aria-label="Create companion"
+                onMouseEnter={() => prefetchRoute("/new")}
+                onFocus={() => prefetchRoute("/new")}
+                onTouchStart={() => prefetchRoute("/new")}
+              >
+                <Plus className="size-4" />
+                <span className="hidden sm:inline">Create companion</span>
+              </Link>
+            </Button>
           ) : null}
         </div>
       </div>

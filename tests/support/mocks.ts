@@ -109,6 +109,7 @@ vi.mock("@clerk/nextjs", () => ({
     getToken: vi.fn(),
   }),
   ClerkProvider: ({ children }: { children: ReactNode }) => children,
+  SignInButton: ({ children }: { children?: ReactNode }) => children,
   SignOutButton: ({ children }: { children?: ReactNode }) => children,
   UserProfile: () => null,
 }));

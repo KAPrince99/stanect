@@ -1,5 +1,6 @@
 import type { ProfileInfoItem } from "./ProfileInfoList";
 import LordIcon from "../lordIcon";
+import { lordColors } from "@/lib/brand";
 
 interface BuildProfileInfoItemsParams {
   userEmail: string;
@@ -20,7 +21,7 @@ const PROFILE_INFO_META: Array<{
       <LordIcon
         src="https://cdn.lordicon.com/gtvaxhwv.json"
         trigger="hover"
-        colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#e88c30,quaternary:#e88c30"
+        colors={lordColors({ primary: "accent", secondary: "cream", tertiary: "accent", quaternary: "accent" })}
         height={35}
         width={35}
       />
@@ -33,7 +34,7 @@ const PROFILE_INFO_META: Array<{
       <LordIcon
         src="https://cdn.lordicon.com/tyntlpjn.json"
         trigger="hover"
-        colors="primary:#ffffff,secondary:#e88c30"
+        colors={lordColors({ primary: "white", secondary: "accent" })}
         height={35}
         width={35}
       />
@@ -46,7 +47,7 @@ const PROFILE_INFO_META: Array<{
       <LordIcon
         src="https://cdn.lordicon.com/laobovmg.json"
         trigger="hover"
-        colors="primary:#e88c30"
+        colors={lordColors({ primary: "accent" })}
         height={35}
         width={35}
       />
@@ -59,7 +60,7 @@ const PROFILE_INFO_META: Array<{
       <LordIcon
         src="https://cdn.lordicon.com/zjuyeglr.json"
         trigger="hover"
-        colors="primary:#e88c30"
+        colors={lordColors({ primary: "accent" })}
         height={35}
         width={35}
       />

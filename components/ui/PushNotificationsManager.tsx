@@ -109,6 +109,7 @@ export function PushNotificationsManager() {
         <>
           <p>You are subscribed to push notifications.</p>
 
+          {/* eslint-disable-next-line no-restricted-syntax -- unstyled PWA demo */}
           <button onClick={unsubscribeFromPush}>Unsubscribe</button>
 
           <input
@@ -118,11 +119,13 @@ export function PushNotificationsManager() {
             onChange={(e) => setMessage(e.target.value)}
           />
 
+          {/* eslint-disable-next-line no-restricted-syntax -- unstyled PWA demo */}
           <button onClick={sendTestNotification}>Send Test</button>
         </>
       ) : (
         <>
           <p>You are not subscribed to push notifications.</p>
+          {/* eslint-disable-next-line no-restricted-syntax -- unstyled PWA demo */}
           <button onClick={subscribeToPush}>Subscribe</button>
         </>
       )}

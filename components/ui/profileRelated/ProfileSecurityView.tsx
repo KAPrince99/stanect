@@ -20,6 +20,7 @@ function ProfileSecurityView({ open, onOpenChange }: ProfileSecurityViewProps) {
     <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
+          {/* eslint-disable-next-line no-restricted-syntax -- text link */}
           <button
             type="button"
             className="type-meta cursor-pointer text-white/55 transition hover:text-white"
@@ -38,6 +39,7 @@ function ProfileSecurityView({ open, onOpenChange }: ProfileSecurityViewProps) {
       </Dialog>
 
       <SignOutButton>
+        {/* eslint-disable-next-line no-restricted-syntax -- text link */}
         <button
           type="button"
           className="type-meta cursor-pointer text-white/55 transition hover:text-white"

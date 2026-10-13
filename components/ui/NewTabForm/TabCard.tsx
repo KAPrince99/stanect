@@ -25,6 +25,7 @@ function TabCard({
       : "text-white/80 hover:text-white";
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- segmented tab control
     <button
       type="button"
       className={`type-label relative cursor-pointer rounded-full px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${textClassName}`}

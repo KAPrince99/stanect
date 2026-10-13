@@ -7,6 +7,7 @@ import { Loader2, MoveRight, Sparkles } from "lucide-react";
 import LordIcon from "../lordIcon";
 import { Button } from "../button";
 import { motionTransition, motionVariants } from "@/lib/motion";
+import { lordColors } from "@/lib/brand";
 
 interface EmptyCompanionStateProps {
   onStartSetup: () => void;
@@ -39,7 +40,7 @@ function EmptyCompanionState({
           <LordIcon
             src="https://cdn.lordicon.com/opeotjej.json"
             trigger="loop"
-            colors="primary:#e88c30,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30"
+            colors={lordColors({ primary: "accent", secondary: "accent", tertiary: "cream", quaternary: "accent" })}
             height={120}
             width={120}
           />
@@ -55,7 +56,9 @@ function EmptyCompanionState({
         <div className="mt-8">
           <Button
             type="button"
-            className="type-cta h-auto min-h-12 w-full whitespace-normal bg-linear-to-r from-amber-400 to-orange-500 px-4 text-black shadow-2xl shadow-amber-500/40 hover:from-amber-500 hover:to-orange-600 has-[>svg]:px-4 sm:h-12 sm:w-auto sm:whitespace-nowrap sm:px-8 sm:has-[>svg]:px-8 md:px-10 md:has-[>svg]:px-10"
+            variant="primary"
+            size="lg"
+            className="w-full shadow-2xl shadow-amber-500/40 sm:w-auto"
             onClick={onStartSetup}
             disabled={isPending}
           >

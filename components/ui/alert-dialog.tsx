@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+import type { VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -118,13 +119,21 @@ function AlertDialogDescription({
   );
 }
 
+type ButtonStyleProps = Pick<
+  VariantProps<typeof buttonVariants>,
+  "variant" | "size"
+>;
+
 interface AlertDialogActionProps
-  extends React.ComponentProps<typeof AlertDialogPrimitive.Action> {
+  extends React.ComponentProps<typeof AlertDialogPrimitive.Action>,
+    ButtonStyleProps {
   isPending?: boolean;
 }
 
 function AlertDialogAction({
   className,
+  variant,
+  size,
   isPending,
   onClick,
   ...props
@@ -144,7 +153,7 @@ function AlertDialogAction({
   return (
     <AlertDialogPrimitive.Action
       {...props}
-      className={cn(buttonVariants(), className)}
+      className={cn(buttonVariants({ variant, size }), className)}
       onClick={handleClick}
       disabled={isPending}
     />
@@ -153,11 +162,14 @@ function AlertDialogAction({
 
 function AlertDialogCancel({
   className,
+  variant = "ghost",
+  size,
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Cancel>) {
+}: React.ComponentProps<typeof AlertDialogPrimitive.Cancel> &
+  ButtonStyleProps) {
   return (
     <AlertDialogPrimitive.Cancel
-      className={cn(buttonVariants({ variant: "ghost" }), className)}
+      className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     />
   );

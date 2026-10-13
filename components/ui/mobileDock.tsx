@@ -7,6 +7,7 @@ import { APP_NAV_ROUTES, usePrefetchRoute } from "@/hooks/usePrefetchRoute";
 
 import LordIcon from "./lordIcon";
 import UserImageContainer from "./UserImageContainer";
+import { lordColors } from "@/lib/brand";
 
 const dockItems = [
   {
@@ -51,7 +52,7 @@ export default function MobileDock() {
   }, [prefetchRoute]);
 
   return (
-    <div className="dock-safe-bottom fixed right-0 bottom-0 left-0 z-50 w-full border-t border-white/20 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] lg:hidden">
+    <div className="dock-safe-bottom fixed right-0 bottom-0 left-0 z-50 w-full border-t border-white/20 bg-linear-to-br from-backdrop-from via-backdrop-via to-backdrop-to lg:hidden">
       <div className="mx-auto flex h-20 max-w-xl items-start justify-around px-4 pt-3">
         {dockItems.map((item) => (
           <Link
@@ -70,7 +71,7 @@ export default function MobileDock() {
                 <LordIcon
                   src={item.iconSrc}
                   trigger="hover"
-                  colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
+                  colors={lordColors({ primary: "accent", secondary: "white", tertiary: "accent" })}
                   width={item.width}
                   height={item.height}
                 />
@@ -81,7 +82,7 @@ export default function MobileDock() {
               <LordIcon
                 src={item.iconSrc}
                 trigger="hover"
-                colors="primary:#4bb3fd,secondary:#e88c30,tertiary:#1a3a80"
+                colors={lordColors({ primary: "sky", secondary: "accent", tertiary: "navy" })}
                 width={item.width}
                 height={item.height}
               />

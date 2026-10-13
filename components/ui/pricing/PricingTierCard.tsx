@@ -34,13 +34,20 @@ export function PricingTierCard({
   const price = billingInterval === "monthly" ? tier.monthly : tier.yearly;
   const periodLabel = billingInterval === "monthly" ? "/month" : "/year";
 
-  const buttonClassName = isCurrentPlan
-    ? "bg-emerald-500 text-white cursor-default opacity-100 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+  const button = isCurrentPlan
+    ? {
+        variant: "success" as const,
+        className:
+          "cursor-default shadow-[0_0_15px_rgba(16,185,129,0.4)] disabled:opacity-100",
+      }
     : isDowngrade
-      ? "border border-white/10 bg-white/5 text-white/60 hover:bg-red-500/10 hover:text-red-400"
+      ? {
+          variant: "secondary" as const,
+          className: "text-white/60 hover:bg-red-500/10 hover:text-red-400",
+        }
       : tier.popular || tier.crown
-        ? "bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-lg"
-        : "border border-white/20 bg-white/10 text-white hover:bg-white/20";
+        ? { variant: "primary" as const, className: "shadow-lg" }
+        : { variant: "secondary" as const, className: "" };
 
   return (
     <motion.div
@@ -58,7 +65,7 @@ export function PricingTierCard({
           transition={{ ...motionTransition.smooth, delay: 0.28 + index * 0.08 }}
           className="absolute top-[-1.25rem] left-1/2 z-20 -translate-x-1/2"
         >
-          <div className="type-cta flex items-center gap-2 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-5 py-1.5 text-xs text-black shadow-lg">
+          <div className="type-cta flex items-center gap-2 rounded-full bg-linear-to-r from-brand-from to-brand-to px-5 py-1.5 text-xs text-black shadow-lg">
             <Zap className="h-3.5 w-3.5" />
             MOST POPULAR
           </div>
@@ -135,8 +142,10 @@ export function PricingTierCard({
         </div>
 
         <Button
+          variant={button.variant}
+          size="md"
           disabled={pendingTierKey !== null || isCurrentPlan}
-          className={`type-cta flex h-11 w-full items-center justify-center gap-2 rounded-full transition-all duration-300 ${buttonClassName}`}
+          className={`w-full ${button.className}`}
           onClick={() => onSelectTier(tier.key)}
         >
           {isPending ? (

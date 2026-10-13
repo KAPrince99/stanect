@@ -19,8 +19,9 @@ export function NavbarPrimaryAction({
       asChild
       onClick={onClick}
       disabled={isLoading}
-      size="lg"
-      className="hidden md:flex bg-linear-to-r from-amber-400 to-amber-500 font-inter text-black shadow-lg transition-all duration-300 hover:scale-105 hover:from-amber-500 hover:to-amber-600 hover:shadow-amber-500/50"
+      variant="primary"
+      size="md"
+      className="hidden shadow-lg hover:scale-105 hover:shadow-amber-500/50 md:flex"
     >
       <Link href={isSignedIn ? "/dashboard" : "/login"}>
         {isLoading ? <Loader2 className="animate-spin" /> : null}

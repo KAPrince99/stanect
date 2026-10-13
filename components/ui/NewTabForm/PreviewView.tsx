@@ -64,15 +64,17 @@ function PreviewView({
             <PreviewValidationIssues issues={validationIssues} />
 
             <Button
-              className="type-cta h-12 w-full bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-xl shadow-amber-500/20 transition-all hover:from-amber-500 hover:to-orange-600"
+              variant="primary"
+              size="lg"
+              className="w-full shadow-xl shadow-amber-500/20"
               disabled={isCreating || validationIssues.length > 0}
               onClick={onCreate}
             >
               Create Companion
               {isCreating ? (
-                <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                <MoveRight className="ml-2 h-5 w-5" />
+                <MoveRight className="h-5 w-5" />
               )}
             </Button>
 

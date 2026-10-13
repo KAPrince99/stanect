@@ -6,7 +6,7 @@ export default function SidebarActivePill() {
   return (
     <motion.span
       layoutId="sidebar-active-tab"
-      className="absolute inset-0 rounded-full bg-[#e88c30]/40"
+      className="absolute inset-0 rounded-full bg-brand-accent/40"
       transition={{
         type: "spring",
         stiffness: 380,

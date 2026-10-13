@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
 
+import { BRAND } from "@/lib/brand";
+
 export default function SuccessPage() {
   const router = useRouter();
 
@@ -15,7 +17,7 @@ export default function SuccessPage() {
       particleCount: 150,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ["#fbbf24", "#f59e0b", "#ffffff"],
+      colors: [...BRAND.confetti],
     });
 
     // Wait 2 seconds for the webhook to finish, then refresh the user data
@@ -49,8 +51,10 @@ export default function SuccessPage() {
 
         <div className="space-y-4">
           <Button
+            variant="primary"
+            size="md"
             onClick={() => router.push("/dashboard")}
-            className="type-cta flex h-11 w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-amber-400 to-orange-500 text-black transition-opacity hover:opacity-95"
+            className="w-full"
           >
             Go to Dashboard <ArrowRight className="w-5 h-5" />
           </Button>

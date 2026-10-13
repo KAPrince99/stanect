@@ -6,6 +6,8 @@ import { Loader2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+
 const VERIFY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 400;
 const PENDING_STATUSES = new Set([
@@ -47,14 +49,14 @@ function Verifying() {
   return (
     <div className="flex max-w-sm flex-col items-center text-center">
       <div className="relative mb-6">
-        <Loader2 className="h-16 w-16 animate-spin text-indigo-500" />
-        <ShieldCheck className="absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 text-indigo-400" />
+        <Loader2 className="h-16 w-16 animate-spin text-amber-500" />
+        <ShieldCheck className="absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 text-amber-400" />
       </div>
 
-      <h1 className="mb-2 text-2xl font-bold">Verifying Transaction</h1>
-      <p className="text-sm leading-relaxed text-slate-400">
+      <h1 className="type-display mb-2 text-[1.75rem]">Verifying Transaction</h1>
+      <p className="type-body">
         We&apos;re communicating with Paystack to secure your subscription.
-        <span className="mt-1 block font-semibold text-indigo-400">
+        <span className="mt-1 block font-semibold text-amber-300">
           Please do not refresh or close this tab.
         </span>
       </p>
@@ -71,22 +73,24 @@ function Unconfirmed({
 }) {
   return (
     <div className="flex max-w-sm flex-col items-center text-center">
-      <h1 className="mb-2 text-2xl font-bold">
+      <h1 className="type-display mb-2 text-[1.75rem]">
         We couldn&apos;t confirm this payment
       </h1>
-      <p className="text-sm leading-relaxed text-slate-400">
+      <p className="type-body">
         We couldn&apos;t reach Paystack to confirm this charge. It may still
         have gone through.
       </p>
-      <button
+      <Button
         type="button"
+        variant="primary"
+        size="md"
         onClick={onCheckAgain}
         disabled={checking}
-        className="mt-6 w-full rounded-full bg-indigo-500 py-3 text-sm font-semibold text-white disabled:opacity-60"
+        className="mt-6 w-full"
       >
         {checking ? "Checking…" : "Check again"}
-      </button>
-      <Link href="/pricing" className="mt-3 text-sm text-indigo-300 underline">
+      </Button>
+      <Link href="/pricing" className="type-meta mt-3 text-white/70 underline">
         Back to pricing
       </Link>
     </div>

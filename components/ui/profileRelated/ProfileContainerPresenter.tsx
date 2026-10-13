@@ -109,7 +109,7 @@ function ProfileContainerPresenter({
           {!isPaid ? (
             <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
               <div
-                className="h-full rounded-full bg-[#e88c30]"
+                className="h-full rounded-full bg-brand-accent"
                 style={{ width: `${progress}%` }}
               />
             </div>

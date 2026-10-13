@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+
 export const metadata: Metadata = {
   title: "Features – Stanect AI",
   description:
@@ -33,7 +35,7 @@ const FEATURES = [
 export default function FeaturesPage() {
   return (
     <main className="relative min-h-screen overflow-hidden px-4 py-24 text-white sm:px-6">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-br from-backdrop-from via-backdrop-via to-backdrop-to" />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-t from-black/40 via-transparent to-transparent" />
 
       <div className="mx-auto max-w-4xl">
@@ -59,18 +61,17 @@ export default function FeaturesPage() {
         </ul>
 
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link
-            href="/pricing"
-            className="type-cta inline-flex h-11 items-center rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-8 text-black shadow-lg shadow-amber-500/30"
+          <Button
+            asChild
+            variant="primary"
+            size="md"
+            className="shadow-lg shadow-amber-500/30"
           >
-            View plans
-          </Link>
-          <Link
-            href="/dashboard"
-            className="type-cta inline-flex h-11 items-center rounded-full border border-white/20 bg-white/5 px-8 text-white hover:bg-white/10"
-          >
-            Open dashboard
-          </Link>
+            <Link href="/pricing">View plans</Link>
+          </Button>
+          <Button asChild variant="secondary" size="md">
+            <Link href="/dashboard">Open dashboard</Link>
+          </Button>
         </div>
       </div>
     </main>

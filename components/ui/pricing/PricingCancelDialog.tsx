@@ -1,14 +1,6 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { memo } from "react";
+
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 interface PricingCancelDialogProps {
   open: boolean;
@@ -22,32 +14,15 @@ function PricingCancelDialog({
   onConfirm,
 }: PricingCancelDialogProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="rounded-3xl border border-white/10 bg-zinc-900 backdrop-blur-xl">
-        <AlertDialogHeader>
-          <AlertDialogTitle className="type-title text-xl">
-            Are you sure?
-          </AlertDialogTitle>
-          <AlertDialogDescription className="type-body">
-            Downgrading to the Free plan will remove your Pro benefits
-            immediately. You will lose access to unlimited companions and
-            premium voices.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-
-        <AlertDialogFooter className="mt-4">
-          <AlertDialogCancel className="type-label rounded-full border-none bg-white/5 text-white hover:bg-white/10">
-            Wait, keep it
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={onConfirm}
-            className="type-cta rounded-full border-none bg-red-500 text-white hover:bg-red-600"
-          >
-            Yes, Downgrade
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Are you sure?"
+      description="Downgrading to the Free plan will remove your Pro benefits immediately. You will lose access to unlimited companions and premium voices."
+      cancelLabel="Wait, keep it"
+      confirmLabel="Yes, Downgrade"
+      onConfirm={onConfirm}
+    />
   );
 }
 export default memo(PricingCancelDialog);

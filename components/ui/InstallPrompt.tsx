@@ -22,6 +22,7 @@ export function InstallPrompt() {
   return (
     <div>
       <h3>Install App</h3>
+      {/* eslint-disable-next-line no-restricted-syntax -- unstyled PWA demo */}
       <button>Add to Home Screen</button>
       {isIOS && (
         <p>

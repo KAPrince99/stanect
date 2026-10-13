@@ -17,6 +17,7 @@ import Image from "next/image";
 import LordIcon from "../lordIcon";
 import { Camera, Loader2 } from "lucide-react";
 import InputField from "../NewTabForm/InputField";
+import { lordColors } from "@/lib/brand";
 
 interface UpdateProfileDialogProps {
   open: boolean;
@@ -51,16 +52,16 @@ function UpdateProfileDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>
         <Button
-          size="lg"
-          variant="outline"
-          className="type-cta h-11 w-full border-white/20 bg-white/5 px-8 text-white hover:bg-white/10 hover:text-white sm:w-auto"
+          variant="secondary"
+          size="md"
+          className="w-full sm:w-auto"
         >
           Update Profile
         </Button>
       </AlertDialogTrigger>
 
       <AlertDialogContent className="gap-0 overflow-hidden rounded-3xl border border-white/10 bg-zinc-900 p-0 text-white shadow-2xl backdrop-blur-xl sm:max-w-md">
-        <div className="h-1 bg-linear-to-r from-amber-400 via-orange-500 to-amber-400" />
+        <div className="h-1 bg-linear-to-r from-brand-from via-brand-to to-brand-from" />
 
         <div className="p-6 sm:p-8">
           <AlertDialogHeader className="space-y-2 text-center sm:text-center">
@@ -83,11 +84,12 @@ function UpdateProfileDialog({
             />
 
             <div className="flex flex-col items-center gap-4">
+              {/* eslint-disable-next-line no-restricted-syntax -- round avatar picker, not a standard button */}
               <button
                 type="button"
                 disabled={loading}
                 onClick={() => imageInputRef.current?.click()}
-                className="group relative h-24 w-24 rounded-full bg-linear-to-br from-amber-400 to-orange-600 p-1 shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 disabled:opacity-60"
+                className="group relative h-24 w-24 rounded-full bg-linear-to-br from-brand-from to-brand-to-hover p-1 shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 disabled:opacity-60"
                 aria-label="Change profile photo"
               >
                 <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-gray-900 text-3xl font-bold text-white">
@@ -110,10 +112,10 @@ function UpdateProfileDialog({
 
               <Button
                 type="button"
+                variant="secondary"
                 size="sm"
                 disabled={loading}
                 onClick={() => imageInputRef.current?.click()}
-                className="type-meta h-9 rounded-full border border-white/15 bg-white/5 px-4 text-white hover:bg-white/10"
               >
                 Change photo
               </Button>
@@ -125,7 +127,7 @@ function UpdateProfileDialog({
                 <LordIcon
                   src="https://cdn.lordicon.com/hhljfoaj.json"
                   trigger="hover"
-                  colors="primary:#e88c30"
+                  colors={lordColors({ primary: "accent" })}
                   height={22}
                   width={22}
                 />
@@ -143,7 +145,7 @@ function UpdateProfileDialog({
                 <LordIcon
                   src="https://cdn.lordicon.com/tyntlpjn.json"
                   trigger="hover"
-                  colors="primary:#ffffff,secondary:#e88c30"
+                  colors={lordColors({ primary: "white", secondary: "accent" })}
                   height={22}
                   width={22}
                 />
@@ -158,16 +160,20 @@ function UpdateProfileDialog({
 
           <AlertDialogFooter className="mt-8 gap-3 sm:justify-stretch">
             <AlertDialogCancel
+              variant="secondary"
+              size="md"
               disabled={loading}
-              className="type-label h-11 flex-1 rounded-full border-none bg-white/5 text-white hover:bg-white/10 hover:text-white"
+              className="flex-1"
             >
               Cancel
             </AlertDialogCancel>
 
             <AlertDialogAction
+              variant="primary"
+              size="md"
               onClick={onSave}
               disabled={loading}
-              className="type-cta h-11 flex-1 rounded-full border-none bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-lg shadow-amber-500/30 hover:from-amber-500 hover:to-orange-600"
+              className="flex-1 shadow-lg shadow-amber-500/30"
             >
               {loading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

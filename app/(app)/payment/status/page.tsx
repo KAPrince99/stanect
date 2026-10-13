@@ -82,6 +82,7 @@ function StatusContent() {
         </div>
 
         {showReset && (
+          // eslint-disable-next-line no-restricted-syntax -- text link, not a button
           <button
             type="button"
             disabled={resetting}

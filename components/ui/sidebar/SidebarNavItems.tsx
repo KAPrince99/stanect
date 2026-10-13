@@ -7,6 +7,7 @@ import LordIcon from "@/components/ui/lordIcon";
 import SidebarNavLink from "./SidebarNavLink";
 import { sidebarNavItems } from "./sidebarNavConfig";
 import { isSidebarRouteActive } from "./sidebarShared";
+import { lordColors } from "@/lib/brand";
 
 export default function SidebarNavItems() {
   const pathname = usePathname();
@@ -26,7 +27,7 @@ export default function SidebarNavItems() {
             <LordIcon
               src={item.lordIcon}
               trigger="hover"
-              colors="primary:#e88c30,secondary:#ffffff,tertiary:#e88c30"
+              colors={lordColors({ primary: "accent", secondary: "white", tertiary: "accent" })}
               width={item.iconSize}
               height={item.iconSize}
             />

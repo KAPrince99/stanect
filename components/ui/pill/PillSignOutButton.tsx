@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 export default function PillSignOutButton() {
   return (
     <SignOutButton>
+      {/* eslint-disable-next-line no-restricted-syntax -- compact chip, smaller than the 36px minimum button */}
       <button
         type="button"
         aria-label="Sign out"

@@ -6,6 +6,7 @@ import InputField from "./InputField";
 import { useTabFormStore } from "@/store/useTabFormStore";
 import { companionNameSchema, sceneSchema } from "@/schemas/newCompanionSchema";
 import TabContentHeader from "./TabContentHeader";
+import { lordColors } from "@/lib/brand";
 
 function Person() {
   const companionName = useTabFormStore((s) => s.companionName);
@@ -60,7 +61,7 @@ function Person() {
             <LordIcon
               src="https://cdn.lordicon.com/hhljfoaj.json"
               trigger="hover"
-              colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30"
+              colors={lordColors({ primary: "accent", secondary: "accent", tertiary: "accent" })}
               height={25}
               width={25}
             />
@@ -83,7 +84,7 @@ function Person() {
             <LordIcon
               src="https://cdn.lordicon.com/dhmavvpz.json"
               trigger="hover"
-              colors="primary:#e88c30,secondary:#e88c30"
+              colors={lordColors({ primary: "accent", secondary: "accent" })}
               height={25}
               width={25}
             />

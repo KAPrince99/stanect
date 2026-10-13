@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 
+import { BRAND } from "@/lib/brand";
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Stanect",
@@ -8,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "An AI-powered voice companion that helps you build confidence and communicate better",
     start_url: "/",
     display: "standalone",
-    background_color: "#0b1a36",
-    theme_color: "#0b1a36",
+    background_color: BRAND.backdropFrom,
+    theme_color: BRAND.backdropFrom,
     orientation: "portrait-primary", // Added from the JSON file
     scope: "/", // Added from the JSON file
     icons: [

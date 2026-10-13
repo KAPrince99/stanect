@@ -10,6 +10,7 @@ import { useConvoStore } from "@/store/use-convo-store";
 import LordIcon from "../lordIcon";
 import TranscriptToggle from "../TranscriptToggle";
 import { useConvoStage } from "./ConvoStageContext";
+import { lordColors } from "@/lib/brand";
 
 function ConvoActionBar() {
   const {
@@ -32,14 +33,16 @@ function ConvoActionBar() {
     <div className="z-20 flex shrink-0 items-center justify-center gap-4 py-6 sm:gap-6 sm:py-8">
       {!isCallLive ? (
         <Button
-          className="type-cta h-12 cursor-pointer rounded-full bg-linear-to-r from-emerald-400 to-green-500 px-8 text-black shadow-lg shadow-emerald-500/25 transition hover:scale-[1.02] hover:shadow-emerald-500/40 disabled:opacity-60"
+          variant="success"
+          size="lg"
+          className="shadow-lg shadow-emerald-500/25 hover:scale-[1.02] hover:shadow-emerald-500/40"
           onClick={onStartCall}
           disabled={showStarting || !hasAssistantId}
         >
           <LordIcon
             src="https://cdn.lordicon.com/wtywrnoz.json"
             trigger="loop"
-            colors="primary:#000000"
+            colors={lordColors({ primary: "black" })}
             height={20}
             width={20}
           />
@@ -48,7 +51,9 @@ function ConvoActionBar() {
       ) : (
         <div className="flex items-center gap-4">
           <Button
-            className={`h-14 w-14 cursor-pointer rounded-full border-2 border-white/20 p-0 shadow-xl backdrop-blur-lg transition-colors ${
+            variant="glass"
+            size="icon"
+            className={`size-14 border-2 border-white/20 shadow-xl backdrop-blur-lg ${
               isMuted
                 ? "bg-red-500/30 hover:bg-red-500/50"
                 : "bg-emerald-500/30 hover:bg-emerald-500/50"
@@ -65,7 +70,9 @@ function ConvoActionBar() {
           </Button>
 
           <Button
-            className="h-16 w-16 cursor-pointer rounded-full bg-red-600 p-0 shadow-2xl shadow-red-600/50 transition-colors hover:bg-red-700"
+            variant="danger"
+            size="icon"
+            className="size-16 shadow-2xl shadow-red-600/50"
             onClick={onEndCall}
             disabled={loadingEnd}
             aria-label="End call"

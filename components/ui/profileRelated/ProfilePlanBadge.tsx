@@ -1,5 +1,6 @@
 import { memo } from "react";
 import LordIcon from "../lordIcon";
+import { lordColors } from "@/lib/brand";
 
 interface ProfilePlanBadgeProps {
   userPlan: string;
@@ -11,7 +12,7 @@ function ProfilePlanBadge({ userPlan }: ProfilePlanBadgeProps) {
       <LordIcon
         src="https://cdn.lordicon.com/ypilrraw.json"
         trigger="loop"
-        colors="primary:#e88c30,secondary:#ffc738"
+        colors={lordColors({ primary: "accent", secondary: "gold" })}
         height={40}
         width={40}
       />
@@ -23,7 +24,7 @@ function ProfilePlanBadge({ userPlan }: ProfilePlanBadgeProps) {
       <LordIcon
         src="https://cdn.lordicon.com/qwghwbtk.json"
         trigger="loop"
-        colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#ffc738,quaternary:#646e78"
+        colors={lordColors({ primary: "accent", secondary: "cream", tertiary: "gold", quaternary: "slate" })}
         height={40}
         width={40}
       />
@@ -34,7 +35,7 @@ function ProfilePlanBadge({ userPlan }: ProfilePlanBadgeProps) {
     <LordIcon
       src="https://cdn.lordicon.com/vgdksfqv.json"
       trigger="loop"
-      colors="primary:#ffffff,secondary:#e88c30,tertiary:#e88c30"
+      colors={lordColors({ primary: "white", secondary: "accent", tertiary: "accent" })}
       height={40}
       width={40}
     />

@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import { CallStatus } from "@/store/use-convo-store";
 
 import LordIcon from "../lordIcon";
+import { lordColors } from "@/lib/brand";
 
 export interface ConvoStatusView {
   label: string;
@@ -33,7 +34,7 @@ export const convoStatusConfig: Record<CallStatus, ConvoStatusView> = {
       <LordIcon
         src="https://cdn.lordicon.com/wjogzler.json"
         trigger="loop"
-        colors="primary:#e88c30"
+        colors={lordColors({ primary: "accent" })}
         height={18}
         width={18}
       />

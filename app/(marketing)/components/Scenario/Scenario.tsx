@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import LordIcon from "@/components/ui/lordIcon";
 import Image from "next/image";
 import Link from "next/link";
+import { lordColors } from "@/lib/brand";
 
 interface ScenarioProps {
   scenario: {
@@ -63,17 +64,21 @@ export default function Scenario({ scenario }: ScenarioProps) {
             } justify-center md:justify-start`}
           >
             <Button
-              size="lg"
-              className="min-w-40 bg-linear-to-r from-amber-400 to-amber-500 text-black hover:from-amber-500 hover:to-amber-600 shadow-lg transition-all duration-300 hover:scale-105"
+              asChild
+              variant="primary"
+              size="md"
+              className="min-w-40 shadow-lg hover:scale-105"
             >
-              <Link href="/dashboard">Get Started</Link>
-              <LordIcon
-                src="https://cdn.lordicon.com/jarmuava.json"
-                trigger="loop"
-                colors="primary:#000000"
-                height={20}
-                width={20}
-              />
+              <Link href="/dashboard">
+                Get Started
+                <LordIcon
+                  src="https://cdn.lordicon.com/jarmuava.json"
+                  trigger="loop"
+                  colors={lordColors({ primary: "black" })}
+                  height={20}
+                  width={20}
+                />
+              </Link>
             </Button>
           </div>
         </section>

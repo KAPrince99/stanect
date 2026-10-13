@@ -10,6 +10,8 @@ import {
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
+import { BRAND } from "@/lib/brand";
+
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
 
@@ -20,11 +22,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "toast group rounded-2xl border border-white/12 bg-[#0b1a36]/90 text-white shadow-[0_20px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl",
+            "toast group rounded-2xl border border-white/12 bg-backdrop-from/90 text-white shadow-[0_20px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl",
           title: "text-white font-semibold tracking-tight",
           description: "text-white/75",
           actionButton:
-            "!bg-linear-to-r !from-amber-400 !to-orange-500 !text-black hover:!from-amber-500 hover:!to-orange-600",
+            "!bg-linear-to-r !from-brand-from !to-brand-to !text-black hover:!from-brand-from-hover hover:!to-brand-to-hover",
           cancelButton: "!bg-white/10 !text-white hover:!bg-white/20",
           closeButton:
             "!bg-transparent !border-white/20 !text-white/65 hover:!text-white hover:!border-white/30",
@@ -40,7 +42,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       style={
         {
           "--normal-bg": "rgba(11, 26, 54, 0.92)",
-          "--normal-text": "#ffffff",
+          "--normal-text": BRAND.white,
           "--normal-border": "rgba(255, 255, 255, 0.12)",
           "--border-radius": "var(--radius)",
         } as React.CSSProperties

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+import { Button } from "@/components/ui/button";
 import { motionTransition } from "@/lib/motion";
 
 const fade = {
@@ -55,7 +56,7 @@ export default function CompanyAbout() {
               variants={fade}
               initial="hidden"
               animate="visible"
-              className="type-meta mb-6 uppercase tracking-[0.2em] text-[#e88c30]/90"
+              className="type-meta mb-6 uppercase tracking-[0.2em] text-brand-accent/90"
             >
               Solo-built product
             </motion.p>
@@ -91,21 +92,21 @@ export default function CompanyAbout() {
               animate="visible"
               className="mt-10 flex flex-wrap items-center gap-4"
             >
-              <Link
-                href="/"
-                className="type-cta inline-flex h-12 items-center gap-2 bg-[#e88c30] px-7 text-black transition hover:bg-[#f0a45a]"
-              >
-                Try Stanect
-                <MoveRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="https://github.com/KAPrince99/stanect"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="type-cta inline-flex h-12 items-center gap-2 border border-white/20 px-7 text-white/80 transition hover:border-white/40 hover:text-white"
-              >
-                GitHub
-              </Link>
+              <Button asChild variant="primary" size="lg">
+                <Link href="/">
+                  Try Stanect
+                  <MoveRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="secondary" size="lg">
+                <Link
+                  href="https://github.com/KAPrince99/stanect"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub
+                </Link>
+              </Button>
             </motion.div>
 
             <motion.div

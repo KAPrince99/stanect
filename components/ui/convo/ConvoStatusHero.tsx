@@ -43,13 +43,7 @@ function GlobePortrait({
           : "right-0 sm:right-[18px]"
       }`}
     >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes="80px"
-        className="object-cover"
-      />
+      <Image src={src} alt={alt} fill sizes="80px" className="object-cover" />
     </div>
   );
 }

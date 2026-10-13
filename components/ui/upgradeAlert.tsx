@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "./button";
 import LordIcon from "./lordIcon";
 import { ArrowLeft } from "lucide-react";
+import { lordColors } from "@/lib/brand";
 
 export default function UpgradeAlert({
   plan,
@@ -18,7 +19,7 @@ export default function UpgradeAlert({
         <LordIcon
           src="https://cdn.lordicon.com/wdbwxkvh.json"
           trigger="loop"
-          colors="primary:#e88c30,secondary:#ebe6ef,tertiary:#e88c30"
+          colors={lordColors({ primary: "accent", secondary: "cream", tertiary: "accent" })}
           height={75}
           width={75}
         />
@@ -31,22 +32,24 @@ export default function UpgradeAlert({
           You&apos;ve already brought one to life!
         </p>
         <div className="flex flex-col gap-4">
-          <Button
-            asChild
-            className="type-cta h-12 bg-linear-to-r from-amber-400 to-orange-500 text-black"
-          >
+          <Button asChild variant="primary" size="lg">
             <Link href="/pricing">
               <span>Upgrade to Pro</span>{" "}
               <LordIcon
                 src="https://cdn.lordicon.com/wmqqbxlm.json"
                 trigger="loop"
-                colors="primary:#ffffff,secondary:#e88c30,tertiary:#ebe6ef,quaternary:#e88c30,quinary:#ffffff"
+                colors={lordColors({ primary: "white", secondary: "accent", tertiary: "cream", quaternary: "accent", quinary: "white" })}
                 height={25}
                 width={25}
               />
             </Link>
           </Button>
-          <Button asChild variant="ghost" className="type-label text-white/50">
+          <Button
+            asChild
+            variant="ghost"
+            size="lg"
+            className="type-label text-white/50"
+          >
             <Link href="/dashboard">
               <ArrowLeft /> Back to Dashboard
             </Link>

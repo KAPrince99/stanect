@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- bespoke hero CTA with its own gradient, intentionally outside the Button system */
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, Globe } from "lucide-react";

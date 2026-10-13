@@ -2,14 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useEffect, useMemo } from "react";
-import { ArrowLeft } from "lucide-react";
-
 import { useConvoData } from "@/hooks/useConvoData";
 import { useConvoSession } from "@/hooks/useConvoSession";
 import { useCompanionTranscript } from "@/hooks/useCompanionTranscript";
 import { setLastCompanionId } from "@/lib/last-companion";
 import { useConvoStore } from "@/store/use-convo-store";
-import { Button } from "@/components/ui/button";
+import BackButton from "@/components/ui/BackButton";
 
 import DeleteCompanionButton from "../deleteCompanionButton";
 import LoadingSpinner from "../LoadingSpinner";
@@ -67,18 +65,7 @@ function ConvoContainer({ id }: ConvoContainerProps) {
   );
 
   const backAction = useMemo(
-    () => (
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        className="size-11 rounded-full border border-white/10 bg-white/8 text-white backdrop-blur-md hover:bg-white/10"
-        onClick={onDashboard}
-        aria-label="Back to dashboard"
-      >
-        <ArrowLeft className="h-5 w-5" />
-      </Button>
-    ),
+    () => <BackButton onClick={onDashboard} />,
     [onDashboard],
   );
 

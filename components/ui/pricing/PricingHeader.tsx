@@ -53,6 +53,7 @@ export function PricingHeader({
           const isActive = billingInterval === option;
 
           return (
+            // eslint-disable-next-line no-restricted-syntax -- segmented billing switch
             <button
               key={option}
               type="button"

@@ -12,7 +12,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div lang="en" className="h-full w-screen">
       <div className="relative h-full text-white antialiased">
         <div className="pointer-events-none fixed inset-0 -z-10">
-          <div className="absolute inset-0 bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8]" />
+          <div className="absolute inset-0 bg-linear-to-br from-backdrop-from via-backdrop-via to-backdrop-to" />
           <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
         </div>
 

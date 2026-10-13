@@ -51,7 +51,7 @@ function CompanionGhostCard({ index, className }: CompanionGhostCardProps) {
               Create another
             </p>
             <div className="mt-auto pt-2.5">
-              <div className="h-9 w-full rounded-md bg-white/8 md:h-10" />
+              <div className="h-11 w-full rounded-full bg-white/8" />
             </div>
           </div>
         </article>

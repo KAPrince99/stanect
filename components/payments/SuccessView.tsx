@@ -1,6 +1,8 @@
 import { CheckCircleIcon } from "lucide-react";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+
 export default function SuccessView({ planName }: { planName: string }) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center rounded-3xl border border-white/12 bg-white/[0.06] p-8 text-center backdrop-blur-xl">
@@ -15,12 +17,14 @@ export default function SuccessView({ planName }: { planName: string }) {
         </span>{" "}
         tier. Your account features have been unlocked.
       </p>
-      <Link
-        href="/dashboard"
-        className="type-cta w-full max-w-xs rounded-full bg-linear-to-r from-amber-400 to-orange-500 py-3 text-center text-black transition-opacity hover:opacity-95"
+      <Button
+        asChild
+        variant="primary"
+        size="md"
+        className="w-full max-w-xs"
       >
-        Go to Dashboard
-      </Link>
+        <Link href="/dashboard">Go to Dashboard</Link>
+      </Button>
     </div>
   );
 }

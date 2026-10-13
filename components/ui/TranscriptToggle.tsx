@@ -17,8 +17,13 @@ export default function TranscriptToggle() {
       transition={{ duration: 0.2 }}
     >
       <Button
-        className="rounded-full border border-gray-600 bg-amber-700 p-4 shadow-xl shadow-gray-700/50 hover:bg-gray-600"
+        type="button"
+        variant="glass"
+        size="icon"
+        // Same 48px height as the Start Call button beside it.
+        className="size-12 shadow-xl"
         onClick={() => setShowTranscript(true)}
+        aria-label="Show transcript"
       >
         <MessageCircle className="h-6 w-6 text-white" />
       </Button>

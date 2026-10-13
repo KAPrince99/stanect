@@ -24,7 +24,7 @@ function ProfileIdentityHeader({
 
   return (
     <div className="relative z-10 grid grid-cols-[1fr_3fr] items-center gap-4 md:place-items-center md:px-6">
-      <div className="h-28 w-28 rounded-full bg-linear-to-br from-amber-400 to-orange-600 p-1 shadow-xl md:h-32 md:w-32">
+      <div className="h-28 w-28 rounded-full bg-linear-to-br from-brand-from to-brand-to-hover p-1 shadow-xl md:h-32 md:w-32">
         <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-gray-900 text-4xl font-bold text-white">
           {imgSrc ? (
             <Image

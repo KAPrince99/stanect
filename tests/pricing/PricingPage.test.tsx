@@ -77,6 +77,28 @@ describe("PricingPage", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("styles each plan button by its state, all as 44px pills", async () => {
+    fetchSubscriptionStatus.mockResolvedValue({ plan: "pro" });
+
+    renderWithProviders(<PricingPage />);
+
+    const downgrade = await screen.findByRole("button", {
+      name: "Downgrade to Free",
+    });
+    expect(downgrade).toHaveClass("border-white/20", "rounded-full", "h-11");
+
+    const active = screen.getByRole("button", { name: "Active" });
+    expect(active).toHaveClass("from-success-from", "rounded-full", "h-11");
+
+    const goKing = screen
+      .getAllByRole("button")
+      .filter((button) => button.className.includes("from-brand-from"));
+    expect(goKing.length).toBeGreaterThan(0);
+    for (const button of goKing) {
+      expect(button).toHaveClass("rounded-full", "h-11");
+    }
+  });
+
   it("leaves an already-free account on the pricing page", async () => {
     fetchSubscriptionStatus.mockResolvedValue({ plan: "free" });
 

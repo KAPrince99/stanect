@@ -74,6 +74,51 @@ describe("DashboardCompanionsView", () => {
     expect(onStartSetup).toHaveBeenCalledOnce();
   });
 
+  it("uses the shared pill buttons: 48px setup, 44px continue and create, 44px card start", () => {
+    const { unmount } = renderWithProviders(
+      <DashboardCompanionsView
+        companions={[]}
+        welcomeUser="Ada"
+        continueCompanion={null}
+        canCreateCompanion
+        planBadgeLabel="Free"
+        planBadgeTone="ok"
+        isLoading={false}
+        onStartSetup={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Start Companion Setup" })).toHaveClass(
+      "from-brand-from",
+      "rounded-full",
+      "h-12",
+    );
+    unmount();
+
+    renderWithProviders(
+      <DashboardCompanionsView
+        companions={[mia, alex, sam]}
+        welcomeUser="Ada"
+        continueCompanion={alex}
+        canCreateCompanion
+        planBadgeLabel="Pro"
+        planBadgeTone="paid"
+        isLoading={false}
+        onStartSetup={vi.fn()}
+      />,
+    );
+    for (const link of screen.getAllByRole("link", { name: "Continue" })) {
+      expect(link).toHaveClass("from-brand-from", "rounded-full", "h-11");
+    }
+    expect(screen.getByRole("link", { name: "Create companion" })).toHaveClass(
+      "rounded-full",
+      "h-11",
+      "border-white/20",
+    );
+    for (const start of screen.getAllByRole("button", { name: "Start Convo" })) {
+      expect(start).toHaveClass("from-brand-from", "rounded-full", "h-11");
+    }
+  });
+
   it("disables setup while navigation is pending", () => {
     renderWithProviders(
       <DashboardCompanionsView

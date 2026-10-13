@@ -9,6 +9,7 @@ import { useTabFormStore } from "@/store/useTabFormStore";
 import TabContentHeader from "./TabContentHeader";
 import VoiceSelector from "./VoiceSelector";
 import PlanLimitHint from "./PlanLimitHint";
+import { lordColors } from "@/lib/brand";
 
 function getMaxMinutes(plan: string) {
   const key = (plan === "pro" || plan === "king" ? plan : "free") as PlanType;
@@ -92,7 +93,7 @@ function Voice() {
             <LordIcon
               src="https://cdn.lordicon.com/zjuyeglr.json"
               trigger="hover"
-              colors="primary:#e88c30,secondary:#e88c30"
+              colors={lordColors({ primary: "accent", secondary: "accent" })}
               height={25}
               width={25}
             />

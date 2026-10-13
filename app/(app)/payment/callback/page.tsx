@@ -14,7 +14,7 @@ const SuspenseFallback = () => (
 
 export default function PaymentCallbackPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-linear-to-br from-[#0b1a36] via-[#1a3a80] to-[#1e4ea8] p-6 text-white">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-linear-to-br from-backdrop-from via-backdrop-via to-backdrop-to p-6 text-white">
       <Suspense fallback={<SuspenseFallback />}>
         <PaymentHandler />
       </Suspense>

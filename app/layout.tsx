@@ -5,6 +5,8 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 
+import { BRAND } from "@/lib/brand";
+
 /* Fonts */
 const inter = Inter({
   subsets: ["latin"],
@@ -46,7 +48,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: "cover",
-  themeColor: "#0b1a36",
+  themeColor: BRAND.backdropFrom,
 };
 
 export default function RootLayout({

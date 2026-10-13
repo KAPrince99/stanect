@@ -48,6 +48,24 @@ describe("ConvoActionBar", () => {
     expect(stage.onStartCall).not.toHaveBeenCalled();
   });
 
+  it("uses the shared button styles: green start, red end, 48px height for start and transcript", () => {
+    const { unmount } = renderBar(convoStage({ isDesktop: false }));
+
+    const start = screen.getByRole("button", { name: "Start Call" });
+    expect(start).toHaveClass("from-success-from", "h-12", "rounded-full");
+    expect(screen.getByRole("button", { name: "Show transcript" })).toHaveClass(
+      "size-12",
+      "rounded-full",
+    );
+    unmount();
+
+    renderBar(convoStage({ isDesktop: true }), { callStatus: "ACTIVE" });
+    expect(screen.getByRole("button", { name: "End call" })).toHaveClass(
+      "bg-danger",
+      "rounded-full",
+    );
+  });
+
   it("shows Starting… while the call is connecting", () => {
     renderBar(convoStage(), { callStatus: "CONNECTING" });
 

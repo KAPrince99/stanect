@@ -10,6 +10,7 @@ import { useConvoStore } from "@/store/use-convo-store";
 import { Button } from "../button";
 import LordIcon from "../lordIcon";
 import { useConvoStage } from "./ConvoStageContext";
+import { lordColors } from "@/lib/brand";
 
 interface TranscriptPanelProps {
   companionId: string;
@@ -58,7 +59,7 @@ export function TranscriptPanel({
           <LordIcon
             src="https://cdn.lordicon.com/zyyejanq.json"
             trigger="loop"
-            colors="primary:#e88c30"
+            colors={lordColors({ primary: "accent" })}
             height={30}
             width={30}
           />
@@ -67,8 +68,12 @@ export function TranscriptPanel({
 
         {showClose && onClose ? (
           <Button
-            className="rounded-full p-2 hover:bg-white/10"
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="rounded-full text-white hover:bg-white/10 hover:text-white"
             onClick={onClose}
+            aria-label="Close transcript"
           >
             <X className="h-5 w-5" />
           </Button>

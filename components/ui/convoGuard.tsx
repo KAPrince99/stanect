@@ -52,9 +52,11 @@ export default function ConvoGuard({
           {isCheckFailed && onRetry ? (
             <Button
               type="button"
+              variant="primary"
+              size="lg"
               onClick={onRetry}
               disabled={isRetrying}
-              className="type-cta h-12 bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-lg shadow-orange-500/20"
+              className="shadow-lg shadow-orange-500/20"
             >
               <RefreshCw
                 className={`mr-2 h-4 w-4 ${isRetrying ? "animate-spin" : ""}`}
@@ -64,7 +66,9 @@ export default function ConvoGuard({
           ) : (
             <Button
               asChild
-              className="type-cta h-12 bg-linear-to-r from-amber-400 to-orange-500 text-black shadow-lg shadow-orange-500/20"
+              variant="primary"
+              size="lg"
+              className="shadow-lg shadow-orange-500/20"
             >
               <Link
                 href="/pricing"
@@ -79,6 +83,7 @@ export default function ConvoGuard({
           <Button
             asChild
             variant="ghost"
+            size="lg"
             className="type-label text-white/50 hover:bg-white/5 hover:text-white"
           >
             <Link href="/dashboard">Back to Dashboard</Link>

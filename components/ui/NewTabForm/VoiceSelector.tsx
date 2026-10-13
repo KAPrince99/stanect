@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { motion } from "framer-motion";
 import LordIcon from "../lordIcon";
 import { motionTransition } from "@/lib/motion";
+import { lordColors } from "@/lib/brand";
 
 interface VoiceSelectorProps {
   voice: "male" | "female" | null;
@@ -15,7 +16,7 @@ function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
         <LordIcon
           src="https://cdn.lordicon.com/ckooqaow.json"
           trigger="hover"
-          colors="primary:#e88c30,secondary:#e88c30,tertiary:#e88c30,quaternary:#ebe6ef,quinary:#f24c00"
+          colors={lordColors({ primary: "accent", secondary: "accent", tertiary: "accent", quaternary: "cream", quinary: "flame" })}
           height={25}
           width={25}
         />
