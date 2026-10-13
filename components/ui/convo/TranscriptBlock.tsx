@@ -52,7 +52,7 @@ export function TranscriptPanel({
 
   return (
     <aside
-      className={`flex h-full min-h-0 w-full flex-col border-white/10 bg-white/5 backdrop-blur-xl ${className ?? ""}`}
+      className={`flex h-full min-h-0 w-full flex-col border-white/10 bg-white/10 backdrop-blur-2xl ${className ?? ""}`}
     >
       <div className="flex shrink-0 items-center justify-between border-b border-white/10 p-5">
         <h2 className="type-title flex items-center gap-2 text-lg">
@@ -80,7 +80,10 @@ export function TranscriptPanel({
         ) : null}
       </div>
 
-      <div ref={parentRef} className="min-h-0 flex-1 overflow-y-auto p-6">
+      <div
+        ref={parentRef}
+        className="scrollbar-hide min-h-0 flex-1 overflow-y-auto p-6"
+      >
         {messages.length === 0 ? (
           <p className="type-body pt-8 text-center text-white/40">
             Transcript appears when you start talking.

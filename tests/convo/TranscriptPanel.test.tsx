@@ -36,9 +36,12 @@ describe("TranscriptPanel", () => {
     expect(
       screen.getByRole("heading", { name: "Live Transcript" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText("Transcript appears when you start talking."),
-    ).toBeInTheDocument();
+    const empty = screen.getByText(
+      "Transcript appears when you start talking.",
+    );
+    expect(empty).toBeInTheDocument();
+    expect(empty.parentElement).toHaveClass("scrollbar-hide", "overflow-y-auto");
+    expect(empty.closest("aside")).toHaveClass("bg-white/10", "backdrop-blur-2xl");
   });
 
   it("labels user lines as You and assistant lines with the companion name", () => {
