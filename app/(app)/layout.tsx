@@ -37,11 +37,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         <Toaster
-          position="top-right"
-          closeButton
-          toastOptions={{
-            duration: 4000,
-          }}
+          position="bottom-right"
+          offset={{ bottom: "1.5rem", right: "1.5rem" }}
+          mobileOffset={{ bottom: "6rem", right: "1rem" }}
+          toastOptions={{ duration: 4000 }}
         />
         <SpeedInsights />
         <Analytics />

@@ -37,9 +37,7 @@ function ProfileBillingActions({ userId }: ProfileBillingActionsProps) {
       if (!response.ok) {
         throw new Error("Could not process cancellation");
       }
-      toast.success("Subscription cancelled", {
-        description: "You are now on the Free plan.",
-      });
+      toast.success("You're now on the Free plan");
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["subscription", userId] }),
         queryClient.invalidateQueries({ queryKey: ["users", userId] }),

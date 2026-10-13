@@ -12,6 +12,10 @@ import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 import { BRAND } from "@/lib/brand";
 
+/** Shared by every toast: a compact pill, same shape as the buttons. */
+export const toastSurfaceClass =
+  "toast group flex items-center gap-2 rounded-full border border-white/15 bg-black px-4 py-2.5 text-white shadow-none";
+
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
 
@@ -21,15 +25,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       toastOptions={{
         classNames: {
-          toast:
-            "toast group rounded-2xl border border-white/12 bg-backdrop-from/90 text-white shadow-[0_20px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl",
-          title: "text-white font-semibold tracking-tight",
-          description: "text-white/75",
+          toast: toastSurfaceClass,
+          title: "type-meta font-medium text-white",
+          description: "hidden",
           actionButton:
-            "!bg-linear-to-r !from-brand-from !to-brand-to !text-black hover:!from-brand-from-hover hover:!to-brand-to-hover",
-          cancelButton: "!bg-white/10 !text-white hover:!bg-white/20",
-          closeButton:
-            "!bg-transparent !border-white/20 !text-white/65 hover:!text-white hover:!border-white/30",
+            "rounded-full !bg-linear-to-r !from-brand-from !to-brand-to !text-black hover:!from-brand-from-hover hover:!to-brand-to-hover",
+          cancelButton: "rounded-full !bg-white/10 !text-white hover:!bg-white/20",
         },
       }}
       icons={{
@@ -41,10 +42,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
-          "--normal-bg": "rgba(11, 26, 54, 0.92)",
+          "--normal-bg": "#000000",
           "--normal-text": BRAND.white,
-          "--normal-border": "rgba(255, 255, 255, 0.12)",
-          "--border-radius": "var(--radius)",
+          "--normal-border": "rgba(255, 255, 255, 0.15)",
+          "--border-radius": "9999px",
         } as React.CSSProperties
       }
       {...props}

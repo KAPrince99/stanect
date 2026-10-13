@@ -233,8 +233,7 @@ describe("PricingPage", () => {
       });
     });
     expect(testMocks.toast.success).toHaveBeenCalledWith(
-      "Subscription Cancelled",
-      { description: "You are now on the Free plan." },
+      "You're now on the Free plan",
     );
     expect(fetchSubscriptionStatus).toHaveBeenCalledTimes(2);
     expect(screen.queryByText("Are you sure?")).not.toBeInTheDocument();
@@ -255,9 +254,9 @@ describe("PricingPage", () => {
     );
 
     await waitFor(() => {
-      expect(testMocks.toast.error).toHaveBeenCalledWith("Error", {
-        description: "Could not process cancellation.",
-      });
+      expect(testMocks.toast.error).toHaveBeenCalledWith(
+        "Could not process cancellation",
+      );
     });
     expect(screen.queryByText("Are you sure?")).not.toBeInTheDocument();
   });

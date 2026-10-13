@@ -94,13 +94,11 @@ function PricingPage() {
         throw new Error("Could not process cancellation");
       }
 
-      toast.success("Subscription Cancelled", {
-        description: "You are now on the Free plan.",
-      });
+      toast.success("You're now on the Free plan");
 
       await refetchSubscriptionStatus();
     } catch {
-      toast.error("Error", { description: "Could not process cancellation." });
+      toast.error("Could not process cancellation");
     } finally {
       setPendingTierKey(null);
       setIsCancelDialogOpen(false);

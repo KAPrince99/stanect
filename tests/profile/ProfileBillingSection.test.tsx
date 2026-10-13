@@ -89,8 +89,7 @@ describe("ProfileBillingSection", () => {
       });
     });
     expect(testMocks.toast.success).toHaveBeenCalledWith(
-      "Subscription cancelled",
-      { description: "You are now on the Free plan." },
+      "You're now on the Free plan",
     );
     expect(invalidate).toHaveBeenCalledWith({
       queryKey: ["subscription", "user_42"],

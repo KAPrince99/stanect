@@ -2,10 +2,7 @@
 
 import { deleteCompanion } from "@/app/(app)/actions/actions";
 import { toast } from "sonner";
-
-import { BRAND } from "@/lib/brand";
 import { useRouter } from "next/navigation";
-import { Sparkles } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CompanionProps } from "@/types/types";
 import React, { useCallback } from "react";
@@ -49,9 +46,6 @@ export default function DeleteCompanionButton({
       });
       toast.error(
         err instanceof Error ? err.message : "Failed to delete companion",
-        {
-          style: { background: BRAND.toastError },
-        },
       );
     },
     onSuccess: async () => {
@@ -63,24 +57,7 @@ export default function DeleteCompanionButton({
         queryKey: ["createCompanionGate"],
         type: "all",
       });
-      toast.success("Companion deleted successfully", {
-        description: "They've been removed from your world forever.",
-        duration: 5000,
-        style: {
-          background: `linear-gradient(135deg, ${BRAND.backdropFrom}, ${BRAND.backdropVia})`,
-          border: "1px solid rgba(59, 130, 246, 0.5)",
-          borderRadius: "1.5rem",
-          color: BRAND.white,
-          boxShadow: "0 20px 40px rgba(0, 198, 255, 0.25)",
-        },
-        icon: <Sparkles className="h-6 w-6 text-cyan-400" />,
-        action: {
-          label: "Undo",
-          onClick: () => {
-            toast("Undo not available yet", { duration: 2000 });
-          },
-        },
-      });
+      toast.success("Companion deleted");
       setOpen(false);
       router.replace("/dashboard");
     },

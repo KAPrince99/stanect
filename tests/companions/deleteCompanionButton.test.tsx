@@ -73,12 +73,7 @@ describe("DeleteCompanionButton", () => {
     await waitFor(() => {
       expect(testMocks.router.replace).toHaveBeenCalledWith("/dashboard");
     });
-    expect(testMocks.toast.success).toHaveBeenCalledWith(
-      "Companion deleted successfully",
-      expect.objectContaining({
-        description: "They've been removed from your world forever.",
-      }),
-    );
+    expect(testMocks.toast.success).toHaveBeenCalledWith("Companion deleted");
     expect(invalidate).toHaveBeenCalledWith({
       queryKey: ["companions"],
       type: "all",
@@ -88,13 +83,6 @@ describe("DeleteCompanionButton", () => {
       type: "all",
     });
 
-    const successOptions = testMocks.toast.success.mock.calls[0][1] as {
-      action: { onClick: () => void };
-    };
-    successOptions.action.onClick();
-    expect(testMocks.toast).toHaveBeenCalledWith("Undo not available yet", {
-      duration: 2000,
-    });
   });
 
   it("restores the companion when delete fails", async () => {
@@ -125,10 +113,7 @@ describe("DeleteCompanionButton", () => {
     await waitFor(() => {
       expect(queryClient.getQueryData(["companions"])).toEqual([mia, alex]);
     });
-    expect(testMocks.toast.error).toHaveBeenCalledWith(
-      "Nope",
-      expect.objectContaining({ style: { background: "#ff4d4f" } }),
-    );
+    expect(testMocks.toast.error).toHaveBeenCalledWith("Nope");
     expect(testMocks.router.replace).not.toHaveBeenCalled();
   });
 });
