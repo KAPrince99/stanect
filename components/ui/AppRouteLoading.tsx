@@ -34,22 +34,21 @@ export function DashboardRouteLoading() {
       aria-label="Loading dashboard"
     >
       <div className="mx-auto w-full max-w-4xl">
-        <div className="mb-5 w-full sm:mb-6">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <Pulse className="h-3 w-32" />
-            <Pulse className="h-6 w-14 rounded-full" />
+        <div className="mb-3 flex w-full items-center gap-2 sm:mb-4">
+          <div className="flex min-w-0 items-center gap-2">
+            <Pulse className="size-8 shrink-0" />
+            <Pulse className="h-4 w-24" />
+            <Pulse className="h-8 w-24 shrink-0 rounded-full bg-amber-400/25" />
           </div>
-          <div className="flex w-full items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-2.5 py-2.5 sm:gap-4 sm:px-4">
-            <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-              <Pulse className="size-11 shrink-0 rounded-xl" />
-              <div className="min-w-0 space-y-1.5">
-                <Pulse className="h-2.5 w-20" />
-                <Pulse className="h-4 w-28 rounded-md" />
-                <Pulse className="h-2.5 w-24" />
-              </div>
-            </div>
-            <Pulse className="ml-auto h-11 w-24 shrink-0 sm:w-48" />
-          </div>
+          <Pulse className="ml-auto h-8 w-8 shrink-0 border border-white/20 sm:w-36" />
+        </div>
+
+        <div
+          data-skeleton="dashboard-search"
+          className="mb-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 sm:mb-5 sm:px-4"
+        >
+          <Pulse className="size-4 shrink-0" />
+          <Pulse className="h-3 w-40" />
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">

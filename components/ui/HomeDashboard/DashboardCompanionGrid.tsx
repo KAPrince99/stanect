@@ -15,6 +15,7 @@ export const TARGET_SLOT_COUNT = 3;
 
 interface DashboardCompanionGridProps {
   companions: CompanionProps[];
+  showGhosts?: boolean;
 }
 
 /** First ghost completes a 2-column row. Later ghosts only appear in the 3-column row. */
@@ -25,8 +26,13 @@ function ghostLayoutClass(companionCount: number, index: number) {
     : "hidden h-full lg:flex lg:flex-col";
 }
 
-function DashboardCompanionGrid({ companions }: DashboardCompanionGridProps) {
-  const ghostCount = Math.max(0, TARGET_SLOT_COUNT - companions.length);
+function DashboardCompanionGrid({
+  companions,
+  showGhosts = true,
+}: DashboardCompanionGridProps) {
+  const ghostCount = showGhosts
+    ? Math.max(0, TARGET_SLOT_COUNT - companions.length)
+    : 0;
 
   return (
     <motion.div

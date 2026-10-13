@@ -66,6 +66,11 @@ describe("route skeletons copy the live layouts", () => {
     expect(
       screen.getByRole("status", { name: "Loading dashboard" }),
     ).toBeInTheDocument();
+    expect(container.querySelector(".h-8.w-24.rounded-full")).toBeTruthy();
+    expect(container.querySelector(".ml-auto.h-8")).toBeTruthy();
+    expect(
+      container.querySelector('[data-skeleton="dashboard-search"]'),
+    ).toBeTruthy();
     expect(container.querySelector(".h-11.w-full.rounded-full")).toBeTruthy();
     expect(container.querySelector('[class*="aspect-4/5"]')).toBeTruthy();
   });
