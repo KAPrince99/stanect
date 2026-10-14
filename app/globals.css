@@ -453,6 +453,34 @@ h6 {
   }
 }
 
+/*
+  All/Favorites nest: one companion-card column. Width is authored CSS so it
+  cannot collapse to the labels. Margin around the nest is m-1.5 in the
+  component, matching this track to the third card at lg.
+*/
+.dashboard-one-card {
+  box-sizing: border-box;
+  width: calc((100% - 0.75rem) / 2);
+  min-width: calc((100% - 0.75rem) / 2);
+  flex: 0 0 calc((100% - 0.75rem) / 2);
+}
+
+@media (min-width: 640px) {
+  .dashboard-one-card {
+    width: calc((100% - 1.5rem) / 2);
+    min-width: calc((100% - 1.5rem) / 2);
+    flex: 0 0 calc((100% - 1.5rem) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-one-card {
+    width: calc((100% - 3rem) / 3);
+    min-width: calc((100% - 3rem) / 3);
+    flex: 0 0 calc((100% - 3rem) / 3);
+  }
+}
+
 /* Fixed dock. Padding sits under the icon row, above the home indicator. */
 .dock-safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);

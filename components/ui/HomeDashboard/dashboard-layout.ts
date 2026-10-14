@@ -1,13 +1,16 @@
+/** Dashboard column. Marker class keeps All/Favorites on the same board as the cards. */
+export const DASHBOARD_BOARD = "dashboard-board mx-auto w-full max-w-4xl";
+
 /** Same columns and gaps as the companion card grid. */
 export const DASHBOARD_CARD_GRID =
   "grid w-full grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3";
 
 /**
  * One card column: 2-col + gap-3, sm 2-col + gap-6, lg 3-col + gap-6.
- * All/Favorites nest is this wide so its border matches the third card.
+ * All/Favorites nest uses this width; m-1.5 insets it uniformly from the
+ * outer search capsule.
  */
-export const DASHBOARD_ONE_CARD_WIDTH =
-  "w-[calc((100%-0.75rem)/2)] sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)]";
+export const DASHBOARD_ONE_CARD_WIDTH = "dashboard-one-card";
 
 export const DASHBOARD_RESULTS_ID = "dashboard-companion-results";
 

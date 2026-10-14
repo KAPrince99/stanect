@@ -272,11 +272,23 @@ describe("DashboardCompanionsView", () => {
       "dashboard-companion-results",
     );
     expect(screen.getByRole("search").parentElement).toHaveClass("rounded-3xl");
+    expect(screen.getByRole("search").parentElement).not.toHaveClass(
+      "grid-cols-subgrid",
+    );
     expect(screen.getByRole("radiogroup", { name: "Filter companions" })).toHaveClass(
       "rounded-2xl",
       "border-white/20",
-      "lg:w-[calc((100%-3rem)/3)]",
+      "dashboard-one-card",
+      "m-1.5",
     );
+    expect(screen.getByRole("radiogroup", { name: "Filter companions" })).not.toHaveClass(
+      "w-36",
+    );
+    expect(
+      screen.getByRole("radiogroup", { name: "Filter companions" }).closest(
+        ".dashboard-board",
+      ),
+    ).toBeTruthy();
     expect(screen.getByRole("radiogroup", { name: "Filter companions" })).not.toHaveClass(
       "rounded-full",
     );

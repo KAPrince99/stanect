@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import { companionPortraitAspect } from "./HomeDashboard/CompanionOverviewCardMedia";
 import {
   DASHBOARD_BELOW_SEARCH,
+  DASHBOARD_BOARD,
   DASHBOARD_CARD_GRID,
   DASHBOARD_ONE_CARD_WIDTH,
 } from "./HomeDashboard/dashboard-layout";
@@ -38,7 +39,7 @@ export function DashboardRouteLoading() {
       role="status"
       aria-label="Loading dashboard"
     >
-      <div className="mx-auto w-full max-w-4xl">
+      <div className={DASHBOARD_BOARD}>
         <div className={`${DASHBOARD_CARD_GRID} mb-3 items-center sm:mb-4`}>
           <div className="col-span-2 flex min-w-0 items-center gap-2">
             <Pulse className="size-10 shrink-0 rounded-xl" />
@@ -50,7 +51,7 @@ export function DashboardRouteLoading() {
 
         <div
           data-skeleton="dashboard-search"
-          className={`flex w-full min-w-0 flex-nowrap items-stretch rounded-3xl border border-white/20 bg-white/5 ${DASHBOARD_BELOW_SEARCH}`}
+          className={`flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 ${DASHBOARD_BELOW_SEARCH}`}
         >
           <div className="flex min-w-0 flex-1 items-center gap-2.5 px-4 py-3 sm:px-5">
             <Pulse className="size-6 shrink-0" />
@@ -58,14 +59,14 @@ export function DashboardRouteLoading() {
           </div>
           <div
             data-skeleton="dashboard-filter"
-            className={`relative my-1.5 grid min-h-11 shrink-0 grid-cols-2 items-center rounded-2xl border border-white/20 ${DASHBOARD_ONE_CARD_WIDTH}`}
+            className={`relative m-1.5 grid min-h-11 grid-cols-2 items-center rounded-2xl border border-white/20 ${DASHBOARD_ONE_CARD_WIDTH}`}
           >
             <Pulse className="h-8 w-full rounded-xl" />
             <Pulse className="h-8 w-full rounded-xl" />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
+        <div className={DASHBOARD_CARD_GRID}>
           {Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}

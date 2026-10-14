@@ -125,7 +125,7 @@ function DashboardSearch({
 
   return (
     <div className={DASHBOARD_BELOW_SEARCH}>
-      <div className="flex w-full min-w-0 flex-nowrap items-stretch rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl">
+      <div className="flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl">
         <form
           role="search"
           className="flex min-w-0 flex-1 items-center gap-2.5 px-4 py-3 sm:px-5"
@@ -184,7 +184,7 @@ function DashboardSearch({
           aria-controls={DASHBOARD_RESULTS_ID}
           onKeyDown={onFilterKeyDown}
           className={cn(
-            "relative my-1.5 grid min-h-11 shrink-0 grid-cols-2 items-stretch rounded-2xl border border-white/20",
+            "relative m-1.5 grid min-h-11 grid-cols-2 items-stretch rounded-2xl border border-white/20",
             DASHBOARD_ONE_CARD_WIDTH,
           )}
         >

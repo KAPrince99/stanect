@@ -11,7 +11,7 @@ import DashboardContinueStrip from "./DashboardContinueStrip";
 import DashboardSearch from "./DashboardSearch";
 import DashboardSearchEmpty from "./DashboardSearchEmpty";
 import EmptyCompanionState from "./EmptyCompanionState";
-import { DASHBOARD_RESULTS_ID } from "./dashboard-layout";
+import { DASHBOARD_BOARD, DASHBOARD_RESULTS_ID } from "./dashboard-layout";
 
 interface DashboardCompanionsViewProps {
   companions: CompanionProps[];
@@ -59,7 +59,7 @@ function DashboardCompanionsView({
 
   return (
     <section className="app-column-x relative pt-24 pb-8 lg:pt-28">
-      <div className="mx-auto w-full max-w-4xl">
+      <div className={DASHBOARD_BOARD}>
         {hasCompanions ? (
           <>
             {continueCompanion ? (
