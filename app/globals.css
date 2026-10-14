@@ -173,10 +173,20 @@ html {
 /* 1. Body styles and preventing scroll leak (Standard CSS) */
 body {
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
   /* Ensure the body itself is the correct color */
   background-color: #0b1a36;
   margin: 0;
   padding: 0;
+}
+
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* 2. Next.js Root Element (#__next) styles (Standard CSS) */
