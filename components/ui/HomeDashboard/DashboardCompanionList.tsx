@@ -1,21 +1,27 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   memo,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-import { getCompanions, getUser } from "@/app/(app)/actions/actions";
 import {
-  getFavoriteCompanionIds,
-  subscribeToFavoriteCompanions,
+  getCompanions,
+  getUser,
+  importFavoriteCompanions,
   toggleFavoriteCompanion,
+} from "@/app/(app)/actions/actions";
+import {
+  clearLocalFavoriteCompanionIds,
+  getLocalFavoriteCompanionIds,
 } from "@/lib/companion-favorites";
 import {
   applyCompanionFilters,
@@ -25,7 +31,7 @@ import {
 import { getLastCompanionId } from "@/lib/last-companion";
 import { hasReachedCompanionLimit } from "@/lib/plan-utils";
 import type { PlanType } from "@/lib/plan-limits";
-import type { CompanionProps } from "@/types/types";
+import type { CompanionProps, Userprops } from "@/types/types";
 
 import DashboardCompanionsView from "./DashboardCompanionsView";
 
@@ -56,15 +62,12 @@ function subscribeToLastCompanionId(onStoreChange: () => void) {
 
 function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
   const [companionFilter, setCompanionFilter] =
     useState<CompanionFilter>("all");
-  const favoriteIds = useSyncExternalStore(
-    subscribeToFavoriteCompanions,
-    getFavoriteCompanionIds,
-    () => EMPTY_FAVORITE_IDS,
-  );
+  const importedLocalFavorites = useRef(false);
   const [isStartingSetup, startTransition] = useTransition();
   const lastCompanionId = useSyncExternalStore(
     subscribeToLastCompanionId,
@@ -97,6 +100,76 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
     queryFn: () => getUser(userId),
     enabled: !!userId,
     staleTime: 1000 * 60 * 5,
+  });
+
+  const favoriteIds = userData?.favorite_companion_ids ?? EMPTY_FAVORITE_IDS;
+
+  useEffect(() => {
+    if (!userData || importedLocalFavorites.current) return;
+    const localIds = getLocalFavoriteCompanionIds();
+    if (localIds.length === 0) return;
+
+    const alreadyOnUser = new Set(userData.favorite_companion_ids ?? []);
+    if (localIds.every((id) => alreadyOnUser.has(id))) {
+      clearLocalFavoriteCompanionIds();
+      importedLocalFavorites.current = true;
+      return;
+    }
+
+    importedLocalFavorites.current = true;
+    void importFavoriteCompanions(localIds)
+      .then((result) => {
+        clearLocalFavoriteCompanionIds();
+        queryClient.setQueryData(
+          ["users", userId],
+          (current: Userprops | null | undefined) =>
+            current
+              ? {
+                  ...current,
+                  favorite_companion_ids: result.favorite_companion_ids,
+                }
+              : current,
+        );
+      })
+      .catch(() => {
+        importedLocalFavorites.current = false;
+      });
+  }, [queryClient, userData, userId]);
+
+  const favoriteMutation = useMutation({
+    mutationFn: (companionId: string) => toggleFavoriteCompanion(companionId),
+    onMutate: async (companionId) => {
+      await queryClient.cancelQueries({ queryKey: ["users", userId] });
+      const previous = queryClient.getQueryData<Userprops>(["users", userId]);
+      queryClient.setQueryData(
+        ["users", userId],
+        (current: Userprops | null | undefined) => {
+          if (!current) return current;
+          const next = new Set(current.favorite_companion_ids ?? []);
+          if (next.has(companionId)) next.delete(companionId);
+          else next.add(companionId);
+          return { ...current, favorite_companion_ids: [...next] };
+        },
+      );
+      return { previous };
+    },
+    onError: (error, _id, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["users", userId], context.previous);
+      }
+      toast.error(
+        error instanceof Error ? error.message : "Could not update favorite",
+      );
+    },
+    onSuccess: (result) => {
+      queryClient.setQueryData(
+        ["users", userId],
+        (current: Userprops | null | undefined) =>
+          current
+            ? { ...current, favorite_companion_ids: result.favorite_companion_ids }
+            : current,
+      );
+    },
   });
 
   const continueCompanion = useMemo(
@@ -138,7 +211,7 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
       companionFilter={companionFilter}
       onCompanionFilterChange={setCompanionFilter}
       favoriteIds={favoriteIdSet}
-      onToggleFavorite={toggleFavoriteCompanion}
+      onToggleFavorite={(id) => favoriteMutation.mutate(id)}
       continueCompanion={continueCompanion}
       canCreateCompanion={canCreateCompanion}
       isLoading={isCompanionsLoading}

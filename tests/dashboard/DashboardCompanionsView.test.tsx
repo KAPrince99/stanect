@@ -6,6 +6,7 @@ import type { CompanionProps } from "@/types/types";
 import { renderWithProviders } from "@/tests/support/render";
 
 import DashboardCompanionsView from "@/components/ui/HomeDashboard/DashboardCompanionsView";
+import { CREATE_LORD_ICON } from "@/components/ui/sidebar/sidebarNavConfig";
 
 function companion(id: string, name: string): CompanionProps {
   return {
@@ -120,22 +121,29 @@ describe("DashboardCompanionsView", () => {
       screen.getByText((_, node) => node?.textContent === "Keep going with Mia?"),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Continue convo" })).toHaveAttribute(
       "href",
       "/dashboard/c1",
     );
-    expect(screen.getByRole("link", { name: "Continue" })).toHaveClass(
+    expect(screen.getByRole("link", { name: "Continue convo" })).toHaveClass(
       "h-8",
       "!text-sm",
     );
     expect(
-      screen.getByRole("link", { name: "Continue" }).querySelector("svg"),
+      screen.getByRole("link", { name: "Continue convo" }).querySelector("svg"),
     ).toBeInTheDocument();
     expect(screen.queryByText("Welcome back, Ada")).not.toBeInTheDocument();
     expect(screen.queryByText("Free")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Create companion" })).toBeInTheDocument();
     expect(screen.getByRole("textbox", { name: "Search companions" })).toBeInTheDocument();
-    expect(screen.getByRole("search")).toHaveClass("col-span-2");
+    expect(screen.getByRole("search")).toBeInTheDocument();
+    expect(screen.getByRole("search").querySelector("img")).toHaveAttribute(
+      "src",
+      "/icons/search-magnifier.svg",
+    );
+    expect(screen.getByRole("search").querySelector("img")).not.toHaveClass(
+      "animate-search-look",
+    );
     expect(screen.getByRole("radio", { name: "All" })).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Favorites" })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Create another companion" })).toHaveLength(
@@ -157,20 +165,26 @@ describe("DashboardCompanionsView", () => {
     expect(
       screen.getByText((_, node) => node?.textContent === "Keep going with Alex?"),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Continue convo" })).toHaveAttribute(
       "href",
       "/dashboard/c2",
     );
-    expect(screen.getByRole("link", { name: "Continue" })).toHaveClass("h-8");
+    expect(screen.getByRole("link", { name: "Continue convo" })).toHaveClass("h-8");
     expect(screen.getByRole("link", { name: "Create companion" })).toHaveAttribute(
       "href",
       "/new",
     );
     expect(screen.getByRole("link", { name: "Create companion" })).toHaveClass(
-      "h-8",
+      "h-10",
       "!text-sm",
       "w-full",
     );
+    expect(
+      screen.getByRole("link", { name: "Create companion" }).querySelector("lord-icon"),
+    ).toHaveAttribute("src", CREATE_LORD_ICON);
+    expect(
+      screen.getByRole("link", { name: "Create companion" }).querySelector("svg"),
+    ).toBeNull();
     expect(screen.queryByText("Pro")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: "Create another companion" }),
@@ -245,6 +259,53 @@ describe("DashboardCompanionsView", () => {
       "aria-checked",
       "false",
     );
+    expect(screen.getByRole("radio", { name: "All" })).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
+    expect(screen.getByRole("radio", { name: "Favorites" })).toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
+    expect(screen.getByRole("radiogroup", { name: "Filter companions" })).toHaveAttribute(
+      "aria-controls",
+      "dashboard-companion-results",
+    );
+    expect(screen.getByRole("search").parentElement).toHaveClass("rounded-3xl");
+    expect(screen.getByRole("radiogroup", { name: "Filter companions" })).toHaveClass(
+      "rounded-2xl",
+      "border-white/20",
+      "lg:w-[calc((100%-3rem)/3)]",
+    );
+    expect(screen.getByRole("radiogroup", { name: "Filter companions" })).not.toHaveClass(
+      "rounded-full",
+    );
+    expect(screen.getByText("Showing all")).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "Favorites" })).toHaveAccessibleName(
+      "Favorites",
+    );
+    expect(screen.getByText("Favs")).toBeInTheDocument();
+  });
+
+  it("animates the magnifier while search is focused", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <DashboardCompanionsView
+        companions={[mia, alex]}
+        filteredCompanions={[mia, alex]}
+        continueCompanion={alex}
+        searchQuery=""
+        onSearchQueryChange={vi.fn()}
+        isLoading={false}
+        onStartSetup={vi.fn()}
+      />,
+    );
+
+    const magnifier = screen.getByRole("search").querySelector("img");
+    expect(magnifier).not.toHaveClass("animate-search-look");
+
+    await user.click(screen.getByRole("textbox", { name: "Search companions" }));
+    expect(magnifier).toHaveClass("animate-search-look");
   });
 
   it("shows the empty favorites state without the setup wizard", () => {
@@ -267,6 +328,31 @@ describe("DashboardCompanionsView", () => {
       screen.getByRole("heading", { name: "No favorites yet" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Show all" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Create your first companion" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("uses the favorites empty search copy, not the setup wizard", () => {
+    renderWithProviders(
+      <DashboardCompanionsView
+        companions={[mia, alex]}
+        filteredCompanions={[]}
+        continueCompanion={alex}
+        searchQuery="zzz"
+        activeQuery="zzz"
+        companionFilter="favorites"
+        favoriteIds={new Set(["c1"])}
+        onSearchQueryChange={vi.fn()}
+        onCompanionFilterChange={vi.fn()}
+        isLoading={false}
+        onStartSetup={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "No favorites match “zzz”" }),
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: "Create your first companion" }),
     ).not.toBeInTheDocument();

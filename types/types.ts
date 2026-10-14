@@ -48,6 +48,7 @@ export interface Userprops {
   daily_seconds_used?: number;
   last_usage_date?: string | null;
   created_at?: string;
+  favorite_companion_ids?: string[];
   metadata?: Record<string, unknown>;
 }
 

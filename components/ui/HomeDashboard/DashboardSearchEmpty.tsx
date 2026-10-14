@@ -22,7 +22,7 @@ function DashboardSearchEmpty({
 
   if (isFavorites && !label) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-10 text-center backdrop-blur-xl">
+      <div className="rounded-2xl bg-white/5 px-6 py-10 text-center backdrop-blur-xl">
         <h2 className="type-title">No favorites yet</h2>
         <p className="type-body mx-auto mt-2 max-w-md">
           Star a companion from All to see it here.
@@ -41,7 +41,7 @@ function DashboardSearchEmpty({
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-10 text-center backdrop-blur-xl">
+    <div className="rounded-2xl bg-white/5 px-6 py-10 text-center backdrop-blur-xl">
       <h2 className="type-title">
         {isFavorites
           ? `No favorites match “${label}”`

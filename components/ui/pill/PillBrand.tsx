@@ -1,16 +1,20 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function PillBrand() {
   return (
     <Link
       href="/"
+      aria-label="Stanect"
       className="group z-10 flex items-center no-underline outline-none focus:outline-none"
     >
-      <div className="type-brand">
-        <span className="bg-linear-to-r from-white via-white/90 to-white/50 bg-clip-text text-transparent">
-          Stanect
-        </span>
-      </div>
+      <Image
+        src="/logo/logo.svg"
+        alt=""
+        width={36}
+        height={36}
+        className="size-8 object-contain sm:size-9"
+      />
     </Link>
   );
 }

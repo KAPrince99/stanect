@@ -1,77 +1,60 @@
-const FAVORITE_COMPANION_IDS_KEY = "stanect:favoriteCompanionIds";
-const FAVORITES_CHANGED_EVENT = "stanect:favorites-changed";
+export const FAVORITE_COMPANION_IDS_METADATA_KEY = "favorite_companion_ids";
+const LOCAL_FAVORITE_COMPANION_IDS_KEY = "stanect:favoriteCompanionIds";
 
 const EMPTY_IDS: string[] = [];
+const MAX_FAVORITE_IDS = 500;
 
-let cachedRaw: string | null = null;
-let cachedIds: string[] = EMPTY_IDS;
-
-function readRaw(): string | null {
-  if (typeof window === "undefined") return null;
-  try {
-    return window.localStorage.getItem(FAVORITE_COMPANION_IDS_KEY);
-  } catch {
-    return null;
-  }
+export function parseFavoriteCompanionIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return EMPTY_IDS;
+  const ids = value.filter(
+    (entry): entry is string => typeof entry === "string" && entry.length > 0,
+  );
+  return ids.length > 0 ? ids.slice(0, MAX_FAVORITE_IDS) : EMPTY_IDS;
 }
 
-function parseIds(raw: string | null): string[] {
-  if (!raw) return EMPTY_IDS;
+export function readFavoriteCompanionIdsFromMetadata(
+  metadata: unknown,
+): string[] {
+  if (!metadata || typeof metadata !== "object") return EMPTY_IDS;
+  return parseFavoriteCompanionIds(
+    (metadata as Record<string, unknown>)[FAVORITE_COMPANION_IDS_METADATA_KEY],
+  );
+}
+
+export function toggleFavoriteId(ids: readonly string[], id: string) {
+  const next = new Set(ids);
+  const wasFavorite = next.has(id);
+  if (wasFavorite) next.delete(id);
+  else next.add(id);
+  return {
+    ids: [...next].slice(0, MAX_FAVORITE_IDS),
+    isFavorite: !wasFavorite,
+  };
+}
+
+export function mergeFavoriteIds(...lists: readonly string[][]) {
+  return [...new Set(lists.flat().filter((id) => id.length > 0))].slice(
+    0,
+    MAX_FAVORITE_IDS,
+  );
+}
+
+export function getLocalFavoriteCompanionIds(): string[] {
+  if (typeof window === "undefined") return EMPTY_IDS;
   try {
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return EMPTY_IDS;
-    const ids = parsed.filter(
-      (value): value is string => typeof value === "string" && value.length > 0,
+    return parseFavoriteCompanionIds(
+      JSON.parse(window.localStorage.getItem(LOCAL_FAVORITE_COMPANION_IDS_KEY) ?? "null"),
     );
-    return ids.length > 0 ? ids : EMPTY_IDS;
   } catch {
     return EMPTY_IDS;
   }
 }
 
-function writeIds(ids: string[]) {
-  const raw = JSON.stringify(ids);
-  cachedRaw = raw;
-  cachedIds = ids.length > 0 ? ids : EMPTY_IDS;
+export function clearLocalFavoriteCompanionIds() {
+  if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(FAVORITE_COMPANION_IDS_KEY, raw);
+    window.localStorage.removeItem(LOCAL_FAVORITE_COMPANION_IDS_KEY);
   } catch {
     // Ignore private-mode / quota failures.
   }
-  window.dispatchEvent(new Event(FAVORITES_CHANGED_EVENT));
-}
-
-export function getFavoriteCompanionIds(): string[] {
-  const raw = readRaw();
-  if (raw === cachedRaw) return cachedIds;
-  cachedRaw = raw;
-  cachedIds = parseIds(raw);
-  return cachedIds;
-}
-
-export function toggleFavoriteCompanion(id: string): boolean {
-  if (typeof window === "undefined" || !id) return false;
-  const next = new Set(getFavoriteCompanionIds());
-  const isFavorite = next.has(id);
-  if (isFavorite) next.delete(id);
-  else next.add(id);
-  writeIds([...next]);
-  return !isFavorite;
-}
-
-export function subscribeToFavoriteCompanions(onStoreChange: () => void) {
-  if (typeof window === "undefined") return () => {};
-
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === FAVORITE_COMPANION_IDS_KEY || event.key === null) {
-      onStoreChange();
-    }
-  };
-
-  window.addEventListener("storage", onStorage);
-  window.addEventListener(FAVORITES_CHANGED_EVENT, onStoreChange);
-  return () => {
-    window.removeEventListener("storage", onStorage);
-    window.removeEventListener(FAVORITES_CHANGED_EVENT, onStoreChange);
-  };
 }

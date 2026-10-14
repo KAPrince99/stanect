@@ -11,6 +11,7 @@ interface LordIconProps {
   colors?: string;
   className?: string;
   loading?: "lazy" | "interaction" | "delay";
+  target?: string;
 }
 
 /** Renders a Lordicon. Script is loaded once from the app layout. */
@@ -23,6 +24,7 @@ export default function LordIcon({
   colors,
   className,
   loading = "lazy",
+  target,
 }: LordIconProps) {
   return (
     <lord-icon
@@ -31,6 +33,7 @@ export default function LordIcon({
       state={state}
       colors={colors}
       loading={loading}
+      target={target}
       style={{ width, height }}
       className={className}
     />

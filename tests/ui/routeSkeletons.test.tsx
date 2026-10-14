@@ -67,7 +67,7 @@ describe("route skeletons copy the live layouts", () => {
       screen.getByRole("status", { name: "Loading dashboard" }),
     ).toBeInTheDocument();
     expect(container.querySelector(".h-8.w-24.rounded-full")).toBeTruthy();
-    expect(container.querySelector(".h-8.w-full")).toBeTruthy();
+    expect(container.querySelector(".h-10.w-full")).toBeTruthy();
     expect(
       container.querySelector('[data-skeleton="dashboard-search"]'),
     ).toBeTruthy();

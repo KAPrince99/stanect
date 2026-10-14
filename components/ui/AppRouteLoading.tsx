@@ -4,6 +4,7 @@ import { companionPortraitAspect } from "./HomeDashboard/CompanionOverviewCardMe
 import {
   DASHBOARD_BELOW_SEARCH,
   DASHBOARD_CARD_GRID,
+  DASHBOARD_ONE_CARD_WIDTH,
 } from "./HomeDashboard/dashboard-layout";
 import { AvatarSkeleton } from "./NewTabForm/AvatarSkeleton";
 import { Pulse } from "./Pulse";
@@ -44,23 +45,23 @@ export function DashboardRouteLoading() {
             <Pulse className="h-4 w-44" />
             <Pulse className="h-8 w-24 shrink-0 rounded-full bg-amber-400/25" />
           </div>
-          <Pulse className="h-8 w-full border border-white/20" />
+          <Pulse className="h-10 w-full" />
         </div>
 
-        <div className={`${DASHBOARD_CARD_GRID} items-stretch ${DASHBOARD_BELOW_SEARCH}`}>
-          <div
-            data-skeleton="dashboard-search"
-            className="col-span-2 flex min-w-0 items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 sm:px-5"
-          >
-            <Pulse className="size-5 shrink-0" />
+        <div
+          data-skeleton="dashboard-search"
+          className={`flex w-full min-w-0 flex-nowrap items-stretch rounded-3xl border border-white/20 bg-white/5 ${DASHBOARD_BELOW_SEARCH}`}
+        >
+          <div className="flex min-w-0 flex-1 items-center gap-2.5 px-4 py-3 sm:px-5">
+            <Pulse className="size-6 shrink-0" />
             <Pulse className="h-4 w-44" />
           </div>
           <div
             data-skeleton="dashboard-filter"
-            className="grid min-h-12 w-full grid-cols-2 items-center gap-0 rounded-2xl border border-white/10 bg-white/5 p-1.5"
+            className={`relative my-1.5 grid min-h-11 shrink-0 grid-cols-2 items-center rounded-2xl border border-white/20 ${DASHBOARD_ONE_CARD_WIDTH}`}
           >
-            <Pulse className="h-10 w-full rounded-xl" />
-            <Pulse className="h-10 w-full rounded-xl" />
+            <Pulse className="h-8 w-full rounded-xl" />
+            <Pulse className="h-8 w-full rounded-xl" />
           </div>
         </div>
 
@@ -68,7 +69,7 @@ export function DashboardRouteLoading() {
           {Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}
-              className={`flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl ${index === 2 ? "hidden lg:block" : ""}`}
+              className={`flex flex-col overflow-hidden rounded-3xl bg-white/5 shadow-xl ${index === 2 ? "hidden lg:block" : ""}`}
             >
               <Pulse className={`w-full rounded-none ${companionPortraitAspect}`} />
               <div className="flex flex-1 flex-col p-3 text-center sm:p-4">

@@ -11,6 +11,7 @@ import DashboardContinueStrip from "./DashboardContinueStrip";
 import DashboardSearch from "./DashboardSearch";
 import DashboardSearchEmpty from "./DashboardSearchEmpty";
 import EmptyCompanionState from "./EmptyCompanionState";
+import { DASHBOARD_RESULTS_ID } from "./dashboard-layout";
 
 interface DashboardCompanionsViewProps {
   companions: CompanionProps[];
@@ -85,26 +86,28 @@ function DashboardCompanionsView({
                 onCompanionFilterChange={onCompanionFilterChange ?? (() => {})}
               />
             ) : null}
-            {showEmptyResults ? (
-              <DashboardSearchEmpty
-                query={activeQuery}
-                filter={companionFilter}
-                onClear={() => {
-                  if (isSearching) {
-                    onSearchQueryChange?.("");
-                    return;
-                  }
-                  onCompanionFilterChange?.("all");
-                }}
-              />
-            ) : (
-              <DashboardCompanionGrid
-                companions={filteredCompanions}
-                showGhosts={!isSearching && !isFilteringFavorites}
-                favoriteIds={favoriteIds}
-                onToggleFavorite={onToggleFavorite}
-              />
-            )}
+            <div id={DASHBOARD_RESULTS_ID}>
+              {showEmptyResults ? (
+                <DashboardSearchEmpty
+                  query={activeQuery}
+                  filter={companionFilter}
+                  onClear={() => {
+                    if (isSearching) {
+                      onSearchQueryChange?.("");
+                      return;
+                    }
+                    onCompanionFilterChange?.("all");
+                  }}
+                />
+              ) : (
+                <DashboardCompanionGrid
+                  companions={filteredCompanions}
+                  showGhosts={!isSearching && !isFilteringFavorites}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={onToggleFavorite}
+                />
+              )}
+            </div>
           </>
         ) : (
           <EmptyCompanionState

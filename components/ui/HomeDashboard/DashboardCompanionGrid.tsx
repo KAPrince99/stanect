@@ -40,21 +40,17 @@ function DashboardCompanionGrid({
     : 0;
 
   return (
-    <motion.div
-      layout
-      className={DASHBOARD_CARD_GRID}
-    >
-      <AnimatePresence mode="popLayout">
-        {companions.map((companion, index) => (
+    <motion.div className={DASHBOARD_CARD_GRID}>
+      <AnimatePresence initial={false} mode="popLayout">
+        {companions.map((companion) => (
           <motion.div
             key={companion.id}
-            layout
             className="flex h-full min-w-0 flex-col"
             variants={motionVariants.cardPop}
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ ...motionTransition.soft, delay: index * 0.04 }}
+            transition={motionTransition.soft}
           >
             <CompanionOverviewCard
               companion={companion}

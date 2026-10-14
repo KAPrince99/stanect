@@ -1,3 +1,5 @@
+export const CREATE_LORD_ICON = "https://cdn.lordicon.com/ueoydrft.json";
+
 export const sidebarNavItems = [
   {
     href: "/dashboard",
@@ -8,7 +10,7 @@ export const sidebarNavItems = [
   {
     href: "/new",
     label: "Create",
-    lordIcon: "https://cdn.lordicon.com/ueoydrft.json",
+    lordIcon: CREATE_LORD_ICON,
     iconSize: 40,
   },
   {

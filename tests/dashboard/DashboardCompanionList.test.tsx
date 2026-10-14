@@ -8,14 +8,23 @@ import { renderWithProviders } from "@/tests/support/render";
 
 import DashboardCompanionList from "@/components/ui/HomeDashboard/DashboardCompanionList";
 
-const { getCompanions, getUser } = vi.hoisted(() => ({
+const {
+  getCompanions,
+  getUser,
+  toggleFavoriteCompanion,
+  importFavoriteCompanions,
+} = vi.hoisted(() => ({
   getCompanions: vi.fn(),
   getUser: vi.fn(),
+  toggleFavoriteCompanion: vi.fn(),
+  importFavoriteCompanions: vi.fn(),
 }));
 
 vi.mock("@/app/(app)/actions/actions", () => ({
   getCompanions,
   getUser,
+  toggleFavoriteCompanion,
+  importFavoriteCompanions,
 }));
 
 function companion(id: string, name: string, scene = "Gym"): CompanionProps {
@@ -39,12 +48,31 @@ const alex = companion("c2", "Alex");
 const sam = companion("c3", "Sam");
 
 describe("DashboardCompanionList", () => {
+  let favoriteIds: string[] = [];
+
   beforeEach(() => {
+    favoriteIds = [];
     getCompanions.mockReset();
     getUser.mockReset();
+    toggleFavoriteCompanion.mockReset();
+    importFavoriteCompanions.mockReset();
     localStorage.removeItem("stanect:lastCompanionId");
     localStorage.removeItem("stanect:favoriteCompanionIds");
-    getUser.mockResolvedValue({ plan: "free" });
+    getUser.mockImplementation(async () => ({
+      plan: "free",
+      favorite_companion_ids: [...favoriteIds],
+    }));
+    toggleFavoriteCompanion.mockImplementation(async (companionId: string) => {
+      const next = new Set(favoriteIds);
+      if (next.has(companionId)) next.delete(companionId);
+      else next.add(companionId);
+      favoriteIds = [...next];
+      return { favorite_companion_ids: favoriteIds };
+    });
+    importFavoriteCompanions.mockImplementation(async (ids: string[]) => {
+      favoriteIds = [...new Set([...favoriteIds, ...ids])];
+      return { favorite_companion_ids: favoriteIds };
+    });
   });
 
   it("announces loading until companions are ready", () => {
@@ -81,16 +109,16 @@ describe("DashboardCompanionList", () => {
         (_, node) => node?.textContent === "Keep going with Alex?",
       ),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Continue convo" })).toHaveAttribute(
       "href",
       "/dashboard/c2",
     );
-    expect(screen.getByRole("link", { name: "Continue" })).toHaveClass(
+    expect(screen.getByRole("link", { name: "Continue convo" })).toHaveClass(
       "h-8",
       "!text-sm",
     );
     expect(
-      screen.getByRole("link", { name: "Continue" }).querySelector("svg"),
+      screen.getByRole("link", { name: "Continue convo" }).querySelector("svg"),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
     expect(screen.queryByText(/Welcome back/)).not.toBeInTheDocument();
@@ -101,7 +129,10 @@ describe("DashboardCompanionList", () => {
 
   it("offers Create companion on a full row when the plan still has room", async () => {
     getCompanions.mockResolvedValue([mia, alex, sam]);
-    getUser.mockResolvedValue({ plan: "pro" });
+    getUser.mockImplementation(async () => ({
+      plan: "pro",
+      favorite_companion_ids: [...favoriteIds],
+    }));
 
     renderWithProviders(<DashboardCompanionList userId="user_test" />);
 
@@ -110,7 +141,7 @@ describe("DashboardCompanionList", () => {
       "/new",
     );
     expect(screen.getByRole("link", { name: "Create companion" })).toHaveClass(
-      "h-8",
+      "h-10",
       "!text-sm",
       "w-full",
     );
@@ -263,6 +294,9 @@ describe("DashboardCompanionList", () => {
     await user.click(
       within(miaCard as HTMLElement).getByRole("button", { name: "Add to favorites" }),
     );
+    await waitFor(() => {
+      expect(toggleFavoriteCompanion).toHaveBeenCalledWith("c1");
+    });
     await user.click(screen.getByRole("radio", { name: "Favorites" }));
 
     expect(screen.getByRole("radio", { name: "Favorites" })).toHaveAttribute(
@@ -304,7 +338,7 @@ describe("DashboardCompanionList", () => {
 
   it("searches inside the current favorite set", async () => {
     const user = userEvent.setup();
-    localStorage.setItem("stanect:favoriteCompanionIds", JSON.stringify(["c1", "c2"]));
+    favoriteIds = ["c1", "c2"];
     getCompanions.mockResolvedValue([mia, alex]);
 
     renderWithProviders(<DashboardCompanionList userId="user_test" />);
@@ -320,5 +354,75 @@ describe("DashboardCompanionList", () => {
       expect(screen.queryByRole("heading", { name: "Alex" })).not.toBeInTheDocument();
     });
     expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+  });
+
+  it("moves All and Favorites with arrows and announces the filter", async () => {
+    const user = userEvent.setup();
+    getCompanions.mockResolvedValue([mia, alex]);
+
+    renderWithProviders(<DashboardCompanionList userId="user_test" />);
+
+    const all = await screen.findByRole("radio", { name: "All" });
+    all.focus();
+    await user.keyboard("{ArrowRight}");
+
+    expect(screen.getByRole("radio", { name: "Favorites" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    expect(screen.getByRole("radio", { name: "Favorites" })).toHaveFocus();
+    expect(screen.getByText("Showing favorites")).toBeInTheDocument();
+
+    await user.keyboard("{Home}");
+    expect(screen.getByRole("radio", { name: "All" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    expect(screen.getByRole("radio", { name: "All" })).toHaveFocus();
+    expect(screen.getByText("Showing all")).toBeInTheDocument();
+  });
+
+  it("does not change the filter when Escape clears nothing", async () => {
+    const user = userEvent.setup();
+    getCompanions.mockResolvedValue([mia, alex]);
+
+    renderWithProviders(<DashboardCompanionList userId="user_test" />);
+
+    const search = await screen.findByRole("textbox", {
+      name: "Search companions",
+    });
+    search.focus();
+    await user.keyboard("{Escape}");
+
+    expect(search).toHaveValue("");
+    expect(screen.getByRole("radio", { name: "All" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+  });
+
+  it("moves leftover local favorites onto the user", async () => {
+    localStorage.setItem(
+      "stanect:favoriteCompanionIds",
+      JSON.stringify(["c1"]),
+    );
+    getCompanions.mockResolvedValue([mia, alex]);
+
+    renderWithProviders(<DashboardCompanionList userId="user_test" />);
+
+    expect(await screen.findByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(importFavoriteCompanions).toHaveBeenCalledWith(["c1"]);
+    });
+    await waitFor(() => {
+      expect(localStorage.getItem("stanect:favoriteCompanionIds")).toBeNull();
+    });
+
+    const miaCard = screen.getByRole("heading", { name: "Mia" }).closest("article");
+    expect(
+      within(miaCard as HTMLElement).getByRole("button", {
+        name: "Remove from favorites",
+      }),
+    ).toHaveAttribute("aria-pressed", "true");
   });
 });

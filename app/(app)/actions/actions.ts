@@ -9,6 +9,12 @@ import {
   hasReachedCompanionLimit,
   readLastUsageDate,
 } from "@/lib/plan-utils";
+import {
+  FAVORITE_COMPANION_IDS_METADATA_KEY,
+  mergeFavoriteIds,
+  readFavoriteCompanionIdsFromMetadata,
+  toggleFavoriteId,
+} from "@/lib/companion-favorites";
 import { createSupabaseClient } from "@/lib/supabase";
 import {
   AssistantCompanionContext,
@@ -107,7 +113,113 @@ export async function getUser(_id?: string) {
     daily_seconds_used: dailySecondsUsed,
     created_at: data.created_at,
     last_usage_date: lastUsageDate,
+    favorite_companion_ids: readFavoriteCompanionIdsFromMetadata(data.metadata),
   };
+}
+
+const favoriteCompanionIdSchema = z.string().trim().min(1).max(80);
+
+async function writeFavoriteCompanionIds(
+  clerkUserId: string,
+  ids: string[],
+  metadata: unknown,
+) {
+  // Service client after Clerk + ownership — users UPDATE is not guaranteed
+  // under the publishable-key client (same pattern as profile / delete).
+  const { supabase } = await import("@/lib/supa-service");
+  const current =
+    metadata && typeof metadata === "object"
+      ? (metadata as Record<string, unknown>)
+      : {};
+
+  const { error: writeError } = await supabase
+    .from("users")
+    .update({
+      metadata: {
+        ...current,
+        [FAVORITE_COMPANION_IDS_METADATA_KEY]: ids,
+      },
+      updated_at: new Date().toISOString(),
+    })
+    .eq("clerk_user_id", clerkUserId);
+
+  if (writeError) throw new Error(writeError.message);
+  return ids;
+}
+
+export async function toggleFavoriteCompanion(companionId: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const parsed = favoriteCompanionIdSchema.safeParse(companionId);
+  if (!parsed.success) throw new Error("Invalid companion");
+
+  const { supabase } = await import("@/lib/supa-service");
+  const { data: companion, error: companionError } = await supabase
+    .from("companions")
+    .select("id")
+    .eq("id", parsed.data)
+    .eq("owner_id", userId)
+    .maybeSingle();
+
+  if (companionError) throw new Error(companionError.message);
+  if (!companion) throw new Error("Companion not found");
+
+  const { data: row, error: userError } = await supabase
+    .from("users")
+    .select("metadata")
+    .eq("clerk_user_id", userId)
+    .maybeSingle();
+
+  if (userError) throw new Error(userError.message);
+  if (!row) throw new Error("User not found");
+
+  const current = readFavoriteCompanionIdsFromMetadata(row.metadata);
+  const { ids } = toggleFavoriteId(current, parsed.data);
+  await writeFavoriteCompanionIds(userId, ids, row.metadata);
+  return { favorite_companion_ids: ids };
+}
+
+export async function importFavoriteCompanions(companionIds: string[]) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const incoming = parseImportedFavoriteIds(companionIds);
+  const { supabase } = await import("@/lib/supa-service");
+
+  const { data: owned, error: ownedError } = await supabase
+    .from("companions")
+    .select("id")
+    .eq("owner_id", userId);
+
+  if (ownedError) throw new Error(ownedError.message);
+
+  const ownedIds = new Set((owned ?? []).map((row) => row.id as string));
+  const allowed = incoming.filter((id) => ownedIds.has(id));
+
+  const { data: row, error: userError } = await supabase
+    .from("users")
+    .select("metadata")
+    .eq("clerk_user_id", userId)
+    .maybeSingle();
+
+  if (userError) throw new Error(userError.message);
+  if (!row) throw new Error("User not found");
+
+  const merged = mergeFavoriteIds(
+    readFavoriteCompanionIdsFromMetadata(row.metadata),
+    allowed,
+  );
+  await writeFavoriteCompanionIds(userId, merged, row.metadata);
+  return { favorite_companion_ids: merged };
+}
+
+function parseImportedFavoriteIds(companionIds: string[]) {
+  if (!Array.isArray(companionIds)) return [];
+  return companionIds.flatMap((id) => {
+    const parsed = favoriteCompanionIdSchema.safeParse(id);
+    return parsed.success ? [parsed.data] : [];
+  });
 }
 
 export async function getAvatars(): Promise<AvatarProps[]> {

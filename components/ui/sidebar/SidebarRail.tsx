@@ -1,4 +1,3 @@
-import SidebarBrandMark from "./SidebarBrandMark";
 import SidebarNavItems from "./SidebarNavItems";
 import SidebarProfileLink from "./SidebarProfileLink";
 
@@ -11,8 +10,6 @@ export default function SidebarRail() {
           <SidebarProfileLink />
         </div>
       </div>
-
-      <SidebarBrandMark />
     </div>
   );
 }

@@ -33,7 +33,7 @@ function CompanionGhostCard({ index, className }: CompanionGhostCardProps) {
         onMouseEnter={() => prefetchRoute("/new")}
         onFocus={() => prefetchRoute("/new")}
       >
-        <article className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-dashed border-white/15 bg-white/3 opacity-55 shadow-none transition-all duration-300 group-hover:border-white/25 group-hover:bg-white/6 group-hover:opacity-75">
+        <article className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-white/3 opacity-55 shadow-none transition-all duration-300 group-hover:bg-white/6 group-hover:opacity-75">
           <div
             className={cn(
               "relative flex shrink-0 items-center justify-center bg-white/4",
@@ -41,7 +41,7 @@ function CompanionGhostCard({ index, className }: CompanionGhostCardProps) {
             )}
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(255,255,255,0.06),transparent_65%)]" />
-            <div className="relative flex size-12 items-center justify-center rounded-full border border-white/15 bg-white/5 transition-transform duration-300 group-hover:scale-105 sm:size-14">
+            <div className="relative flex size-12 items-center justify-center rounded-full bg-white/5 transition-transform duration-300 group-hover:scale-105 sm:size-14">
               <Plus className="size-5 text-white/45 transition-colors group-hover:text-white/70 sm:size-6" />
             </div>
           </div>
