@@ -17,6 +17,7 @@ export default function DeleteCompanionButton({
   variant?: "fab" | "ghost";
 }) {
   const [open, setOpen] = React.useState(false);
+  const [isLeaving, setIsLeaving] = React.useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -41,6 +42,7 @@ export default function DeleteCompanionButton({
       return { previousQueries };
     },
     onError: (err, _id, context) => {
+      setIsLeaving(false);
       context?.previousQueries?.forEach(([queryKey, data]) => {
         queryClient.setQueryData(queryKey, data);
       });
@@ -48,34 +50,38 @@ export default function DeleteCompanionButton({
         err instanceof Error ? err.message : "Failed to delete companion",
       );
     },
-    onSuccess: async () => {
+    onSuccess: async (_result, deletedId) => {
+      setIsLeaving(true);
+      // Refresh lists and the create gate, but do not refetch this companion
+      // while the convo page is still mounted — that paints a blank screen.
       await queryClient.invalidateQueries({
         queryKey: ["companions"],
-        type: "all",
+        predicate: (query) => query.queryKey[1] !== deletedId,
       });
       await queryClient.invalidateQueries({
         queryKey: ["createCompanionGate"],
         type: "all",
       });
       toast.success("Companion deleted");
-      setOpen(false);
       router.replace("/dashboard");
     },
   });
 
+  const isBusy = mutation.isPending || isLeaving;
+
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
-      if (mutation.isPending && !nextOpen) return;
+      if (isBusy && !nextOpen) return;
       setOpen(nextOpen);
     },
-    [mutation.isPending],
+    [isBusy],
   );
 
   return (
     <DeleteCompanionDialog
       open={open}
       onOpenChange={handleOpenChange}
-      isPending={mutation.isPending}
+      isPending={isBusy}
       onConfirm={() => mutation.mutate(id)}
       variant={variant}
     />

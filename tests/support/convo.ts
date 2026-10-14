@@ -16,6 +16,7 @@ export function resetConvoStore() {
     showTranscript: false,
     activeCallId: null,
     companionId: null,
+    transcriptReady: true,
   });
 }
 

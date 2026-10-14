@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { getCompanionSessions } from "@/app/(app)/actions/sessions";
 import { useConvoStore } from "@/store/use-convo-store";
@@ -27,39 +27,48 @@ function flattenCompanionTranscript(
 
 /** Show this companion's saved transcript. Never another companion's. */
 export function useCompanionTranscript(companionId: string) {
-  const queryClient = useQueryClient();
   const bindCompanion = useConvoStore((s) => s.bindCompanion);
   const replaceMessages = useConvoStore((s) => s.replaceMessages);
+  const markTranscriptReady = useConvoStore((s) => s.markTranscriptReady);
+
+  useEffect(() => {
+    if (!companionId) return;
+    bindCompanion(companionId);
+  }, [bindCompanion, companionId]);
+
+  const { data, isPending, isError, isFetched } = useQuery({
+    queryKey: ["sessions", companionId],
+    queryFn: () => getCompanionSessions(companionId),
+    enabled: Boolean(companionId),
+  });
 
   useEffect(() => {
     if (!companionId) return;
 
-    bindCompanion(companionId);
+    const state = useConvoStore.getState();
+    const live =
+      state.callStatus === "ACTIVE" || state.callStatus === "CONNECTING";
+    if (live) {
+      markTranscriptReady();
+      return;
+    }
 
-    let cancelled = false;
+    if (isError) {
+      markTranscriptReady();
+      return;
+    }
 
-    void queryClient
-      .fetchQuery({
-        queryKey: ["sessions", companionId],
-        queryFn: () => getCompanionSessions(companionId),
-      })
-      .then((rows) => {
-        if (cancelled) return;
+    if (isPending || !isFetched) return;
+    if (state.companionId !== companionId) return;
 
-        const state = useConvoStore.getState();
-        const live =
-          state.callStatus === "ACTIVE" || state.callStatus === "CONNECTING";
-        if (live) return;
-        if (state.companionId !== companionId) return;
-
-        replaceMessages(flattenCompanionTranscript(companionId, rows));
-      })
-      .catch((error) => {
-        console.error("useCompanionTranscript:", error);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [bindCompanion, companionId, queryClient, replaceMessages]);
+    replaceMessages(flattenCompanionTranscript(companionId, data ?? []));
+  }, [
+    companionId,
+    data,
+    isError,
+    isFetched,
+    isPending,
+    markTranscriptReady,
+    replaceMessages,
+  ]);
 }

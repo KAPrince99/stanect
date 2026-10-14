@@ -1,4 +1,5 @@
 import { Pulse } from "../Pulse";
+import { TranscriptLinesSkeleton } from "./TranscriptLinesSkeleton";
 
 export function ConvoRouteLoading() {
   return (
@@ -49,7 +50,7 @@ export function ConvoRouteLoading() {
               </div>
             </div>
             <div className="min-h-0 flex-1 p-6">
-              <Pulse className="mx-auto mt-8 h-4 w-64 max-w-full" />
+              <TranscriptLinesSkeleton />
             </div>
           </aside>
         </div>

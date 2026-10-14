@@ -107,6 +107,8 @@ interface ConvoState {
   showTranscript: boolean;
   activeCallId: string | null;
   companionId: string | null;
+  /** False until saved sessions have been applied (or the fetch failed). */
+  transcriptReady: boolean;
 
   setCallStatus: (status: CallStatus) => void;
   setMuted: (muted: boolean) => void;
@@ -121,6 +123,7 @@ interface ConvoState {
   addMessage: (msg: VapiMessageEvent) => boolean;
   bindCompanion: (companionId: string) => void;
   replaceMessages: (messages: Message[]) => void;
+  markTranscriptReady: () => void;
   tickTimer: () => void;
   startCall: (assistantId: string, durationMinutes: number) => Promise<void>;
   endCall: () => Promise<void>;
@@ -138,6 +141,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
   showTranscript: false,
   activeCallId: null,
   companionId: null,
+  transcriptReady: false,
 
   setCallStatus: (callStatus) => {
     // Nobody speaks once the call is over.
@@ -224,6 +228,7 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
       showTranscript: false,
       showEndModal: false,
       isMuted: false,
+      transcriptReady: true,
     }),
 
   bindCompanion: (companionId) => {
@@ -243,10 +248,13 @@ export const useConvoStore = create<ConvoState>()((set, get) => ({
       showTranscript: false,
       showEndModal: false,
       isMuted: false,
+      transcriptReady: false,
     });
   },
 
-  replaceMessages: (messages) => set({ messages }),
+  replaceMessages: (messages) => set({ messages, transcriptReady: true }),
+
+  markTranscriptReady: () => set({ transcriptReady: true }),
 
   /* ----------------------------- MESSAGE SAFE ---------------------------- */
 

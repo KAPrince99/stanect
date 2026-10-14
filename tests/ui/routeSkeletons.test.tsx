@@ -84,6 +84,9 @@ describe("route skeletons copy the live layouts", () => {
     expect(
       screen.getByRole("status", { name: "Loading conversation" }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("status", { name: "Loading transcript" }),
+    ).toBeInTheDocument();
     expect(container.querySelector(".animate-spin")).toBeNull();
     expect(screen.queryByRole("heading")).not.toBeInTheDocument();
     expect(container.querySelector("aside")).toBeTruthy();

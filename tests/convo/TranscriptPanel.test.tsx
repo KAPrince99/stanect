@@ -29,7 +29,11 @@ describe("TranscriptPanel", () => {
   });
 
   it("shows an empty transcript before anyone speaks", () => {
-    useConvoStore.setState({ companionId: "c1", messages: [] });
+    useConvoStore.setState({
+      companionId: "c1",
+      messages: [],
+      transcriptReady: true,
+    });
 
     render(<TranscriptPanel companionId="c1" companionName="Mia" />);
 
@@ -42,6 +46,41 @@ describe("TranscriptPanel", () => {
     expect(empty).toBeInTheDocument();
     expect(empty.parentElement).toHaveClass("scrollbar-hide", "overflow-y-auto");
     expect(empty.closest("aside")).toHaveClass("bg-white/10", "backdrop-blur-2xl");
+  });
+
+  it("shows ghost lines while saved transcripts are loading", () => {
+    useConvoStore.setState({
+      companionId: "c1",
+      messages: [],
+      transcriptReady: false,
+    });
+
+    render(<TranscriptPanel companionId="c1" companionName="Mia" />);
+
+    expect(
+      screen.getByRole("status", { name: "Loading transcript" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Transcript appears when you start talking."),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not skeleton over a live call with no lines yet", () => {
+    useConvoStore.setState({
+      companionId: "c1",
+      messages: [],
+      transcriptReady: false,
+      callStatus: "CONNECTING",
+    });
+
+    render(<TranscriptPanel companionId="c1" companionName="Mia" />);
+
+    expect(
+      screen.queryByRole("status", { name: "Loading transcript" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Transcript appears when you start talking."),
+    ).toBeInTheDocument();
   });
 
   it("labels user lines as You and assistant lines with the companion name", () => {
@@ -65,6 +104,7 @@ describe("TranscriptPanel", () => {
     useConvoStore.setState({
       companionId: "c1",
       messages: [{ id: "1", role: "user", content: "Hello" }],
+      transcriptReady: true,
     });
 
     render(<TranscriptPanel companionId="c2" companionName="Alex" />);

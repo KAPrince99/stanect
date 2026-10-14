@@ -81,7 +81,9 @@ describe("Preview", () => {
 
     renderWithProviders(<Preview />);
 
-    expect(await screen.findByText("Unable to load preview.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Unable to load preview."),
+    ).toBeInTheDocument();
   });
 
   it("shows an empty preview when no avatar is available", async () => {

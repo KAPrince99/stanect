@@ -74,10 +74,25 @@ describe("DeleteCompanionButton", () => {
       expect(testMocks.router.replace).toHaveBeenCalledWith("/dashboard");
     });
     expect(testMocks.toast.success).toHaveBeenCalledWith("Companion deleted");
-    expect(invalidate).toHaveBeenCalledWith({
-      queryKey: ["companions"],
-      type: "all",
-    });
+    expect(queryClient.getQueryData(["companions", "c1"])).toEqual(mia);
+    expect(screen.getByText("Delete companion?")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Deleting…" })).toBeDisabled();
+
+    const companionsInvalidate = invalidate.mock.calls.find(
+      ([options]) =>
+        Array.isArray(options?.queryKey) &&
+        options.queryKey[0] === "companions" &&
+        typeof options.predicate === "function",
+    );
+    expect(companionsInvalidate).toBeTruthy();
+    expect(
+      companionsInvalidate?.[0].predicate({ queryKey: ["companions", "c1"] }),
+    ).toBe(false);
+    expect(
+      companionsInvalidate?.[0].predicate({
+        queryKey: ["companions", "user_test"],
+      }),
+    ).toBe(true);
     expect(invalidate).toHaveBeenCalledWith({
       queryKey: ["createCompanionGate"],
       type: "all",

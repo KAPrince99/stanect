@@ -10,6 +10,7 @@ import { useConvoStore } from "@/store/use-convo-store";
 import { Button } from "../button";
 import LordIcon from "../lordIcon";
 import { useConvoStage } from "./ConvoStageContext";
+import { TranscriptLinesSkeleton } from "./TranscriptLinesSkeleton";
 import { lordColors } from "@/lib/brand";
 
 interface TranscriptPanelProps {
@@ -29,8 +30,14 @@ export function TranscriptPanel({
 }: TranscriptPanelProps) {
   const boundCompanionId = useConvoStore((s) => s.companionId);
   const allMessages = useConvoStore((s) => s.messages);
+  const transcriptReady = useConvoStore((s) => s.transcriptReady);
+  const callStatus = useConvoStore((s) => s.callStatus);
   const messages =
     boundCompanionId === companionId ? allMessages : [];
+  const live =
+    callStatus === "ACTIVE" || callStatus === "CONNECTING";
+  const showTranscriptSkeleton =
+    !live && !transcriptReady && messages.length === 0;
   const parentRef = useRef<HTMLDivElement>(null);
 
   // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Virtual is intentional for transcript rendering performance.
@@ -84,7 +91,9 @@ export function TranscriptPanel({
         ref={parentRef}
         className="scrollbar-hide min-h-0 flex-1 overflow-y-auto p-6"
       >
-        {messages.length === 0 ? (
+        {showTranscriptSkeleton ? (
+          <TranscriptLinesSkeleton />
+        ) : messages.length === 0 ? (
           <p className="type-body pt-8 text-center text-white/40">
             Transcript appears when you start talking.
           </p>
