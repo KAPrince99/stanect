@@ -12,7 +12,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "../button";
 import LordIcon from "../lordIcon";
 import { CREATE_LORD_ICON } from "../sidebar/sidebarNavConfig";
-import { DASHBOARD_CARD_GRID } from "./dashboard-layout";
+import {
+  DASHBOARD_ALIGN_SEARCH_ICON,
+  DASHBOARD_CARD_GRID,
+} from "./dashboard-layout";
 
 interface DashboardContinueStripProps {
   companionName: string;
@@ -39,7 +42,12 @@ function DashboardContinueStrip({
 
   return (
     <div className={cn(DASHBOARD_CARD_GRID, "mb-3 items-center sm:mb-4")}>
-      <div className="col-span-2 flex min-w-0 items-center gap-2">
+      <div
+        className={cn(
+          "col-span-2 flex min-w-0 items-center gap-2",
+          DASHBOARD_ALIGN_SEARCH_ICON,
+        )}
+      >
         <div className="relative size-10 shrink-0 overflow-hidden rounded-xl">
           <Image
             src={avatarUrl}

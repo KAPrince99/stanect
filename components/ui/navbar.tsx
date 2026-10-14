@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
+import { DASHBOARD_ALIGN_SEARCH_ICON } from "@/components/ui/HomeDashboard/dashboard-layout";
 import { cn } from "@/lib/utils";
 
 import Pill from "./pill";
@@ -28,7 +29,13 @@ export default function Navbar() {
             : "w-[min(100%,56rem)] px-4",
         )}
       >
-        <Pill />
+        <Pill
+          className={
+            alignToContentColumn
+              ? cn(DASHBOARD_ALIGN_SEARCH_ICON, "pr-6 sm:pr-10")
+              : undefined
+          }
+        />
       </div>
     </nav>
   );

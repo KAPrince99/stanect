@@ -2,13 +2,20 @@
 
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
+import { cn } from "@/lib/utils";
+
 import PillBrand from "./PillBrand";
 import PillSignInButton from "./PillSignInButton";
 import PillSignedInActions from "./PillSignedInActions";
 
-export default function Pill() {
+export default function Pill({ className }: { className?: string }) {
   return (
-    <div className="group relative flex h-14 w-full items-center justify-between overflow-hidden rounded-full border border-white/20 bg-white/10 px-6 shadow-2xl shadow-black/40 backdrop-blur-2xl transition-transform duration-200 hover:scale-[1.01] sm:h-16 sm:px-10">
+    <div
+      className={cn(
+        "group relative flex h-14 w-full items-center justify-between overflow-hidden rounded-full border border-white/20 bg-white/10 px-6 shadow-2xl shadow-black/40 backdrop-blur-2xl transition-transform duration-200 hover:scale-[1.01] sm:h-16 sm:px-10",
+        className,
+      )}
+    >
       <div className="pointer-events-none absolute inset-0 scale-150 bg-linear-to-r from-amber-400/10 via-orange-500/10 to-pink-500/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
 
       <PillBrand />

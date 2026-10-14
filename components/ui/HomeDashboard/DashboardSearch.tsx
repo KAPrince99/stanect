@@ -19,6 +19,7 @@ import {
   DASHBOARD_BELOW_SEARCH,
   DASHBOARD_ONE_CARD_WIDTH,
   DASHBOARD_RESULTS_ID,
+  DASHBOARD_SEARCH_PAD_X,
 } from "./dashboard-layout";
 
 interface DashboardSearchProps {
@@ -128,7 +129,10 @@ function DashboardSearch({
       <div className="flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl">
         <form
           role="search"
-          className="flex min-w-0 flex-1 items-center gap-2.5 px-4 py-3 sm:px-5"
+          className={cn(
+            "flex min-w-0 flex-1 items-center gap-2.5 py-3",
+            DASHBOARD_SEARCH_PAD_X,
+          )}
           onSubmit={(event) => event.preventDefault()}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- local SVG; next/image does not optimize it */}

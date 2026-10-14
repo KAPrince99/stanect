@@ -1,6 +1,13 @@
 /** Dashboard column. Marker class keeps All/Favorites on the same board as the cards. */
 export const DASHBOARD_BOARD = "dashboard-board mx-auto w-full max-w-4xl";
 
+/**
+ * Left edge of the search magnifier inside the search capsule.
+ * Continue-strip avatar and the nav logo share this inset.
+ */
+export const DASHBOARD_SEARCH_PAD_X = "px-4 sm:px-5";
+export const DASHBOARD_ALIGN_SEARCH_ICON = "pl-4 sm:pl-5";
+
 /** Same columns and gaps as the companion card grid. */
 export const DASHBOARD_CARD_GRID =
   "grid w-full grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3";

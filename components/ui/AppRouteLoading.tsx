@@ -2,10 +2,12 @@ import { Fragment } from "react";
 
 import { companionPortraitAspect } from "./HomeDashboard/CompanionOverviewCardMedia";
 import {
+  DASHBOARD_ALIGN_SEARCH_ICON,
   DASHBOARD_BELOW_SEARCH,
   DASHBOARD_BOARD,
   DASHBOARD_CARD_GRID,
   DASHBOARD_ONE_CARD_WIDTH,
+  DASHBOARD_SEARCH_PAD_X,
 } from "./HomeDashboard/dashboard-layout";
 import { AvatarSkeleton } from "./NewTabForm/AvatarSkeleton";
 import { Pulse } from "./Pulse";
@@ -41,7 +43,9 @@ export function DashboardRouteLoading() {
     >
       <div className={DASHBOARD_BOARD}>
         <div className={`${DASHBOARD_CARD_GRID} mb-3 items-center sm:mb-4`}>
-          <div className="col-span-2 flex min-w-0 items-center gap-2">
+          <div
+            className={`col-span-2 flex min-w-0 items-center gap-2 ${DASHBOARD_ALIGN_SEARCH_ICON}`}
+          >
             <Pulse className="size-10 shrink-0 rounded-xl" />
             <Pulse className="h-4 w-44" />
             <Pulse className="h-8 w-24 shrink-0 rounded-full bg-amber-400/25" />
@@ -53,7 +57,9 @@ export function DashboardRouteLoading() {
           data-skeleton="dashboard-search"
           className={`flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 ${DASHBOARD_BELOW_SEARCH}`}
         >
-          <div className="flex min-w-0 flex-1 items-center gap-2.5 px-4 py-3 sm:px-5">
+          <div
+            className={`flex min-w-0 flex-1 items-center gap-2.5 py-3 ${DASHBOARD_SEARCH_PAD_X}`}
+          >
             <Pulse className="size-6 shrink-0" />
             <Pulse className="h-4 w-44" />
           </div>
