@@ -1,25 +1,17 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import QueryProvider from "./providers/queryProvider";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 
 import { BRAND } from "@/lib/brand";
 
-/* Fonts */
-const inter = Inter({
+const uiFont = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-ui",
   weight: ["400", "500", "600", "700"],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-display",
-  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -59,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable}`}
+      className={`${uiFont.variable} ${uiFont.className} antialiased`}
       data-scroll-behavior="smooth"
     >
       <head>

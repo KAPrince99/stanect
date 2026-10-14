@@ -29,3 +29,20 @@ export function filterCompanions<T extends SearchableCompanion>(
   if (!normalizeSearchQuery(query)) return companions;
   return companions.filter((companion) => matchCompanion(query, companion));
 }
+
+export type CompanionFilter = "all" | "favorites";
+
+export function applyCompanionFilters<
+  T extends SearchableCompanion & { id: string },
+>(
+  companions: T[],
+  query: string,
+  filter: CompanionFilter,
+  favoriteIds: ReadonlySet<string>,
+): T[] {
+  const pool =
+    filter === "favorites"
+      ? companions.filter((companion) => favoriteIds.has(companion.id))
+      : companions;
+  return filterCompanions(pool, query);
+}

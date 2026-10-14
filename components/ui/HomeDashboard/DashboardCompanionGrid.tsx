@@ -9,6 +9,7 @@ import { CompanionProps } from "@/types/types";
 
 import CompanionGhostCard from "./CompanionGhostCard";
 import CompanionOverviewCard from "./CompanionOverviewCard";
+import { DASHBOARD_CARD_GRID } from "./dashboard-layout";
 
 /** Fill the first row visually until the user has a full set of companions. */
 export const TARGET_SLOT_COUNT = 3;
@@ -16,6 +17,8 @@ export const TARGET_SLOT_COUNT = 3;
 interface DashboardCompanionGridProps {
   companions: CompanionProps[];
   showGhosts?: boolean;
+  favoriteIds?: ReadonlySet<string>;
+  onToggleFavorite?: (id: string) => void;
 }
 
 /** First ghost completes a 2-column row. Later ghosts only appear in the 3-column row. */
@@ -29,6 +32,8 @@ function ghostLayoutClass(companionCount: number, index: number) {
 function DashboardCompanionGrid({
   companions,
   showGhosts = true,
+  favoriteIds,
+  onToggleFavorite,
 }: DashboardCompanionGridProps) {
   const ghostCount = showGhosts
     ? Math.max(0, TARGET_SLOT_COUNT - companions.length)
@@ -37,7 +42,7 @@ function DashboardCompanionGrid({
   return (
     <motion.div
       layout
-      className="grid w-full grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3"
+      className={DASHBOARD_CARD_GRID}
     >
       <AnimatePresence mode="popLayout">
         {companions.map((companion, index) => (
@@ -51,7 +56,15 @@ function DashboardCompanionGrid({
             exit="exit"
             transition={{ ...motionTransition.soft, delay: index * 0.04 }}
           >
-            <CompanionOverviewCard companion={companion} />
+            <CompanionOverviewCard
+              companion={companion}
+              isFavorite={favoriteIds?.has(companion.id)}
+              onToggleFavorite={
+                onToggleFavorite
+                  ? () => onToggleFavorite(companion.id)
+                  : undefined
+              }
+            />
           </motion.div>
         ))}
       </AnimatePresence>

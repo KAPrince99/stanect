@@ -109,11 +109,16 @@ describe("DashboardCompanionsView", () => {
       <DashboardCompanionsView
         companions={[mia]}
         continueCompanion={mia}
+        searchQuery=""
+        onSearchQueryChange={vi.fn()}
         isLoading={false}
         onStartSetup={vi.fn()}
       />,
     );
 
+    expect(
+      screen.getByText((_, node) => node?.textContent === "Keep going with Mia?"),
+    ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
       "href",
@@ -128,7 +133,11 @@ describe("DashboardCompanionsView", () => {
     ).toBeInTheDocument();
     expect(screen.queryByText("Welcome back, Ada")).not.toBeInTheDocument();
     expect(screen.queryByText("Free")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Create companion" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create companion" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Search companions" })).toBeInTheDocument();
+    expect(screen.getByRole("search")).toHaveClass("col-span-2");
+    expect(screen.getByRole("radio", { name: "All" })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "Favorites" })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Create another companion" })).toHaveLength(
       2,
     );
@@ -145,6 +154,9 @@ describe("DashboardCompanionsView", () => {
       />,
     );
 
+    expect(
+      screen.getByText((_, node) => node?.textContent === "Keep going with Alex?"),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
       "href",
       "/dashboard/c2",
@@ -157,6 +169,7 @@ describe("DashboardCompanionsView", () => {
     expect(screen.getByRole("link", { name: "Create companion" })).toHaveClass(
       "h-8",
       "!text-sm",
+      "w-full",
     );
     expect(screen.queryByText("Pro")).not.toBeInTheDocument();
     expect(
@@ -208,6 +221,54 @@ describe("DashboardCompanionsView", () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: "Create another companion" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("puts All and Favorites beside search", () => {
+    renderWithProviders(
+      <DashboardCompanionsView
+        companions={[mia, alex]}
+        filteredCompanions={[mia, alex]}
+        continueCompanion={alex}
+        searchQuery=""
+        onSearchQueryChange={vi.fn()}
+        isLoading={false}
+        onStartSetup={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("radio", { name: "All" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    expect(screen.getByRole("radio", { name: "Favorites" })).toHaveAttribute(
+      "aria-checked",
+      "false",
+    );
+  });
+
+  it("shows the empty favorites state without the setup wizard", () => {
+    renderWithProviders(
+      <DashboardCompanionsView
+        companions={[mia, alex]}
+        filteredCompanions={[]}
+        continueCompanion={alex}
+        searchQuery=""
+        companionFilter="favorites"
+        favoriteIds={new Set()}
+        onSearchQueryChange={vi.fn()}
+        onCompanionFilterChange={vi.fn()}
+        isLoading={false}
+        onStartSetup={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "No favorites yet" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Show all" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Create your first companion" }),
     ).not.toBeInTheDocument();
   });
 });

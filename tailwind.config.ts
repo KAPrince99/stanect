@@ -10,8 +10,18 @@ const config: Config = {
     extend: {
       fontFamily: {
         // Use the CSS variables from next/font
-        sans: ["var(--font-inter)", "sans-serif"],
-        display: ["var(--font-display)", "sans-serif"],
+        sans: [
+          "var(--font-ui)",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+        display: [
+          "var(--font-ui)",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       colors: {
         // Optional: add custom colors

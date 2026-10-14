@@ -12,7 +12,16 @@ import {
 import { useRouter } from "next/navigation";
 
 import { getCompanions, getUser } from "@/app/(app)/actions/actions";
-import { filterCompanions, SEARCH_DEBOUNCE_MS } from "@/lib/companion-search";
+import {
+  getFavoriteCompanionIds,
+  subscribeToFavoriteCompanions,
+  toggleFavoriteCompanion,
+} from "@/lib/companion-favorites";
+import {
+  applyCompanionFilters,
+  SEARCH_DEBOUNCE_MS,
+  type CompanionFilter,
+} from "@/lib/companion-search";
 import { getLastCompanionId } from "@/lib/last-companion";
 import { hasReachedCompanionLimit } from "@/lib/plan-utils";
 import type { PlanType } from "@/lib/plan-limits";
@@ -23,6 +32,8 @@ import DashboardCompanionsView from "./DashboardCompanionsView";
 interface DashboardCompanionListProps {
   userId: string;
 }
+
+const EMPTY_FAVORITE_IDS: string[] = [];
 
 function pickContinueCompanion(
   companions: CompanionProps[],
@@ -47,6 +58,13 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
+  const [companionFilter, setCompanionFilter] =
+    useState<CompanionFilter>("all");
+  const favoriteIds = useSyncExternalStore(
+    subscribeToFavoriteCompanions,
+    getFavoriteCompanionIds,
+    () => EMPTY_FAVORITE_IDS,
+  );
   const [isStartingSetup, startTransition] = useTransition();
   const lastCompanionId = useSyncExternalStore(
     subscribeToLastCompanionId,
@@ -86,9 +104,20 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
     [companions, lastCompanionId],
   );
 
+  const favoriteIdSet = useMemo(
+    () => new Set(favoriteIds),
+    [favoriteIds],
+  );
+
   const filteredCompanions = useMemo(
-    () => filterCompanions(companions, activeQuery),
-    [companions, activeQuery],
+    () =>
+      applyCompanionFilters(
+        companions,
+        activeQuery,
+        companionFilter,
+        favoriteIdSet,
+      ),
+    [companions, activeQuery, companionFilter, favoriteIdSet],
   );
 
   const canCreateCompanion = useMemo(() => {
@@ -106,6 +135,10 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
       searchQuery={searchQuery}
       activeQuery={activeQuery}
       onSearchQueryChange={setSearchQuery}
+      companionFilter={companionFilter}
+      onCompanionFilterChange={setCompanionFilter}
+      favoriteIds={favoriteIdSet}
+      onToggleFavorite={toggleFavoriteCompanion}
       continueCompanion={continueCompanion}
       canCreateCompanion={canCreateCompanion}
       isLoading={isCompanionsLoading}

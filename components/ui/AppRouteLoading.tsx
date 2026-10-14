@@ -1,6 +1,10 @@
 import { Fragment } from "react";
 
 import { companionPortraitAspect } from "./HomeDashboard/CompanionOverviewCardMedia";
+import {
+  DASHBOARD_BELOW_SEARCH,
+  DASHBOARD_CARD_GRID,
+} from "./HomeDashboard/dashboard-layout";
 import { AvatarSkeleton } from "./NewTabForm/AvatarSkeleton";
 import { Pulse } from "./Pulse";
 
@@ -34,21 +38,30 @@ export function DashboardRouteLoading() {
       aria-label="Loading dashboard"
     >
       <div className="mx-auto w-full max-w-4xl">
-        <div className="mb-3 flex w-full items-center gap-2 sm:mb-4">
-          <div className="flex min-w-0 items-center gap-2">
-            <Pulse className="size-8 shrink-0" />
-            <Pulse className="h-4 w-24" />
+        <div className={`${DASHBOARD_CARD_GRID} mb-3 items-center sm:mb-4`}>
+          <div className="col-span-2 flex min-w-0 items-center gap-2">
+            <Pulse className="size-10 shrink-0 rounded-xl" />
+            <Pulse className="h-4 w-44" />
             <Pulse className="h-8 w-24 shrink-0 rounded-full bg-amber-400/25" />
           </div>
-          <Pulse className="ml-auto h-8 w-8 shrink-0 border border-white/20 sm:w-36" />
+          <Pulse className="h-8 w-full border border-white/20" />
         </div>
 
-        <div
-          data-skeleton="dashboard-search"
-          className="mb-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 sm:mb-5 sm:px-4"
-        >
-          <Pulse className="size-4 shrink-0" />
-          <Pulse className="h-3 w-40" />
+        <div className={`${DASHBOARD_CARD_GRID} items-stretch ${DASHBOARD_BELOW_SEARCH}`}>
+          <div
+            data-skeleton="dashboard-search"
+            className="col-span-2 flex min-w-0 items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 sm:px-5"
+          >
+            <Pulse className="size-5 shrink-0" />
+            <Pulse className="h-4 w-44" />
+          </div>
+          <div
+            data-skeleton="dashboard-filter"
+            className="grid min-h-12 w-full grid-cols-2 items-center gap-0 rounded-2xl border border-white/10 bg-white/5 p-1.5"
+          >
+            <Pulse className="h-10 w-full rounded-xl" />
+            <Pulse className="h-10 w-full rounded-xl" />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">

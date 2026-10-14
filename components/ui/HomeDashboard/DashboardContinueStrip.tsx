@@ -9,6 +9,7 @@ import { usePrefetchRoute } from "@/hooks/usePrefetchRoute";
 import { cn } from "@/lib/utils";
 
 import { Button } from "../button";
+import { DASHBOARD_CARD_GRID } from "./dashboard-layout";
 
 interface DashboardContinueStripProps {
   companionName: string;
@@ -30,19 +31,20 @@ function DashboardContinueStrip({
   const prefetchRoute = usePrefetchRoute();
 
   return (
-    <div className="mb-3 flex w-full items-center gap-2 sm:mb-4">
-      <div className="flex min-w-0 items-center gap-2">
-        <div className="relative size-8 shrink-0 overflow-hidden rounded-full border border-white/10">
+    <div className={cn(DASHBOARD_CARD_GRID, "mb-3 items-center sm:mb-4")}>
+      <div className="col-span-2 flex min-w-0 items-center gap-2">
+        <div className="relative size-10 shrink-0 overflow-hidden rounded-xl border border-white/10">
           <Image
             src={avatarUrl}
             alt=""
             fill
             className="object-cover"
-            sizes="32px"
+            sizes="40px"
           />
         </div>
-        <p className="min-w-0 truncate text-base font-medium text-white">
-          {companionName}
+        <p className="min-w-0 truncate text-base text-white/55">
+          Keep going with{" "}
+          <span className="font-semibold text-white">{companionName}</span>?
         </p>
         <Button
           asChild
@@ -68,10 +70,7 @@ function DashboardContinueStrip({
           asChild
           variant="secondary"
           size="sm"
-          className={cn(
-            THIN_PILL,
-            "ml-auto w-8 shrink-0 border-white/20 px-0 has-[>svg]:px-0 sm:w-auto sm:px-3.5 sm:has-[>svg]:px-3.5",
-          )}
+          className={cn(THIN_PILL, "w-full justify-center border-white/20")}
         >
           <Link
             href="/new"
@@ -82,12 +81,10 @@ function DashboardContinueStrip({
             onTouchStart={() => prefetchRoute("/new")}
           >
             <Plus className="size-3.5" />
-            <span className="hidden sm:inline">Create companion</span>
+            Create companion
           </Link>
         </Button>
-      ) : (
-        <span className="ml-auto" />
-      )}
+      ) : null}
     </div>
   );
 }

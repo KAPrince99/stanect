@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -43,6 +43,7 @@ describe("DashboardCompanionList", () => {
     getCompanions.mockReset();
     getUser.mockReset();
     localStorage.removeItem("stanect:lastCompanionId");
+    localStorage.removeItem("stanect:favoriteCompanionIds");
     getUser.mockResolvedValue({ plan: "free" });
   });
 
@@ -75,7 +76,12 @@ describe("DashboardCompanionList", () => {
 
     renderWithProviders(<DashboardCompanionList userId="user_test" />);
 
-    expect(await screen.findByRole("link", { name: "Continue" })).toHaveAttribute(
+    expect(
+      await screen.findByText(
+        (_, node) => node?.textContent === "Keep going with Alex?",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
       "href",
       "/dashboard/c2",
     );
@@ -89,9 +95,8 @@ describe("DashboardCompanionList", () => {
     expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
     expect(screen.queryByText(/Welcome back/)).not.toBeInTheDocument();
     expect(screen.queryByText("Free")).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("link", { name: "Create companion" }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create companion" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Search companions" })).toBeInTheDocument();
   });
 
   it("offers Create companion on a full row when the plan still has room", async () => {
@@ -107,6 +112,7 @@ describe("DashboardCompanionList", () => {
     expect(screen.getByRole("link", { name: "Create companion" })).toHaveClass(
       "h-8",
       "!text-sm",
+      "w-full",
     );
   });
 
@@ -129,16 +135,14 @@ describe("DashboardCompanionList", () => {
     expect(
       await screen.findAllByRole("link", { name: "Create another companion" }),
     ).toHaveLength(2);
-    expect(
-      screen.queryByRole("link", { name: "Create companion" }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create companion" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Search companions" })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "All" })).toBeInTheDocument();
   });
 
-  it("does not show search on an empty dashboard or with a single companion", async () => {
+  it("does not show search on an empty dashboard", async () => {
     getCompanions.mockResolvedValue([]);
-    const empty = renderWithProviders(
-      <DashboardCompanionList userId="user_test" />,
-    );
+    renderWithProviders(<DashboardCompanionList userId="user_test" />);
 
     expect(
       await screen.findByRole("heading", { name: "Create your first companion" }),
@@ -146,15 +150,23 @@ describe("DashboardCompanionList", () => {
     expect(
       screen.queryByRole("textbox", { name: "Search companions" }),
     ).not.toBeInTheDocument();
-    empty.unmount();
+    expect(
+      screen.queryByRole("link", { name: "Create companion" }),
+    ).not.toBeInTheDocument();
+  });
 
+  it("shows search, filter, and Create companion with a single companion", async () => {
     getCompanions.mockResolvedValue([mia]);
     renderWithProviders(<DashboardCompanionList userId="user_test" />);
 
     expect(await screen.findByRole("heading", { name: "Mia" })).toBeInTheDocument();
-    expect(
-      screen.queryByRole("textbox", { name: "Search companions" }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Search companions" })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "All" })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "Favorites" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create companion" })).toHaveAttribute(
+      "href",
+      "/new",
+    );
   });
 
   it("filters the grid by name after a pause", async () => {
@@ -234,5 +246,79 @@ describe("DashboardCompanionList", () => {
     search.blur();
     await user.keyboard("/");
     expect(search).toHaveFocus();
+  });
+
+  it("defaults to All and keeps only starred companions on Favorites", async () => {
+    const user = userEvent.setup();
+    getCompanions.mockResolvedValue([mia, alex]);
+
+    renderWithProviders(<DashboardCompanionList userId="user_test" />);
+
+    expect(await screen.findByRole("radio", { name: "All" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    const miaCard = screen.getByRole("heading", { name: "Mia" }).closest("article");
+    expect(miaCard).toBeTruthy();
+    await user.click(
+      within(miaCard as HTMLElement).getByRole("button", { name: "Add to favorites" }),
+    );
+    await user.click(screen.getByRole("radio", { name: "Favorites" }));
+
+    expect(screen.getByRole("radio", { name: "Favorites" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole("heading", { name: "Alex" })).not.toBeInTheDocument();
+    });
+    expect(
+      screen.queryByRole("link", { name: "Create another companion" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows an empty favorites state and returns to All", async () => {
+    const user = userEvent.setup();
+    getCompanions.mockResolvedValue([mia, alex]);
+
+    renderWithProviders(<DashboardCompanionList userId="user_test" />);
+
+    await user.click(await screen.findByRole("radio", { name: "Favorites" }));
+
+    expect(
+      screen.getByRole("heading", { name: "No favorites yet" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Create your first companion" }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    expect(screen.getByRole("radio", { name: "All" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Alex" })).toBeInTheDocument();
+  });
+
+  it("searches inside the current favorite set", async () => {
+    const user = userEvent.setup();
+    localStorage.setItem("stanect:favoriteCompanionIds", JSON.stringify(["c1", "c2"]));
+    getCompanions.mockResolvedValue([mia, alex]);
+
+    renderWithProviders(<DashboardCompanionList userId="user_test" />);
+
+    await user.click(await screen.findByRole("radio", { name: "Favorites" }));
+    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Alex" })).toBeInTheDocument();
+
+    await user.type(screen.getByRole("textbox", { name: "Search companions" }), "Mia");
+
+    await waitFor(() => {
+      expect(screen.getByText("1 of 2")).toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Alex" })).not.toBeInTheDocument();
+    });
+    expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
   });
 });
