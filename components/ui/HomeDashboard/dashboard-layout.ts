@@ -7,6 +7,8 @@ export const DASHBOARD_BOARD = "dashboard-board mx-auto w-full max-w-4xl";
  */
 export const DASHBOARD_SEARCH_PAD_X = "px-4 sm:px-5";
 export const DASHBOARD_ALIGN_SEARCH_ICON = "pl-4 sm:pl-5";
+/** Continue avatar sits slightly left of the magnifier, not flush to the board. */
+export const DASHBOARD_CONTINUE_AVATAR_INSET = "pl-2 sm:pl-3";
 
 /** Same columns and gaps as the companion card grid. */
 export const DASHBOARD_CARD_GRID =

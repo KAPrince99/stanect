@@ -132,7 +132,7 @@ describe("DashboardCompanionsView", () => {
     expect(
       screen.getByText((_, node) => node?.textContent === "Keep going with Mia?")
         ?.parentElement,
-    ).toHaveClass("pl-4", "sm:pl-5");
+    ).toHaveClass("pl-2", "sm:pl-3");
     expect(screen.getByRole("search")).toHaveClass("px-4", "sm:px-5");
     expect(screen.getByRole("link", { name: "Create companion" })).not.toHaveClass(
       "pl-4",

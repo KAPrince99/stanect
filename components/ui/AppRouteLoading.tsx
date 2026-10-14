@@ -2,7 +2,7 @@ import { Fragment } from "react";
 
 import { companionPortraitAspect } from "./HomeDashboard/CompanionOverviewCardMedia";
 import {
-  DASHBOARD_ALIGN_SEARCH_ICON,
+  DASHBOARD_CONTINUE_AVATAR_INSET,
   DASHBOARD_BELOW_SEARCH,
   DASHBOARD_BOARD,
   DASHBOARD_CARD_GRID,
@@ -44,7 +44,7 @@ export function DashboardRouteLoading() {
       <div className={DASHBOARD_BOARD}>
         <div className={`${DASHBOARD_CARD_GRID} mb-3 items-center sm:mb-4`}>
           <div
-            className={`col-span-2 flex min-w-0 items-center gap-2 ${DASHBOARD_ALIGN_SEARCH_ICON}`}
+            className={`col-span-2 flex min-w-0 items-center gap-2 ${DASHBOARD_CONTINUE_AVATAR_INSET}`}
           >
             <Pulse className="size-10 shrink-0 rounded-xl" />
             <Pulse className="h-4 w-44" />

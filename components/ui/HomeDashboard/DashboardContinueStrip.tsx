@@ -13,8 +13,8 @@ import { Button } from "../button";
 import LordIcon from "../lordIcon";
 import { CREATE_LORD_ICON } from "../sidebar/sidebarNavConfig";
 import {
-  DASHBOARD_ALIGN_SEARCH_ICON,
   DASHBOARD_CARD_GRID,
+  DASHBOARD_CONTINUE_AVATAR_INSET,
 } from "./dashboard-layout";
 
 interface DashboardContinueStripProps {
@@ -45,7 +45,7 @@ function DashboardContinueStrip({
       <div
         className={cn(
           "col-span-2 flex min-w-0 items-center gap-2",
-          DASHBOARD_ALIGN_SEARCH_ICON,
+          DASHBOARD_CONTINUE_AVATAR_INSET,
         )}
       >
         <div className="relative size-10 shrink-0 overflow-hidden rounded-xl">
