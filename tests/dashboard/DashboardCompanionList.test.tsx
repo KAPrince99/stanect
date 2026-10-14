@@ -213,10 +213,10 @@ describe("DashboardCompanionList", () => {
     expect(screen.getByRole("heading", { name: "Alex" })).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByText("1 of 2")).toBeInTheDocument();
       expect(screen.queryByRole("heading", { name: "Alex" })).not.toBeInTheDocument();
     });
     expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    expect(screen.queryByText(/of \d+/)).not.toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: "Create another companion" }),
     ).not.toBeInTheDocument();
@@ -235,7 +235,6 @@ describe("DashboardCompanionList", () => {
     await user.type(search, "park");
 
     await waitFor(() => {
-      expect(screen.getByText("1 of 2")).toBeInTheDocument();
       expect(screen.queryByRole("heading", { name: "Mia" })).not.toBeInTheDocument();
     });
     expect(screen.getByRole("heading", { name: "Alex" })).toBeInTheDocument();
@@ -350,10 +349,10 @@ describe("DashboardCompanionList", () => {
     await user.type(screen.getByRole("textbox", { name: "Search companions" }), "Mia");
 
     await waitFor(() => {
-      expect(screen.getByText("1 of 2")).toBeInTheDocument();
       expect(screen.queryByRole("heading", { name: "Alex" })).not.toBeInTheDocument();
     });
     expect(screen.getByRole("heading", { name: "Mia" })).toBeInTheDocument();
+    expect(screen.queryByText(/of \d+/)).not.toBeInTheDocument();
   });
 
   it("moves All and Favorites with arrows and announces the filter", async () => {

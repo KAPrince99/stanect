@@ -5,6 +5,10 @@ const TRANSCRIPT_GHOSTS = [
   { side: "end", width: "w-[58%]", height: "h-14" },
   { side: "start", width: "w-[64%]", height: "h-16" },
   { side: "end", width: "w-[48%]", height: "h-12" },
+  { side: "start", width: "w-[70%]", height: "h-14" },
+  { side: "end", width: "w-[54%]", height: "h-16" },
+  { side: "start", width: "w-[60%]", height: "h-12" },
+  { side: "end", width: "w-[50%]", height: "h-14" },
 ] as const;
 
 export function TranscriptLinesSkeleton() {

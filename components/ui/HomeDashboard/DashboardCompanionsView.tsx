@@ -74,14 +74,6 @@ function DashboardCompanionsView({
               <DashboardSearch
                 query={searchQuery}
                 onQueryChange={onSearchQueryChange}
-                matchCount={filteredCompanions.length}
-                totalCount={
-                  isFilteringFavorites
-                    ? companions.filter((companion) =>
-                        favoriteIds?.has(companion.id),
-                      ).length
-                    : companions.length
-                }
                 companionFilter={companionFilter}
                 onCompanionFilterChange={onCompanionFilterChange ?? (() => {})}
               />

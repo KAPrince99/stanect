@@ -25,8 +25,6 @@ import {
 interface DashboardSearchProps {
   query: string;
   onQueryChange: (query: string) => void;
-  matchCount: number;
-  totalCount: number;
   companionFilter: CompanionFilter;
   onCompanionFilterChange: (filter: CompanionFilter) => void;
 }
@@ -89,8 +87,6 @@ function FilterOption({
 function DashboardSearch({
   query,
   onQueryChange,
-  matchCount,
-  totalCount,
   companionFilter,
   onCompanionFilterChange,
 }: DashboardSearchProps) {
@@ -98,7 +94,6 @@ function DashboardSearch({
   const allRef = useRef<HTMLButtonElement>(null);
   const favoritesRef = useRef<HTMLButtonElement>(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const isSearching = query.trim().length > 0;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -217,11 +212,6 @@ function DashboardSearch({
         </div>
       </div>
 
-      {isSearching ? (
-        <p className="type-meta mt-2" aria-live="polite">
-          {matchCount} of {totalCount}
-        </p>
-      ) : null}
       <p className="sr-only" aria-live="polite">
         {companionFilter === "favorites" ? "Showing favorites" : "Showing all"}
       </p>

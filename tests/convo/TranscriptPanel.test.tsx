@@ -60,6 +60,9 @@ describe("TranscriptPanel", () => {
     expect(
       screen.getByRole("status", { name: "Loading transcript" }),
     ).toBeInTheDocument();
+    const ghosts = screen.getByRole("status", { name: "Loading transcript" });
+    expect(ghosts.querySelectorAll(".justify-start")).toHaveLength(4);
+    expect(ghosts.querySelectorAll(".justify-end")).toHaveLength(4);
     expect(
       screen.queryByText("Transcript appears when you start talking."),
     ).not.toBeInTheDocument();

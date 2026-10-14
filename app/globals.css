@@ -168,6 +168,7 @@ html.lenis body {
 
 html {
   font-family: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+  color-scheme: dark;
 }
 
 /* 1. Body styles and preventing scroll leak (Standard CSS) */
@@ -220,6 +221,35 @@ h6 {
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+/*
+  Default OS bars are light with a brown thumb on Windows.
+  Match the app backdrop so leftover scrollers do not flash white.
+*/
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.22) #0b1a36;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: #0b1a36;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.22);
+  border: 2px solid #0b1a36;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 255 255 / 0.35);
 }
 .toast {
   animation: toast-fade-in 0.2s ease forwards;

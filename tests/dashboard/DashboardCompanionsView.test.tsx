@@ -237,7 +237,7 @@ describe("DashboardCompanionsView", () => {
     expect(
       screen.getByRole("heading", { name: "No companions match “zzz”" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("0 of 2")).toBeInTheDocument();
+    expect(screen.queryByText(/of \d+/)).not.toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: "Create your first companion" }),
     ).not.toBeInTheDocument();
