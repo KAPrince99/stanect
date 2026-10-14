@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   memo,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -68,6 +69,7 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
   const [companionFilter, setCompanionFilter] =
     useState<CompanionFilter>("all");
   const importedLocalFavorites = useRef(false);
+  const searchDebounce = useRef<number | null>(null);
   const [isStartingSetup, startTransition] = useTransition();
   const lastCompanionId = useSyncExternalStore(
     subscribeToLastCompanionId,
@@ -76,17 +78,24 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
   );
 
   useEffect(() => {
-    if (!searchQuery.trim()) {
+    return () => {
+      if (searchDebounce.current) window.clearTimeout(searchDebounce.current);
+    };
+  }, []);
+
+  const onSearchQueryChange = useCallback((query: string) => {
+    setSearchQuery(query);
+    if (searchDebounce.current) window.clearTimeout(searchDebounce.current);
+
+    if (!query.trim()) {
       setActiveQuery("");
       return;
     }
 
-    const timer = window.setTimeout(() => {
-      setActiveQuery(searchQuery);
+    searchDebounce.current = window.setTimeout(() => {
+      setActiveQuery(query);
     }, SEARCH_DEBOUNCE_MS);
-
-    return () => window.clearTimeout(timer);
-  }, [searchQuery]);
+  }, []);
 
   const { data: companions = [], isLoading: isCompanionsLoading } = useQuery({
     queryKey: ["companions", userId],
@@ -207,7 +216,7 @@ function DashboardCompanionList({ userId }: DashboardCompanionListProps) {
       filteredCompanions={filteredCompanions}
       searchQuery={searchQuery}
       activeQuery={activeQuery}
-      onSearchQueryChange={setSearchQuery}
+      onSearchQueryChange={onSearchQueryChange}
       companionFilter={companionFilter}
       onCompanionFilterChange={setCompanionFilter}
       favoriteIds={favoriteIdSet}
