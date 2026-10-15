@@ -13,16 +13,16 @@ export const stanectClerkAppearance = {
     colorNeutral: "rgba(255,255,255,0.7)",
     borderRadius: "0.75rem",
     fontFamily:
-      "var(--font-ui), ui-sans-serif, system-ui, sans-serif",
+      "var(--font-inter), ui-sans-serif, system-ui, sans-serif",
     fontFamilyButtons:
-      "var(--font-ui), ui-sans-serif, system-ui, sans-serif",
+      "var(--font-space), ui-sans-serif, system-ui, sans-serif",
   },
   elements: {
     rootBox: "w-full",
     card: "w-full border-0 bg-transparent shadow-none",
     cardBox: "w-full shadow-none",
     headerTitle:
-      "font-[family-name:var(--font-ui)] text-2xl font-semibold tracking-tight text-white",
+      "font-[family-name:var(--font-space)] text-2xl font-semibold tracking-tight text-white",
     headerSubtitle: "text-white/55",
     socialButtonsBlockButton:
       "h-11 border border-white/25 bg-white text-[#0b1a36] shadow-sm hover:bg-white/90",

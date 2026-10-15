@@ -11,13 +11,13 @@ const config: Config = {
       fontFamily: {
         // Use the CSS variables from next/font
         sans: [
-          "var(--font-ui)",
+          "var(--font-inter)",
           "ui-sans-serif",
           "system-ui",
           "sans-serif",
         ],
         display: [
-          "var(--font-ui)",
+          "var(--font-space)",
           "ui-sans-serif",
           "system-ui",
           "sans-serif",
