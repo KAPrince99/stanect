@@ -91,7 +91,7 @@ describe("route skeletons copy the live layouts", () => {
     expect(screen.queryByRole("heading")).not.toBeInTheDocument();
     expect(container.querySelector("aside")).toBeTruthy();
     expect(container.querySelector(".h-11.sm\\:w-48")).toBeTruthy();
-    expect(container.querySelector('[class*="w-[220px]"]')).toBeTruthy();
+    expect(container.querySelector('[class*="100cqh"]')).toBeTruthy();
   });
 
   it("renders auth as the two-column card with a Clerk form ghost", () => {

@@ -10,6 +10,7 @@ import { subscribeVoiceLevel } from "@/lib/voice-level";
 import { useConvoStore, type Speaker } from "@/store/use-convo-store";
 
 import ConvoLiveTimer from "./ConvoLiveTimer";
+import { CONVO_GLOBE_SIZE, CONVO_GLOBE_STAGE } from "./convo-layout";
 import { convoStatusConfig } from "./convo-status-config";
 import { useConvoStage } from "./ConvoStageContext";
 
@@ -112,7 +113,7 @@ function ConvoOrbStage({
   useGlobeSlot(globeSlotRef);
 
   return (
-    <div className="relative mx-auto my-2 flex w-full items-center justify-center sm:my-4 lg:mb-10">
+    <div className={CONVO_GLOBE_STAGE}>
       {companionAvatarUrl ? (
         <GlobePortrait
           src={companionAvatarUrl}
@@ -129,44 +130,47 @@ function ConvoOrbStage({
           role="user"
         />
       ) : null}
-      <div
-        ref={globeSlotRef}
-        className="relative aspect-square w-[220px] sm:w-72 xl:w-[23rem] 2xl:w-[26rem]"
-      />
+      <div ref={globeSlotRef} className={CONVO_GLOBE_SIZE} />
     </div>
   );
 }
 
 const MemoConvoOrbStage = memo(ConvoOrbStage);
 
-function ConvoStatusHero() {
-  const { companionName, companionAvatarUrl, userAvatarUrl } = useConvoStage();
+/** Same height and width as Start Call (md + sm:w-48). */
+export function ConvoStatusBadge() {
   const callStatus = useConvoStore((s) => s.callStatus);
   const isCallLive = callStatus === "ACTIVE";
   const currentStatus = convoStatusConfig[callStatus];
 
   return (
-    <div className="flex w-full min-h-0 flex-col items-center">
+    <div
+      className={`type-cta inline-flex h-11 w-48 items-center justify-center gap-2 rounded-full border px-4 backdrop-blur-md transition-colors ${currentStatus.color}`}
+    >
+      {currentStatus.icon}
+      <span className="tracking-wide">
+        {isCallLive ? (
+          <>
+            Live · <ConvoLiveTimer />
+          </>
+        ) : (
+          currentStatus.label
+        )}
+      </span>
+    </div>
+  );
+}
+
+function ConvoStatusHero() {
+  const { companionName, companionAvatarUrl, userAvatarUrl } = useConvoStage();
+
+  return (
+    <div className="flex min-h-0 w-full flex-1 flex-col items-center">
       <motion.div
         initial={false}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg shrink-0 space-y-3 pt-4 pb-2 text-center sm:pt-6"
+        className="w-full max-w-lg shrink-0 pb-2 text-center"
       >
-        <div
-          className={`type-meta inline-flex min-w-42 items-center justify-center gap-2 rounded-full border px-3.5 py-1.5 backdrop-blur-md transition-colors ${currentStatus.color}`}
-        >
-          {currentStatus.icon}
-          <span className="tracking-wide">
-            {isCallLive ? (
-              <>
-                Live · <ConvoLiveTimer />
-              </>
-            ) : (
-              currentStatus.label
-            )}
-          </span>
-        </div>
-
         <h1 className="type-display text-[1.75rem] md:text-[2rem]">
           {companionName || "Your AI Companion"}
         </h1>

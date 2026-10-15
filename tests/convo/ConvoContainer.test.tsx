@@ -182,6 +182,12 @@ describe("ConvoContainer", () => {
 
     expect(scene.closest("div")).toHaveClass("top-3", "sm:top-4", "h-9");
     expect(deleteButton.parentElement).toHaveClass("top-3", "sm:top-4");
+    expect(screen.getByText("Ready").closest("[data-convo-chrome='status']")).toHaveClass(
+      "top-3",
+      "sm:top-4",
+      "h-11",
+    );
+    expect(screen.getByText("Ready").parentElement).toHaveClass("h-11", "w-48");
   });
 
   it("lines the portraits up with the scene on the left and Delete on the right", async () => {
@@ -202,6 +208,16 @@ describe("ConvoContainer", () => {
     // minus 0.5rem = 18px.
     expect(deleteBox).toHaveClass("sm:right-4");
     expect(you).toHaveClass("sm:right-[18px]");
+  });
+
+  it("sizes the globe from leftover stage height", async () => {
+    renderWithProviders(<ConvoContainer id="c1" />);
+
+    const companion = await screen.findByRole("img", { name: "Mia" });
+    const stage = companion.parentElement?.parentElement?.parentElement;
+
+    expect(stage).toHaveClass("[container-type:size]");
+    expect(stage?.querySelector('[class*="100cqh"]')).toBeTruthy();
   });
 
   it("leaves out the scene when it is empty", async () => {
