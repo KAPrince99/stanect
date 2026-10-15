@@ -121,7 +121,12 @@ function DashboardSearch({
 
   return (
     <div className={DASHBOARD_BELOW_SEARCH}>
-      <div className="flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl">
+      <div
+        className={cn(
+          "flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl",
+          isSearchFocused && "animate-search-border",
+        )}
+      >
         <form
           role="search"
           className={cn(

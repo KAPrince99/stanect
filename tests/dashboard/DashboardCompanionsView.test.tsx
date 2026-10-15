@@ -307,7 +307,7 @@ describe("DashboardCompanionsView", () => {
     expect(screen.getByText("Favs")).toBeInTheDocument();
   });
 
-  it("animates the magnifier while search is focused", async () => {
+  it("moves the magnifier and brand border while search is focused", async () => {
     const user = userEvent.setup();
     renderWithProviders(
       <DashboardCompanionsView
@@ -322,10 +322,14 @@ describe("DashboardCompanionsView", () => {
     );
 
     const magnifier = screen.getByRole("search").querySelector("img");
+    const capsule = screen.getByRole("search").parentElement;
     expect(magnifier).not.toHaveClass("animate-search-look");
+    expect(capsule).toHaveClass("border-white/20");
+    expect(capsule).not.toHaveClass("animate-search-border");
 
     await user.click(screen.getByRole("textbox", { name: "Search companions" }));
     expect(magnifier).toHaveClass("animate-search-look");
+    expect(capsule).toHaveClass("animate-search-border", "border-white/20");
   });
 
   it("shows the empty favorites state without the setup wizard", () => {
