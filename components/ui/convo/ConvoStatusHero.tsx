@@ -137,7 +137,7 @@ function ConvoOrbStage({
 
 const MemoConvoOrbStage = memo(ConvoOrbStage);
 
-/** Same height and width as Start Call (md + sm:w-48). */
+/** Same top lane as scene and Delete: compact pill, not Start Call sized. */
 export function ConvoStatusBadge() {
   const callStatus = useConvoStore((s) => s.callStatus);
   const isCallLive = callStatus === "ACTIVE";
@@ -145,7 +145,7 @@ export function ConvoStatusBadge() {
 
   return (
     <div
-      className={`type-cta inline-flex h-11 w-48 items-center justify-center gap-2 rounded-full border px-4 backdrop-blur-md transition-colors ${currentStatus.color}`}
+      className={`type-meta inline-flex h-9 min-w-42 items-center justify-center gap-2 rounded-full border px-3.5 backdrop-blur-md transition-colors ${currentStatus.color}`}
     >
       {currentStatus.icon}
       <span className="tracking-wide">

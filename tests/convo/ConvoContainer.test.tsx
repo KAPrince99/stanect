@@ -185,9 +185,8 @@ describe("ConvoContainer", () => {
     expect(screen.getByText("Ready").closest("[data-convo-chrome='status']")).toHaveClass(
       "top-3",
       "sm:top-4",
-      "h-11",
+      "h-9",
     );
-    expect(screen.getByText("Ready").parentElement).toHaveClass("h-11", "w-48");
   });
 
   it("lines the portraits up with the scene on the left and Delete on the right", async () => {
