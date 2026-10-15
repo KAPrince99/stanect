@@ -6,6 +6,7 @@ import LordIcon from "../lordIcon";
 import { motionTransition } from "@/lib/motion";
 import { lordColors } from "@/lib/brand";
 import { cn } from "@/lib/utils";
+import { DASHBOARD_SEARCH_HEIGHT } from "../HomeDashboard/dashboard-layout";
 
 interface VoiceSelectorProps {
   voice: "male" | "female" | null;
@@ -38,7 +39,8 @@ function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
           }
         }}
         className={cn(
-          "my-5 flex items-center gap-4 rounded-xl border border-white/20 bg-white/10 p-2",
+          "my-5 flex items-stretch gap-4 rounded-xl border border-white/20 bg-white/10 p-1.5",
+          DASHBOARD_SEARCH_HEIGHT,
           isFocused && "animate-search-border",
         )}
       >
@@ -52,7 +54,7 @@ function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.98 }}
               transition={motionTransition.soft}
-              className={`type-label relative flex-1 cursor-pointer rounded-lg py-3 text-center capitalize focus-visible:outline-none focus-visible:ring-0 ${
+              className={`type-label relative flex h-full flex-1 cursor-pointer items-center justify-center rounded-lg py-0 text-center capitalize focus-visible:outline-none focus-visible:ring-0 ${
                 isActive ? "text-white" : "text-white/70 hover:text-white"
               }`}
               onClick={() => onSelectVoice(value)}

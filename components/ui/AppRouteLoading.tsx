@@ -7,6 +7,7 @@ import {
   DASHBOARD_BOARD,
   DASHBOARD_CARD_GRID,
   DASHBOARD_ONE_CARD_WIDTH,
+  DASHBOARD_SEARCH_HEIGHT,
   DASHBOARD_SEARCH_PAD_X,
 } from "./HomeDashboard/dashboard-layout";
 import { AvatarSkeleton } from "./NewTabForm/AvatarSkeleton";
@@ -55,7 +56,7 @@ export function DashboardRouteLoading() {
 
         <div
           data-skeleton="dashboard-search"
-          className={`flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 ${DASHBOARD_BELOW_SEARCH}`}
+          className={`flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 ${DASHBOARD_SEARCH_HEIGHT} ${DASHBOARD_BELOW_SEARCH}`}
         >
           <div
             className={`flex min-w-0 flex-1 items-center gap-2.5 py-3 ${DASHBOARD_SEARCH_PAD_X}`}

@@ -76,6 +76,15 @@ describe("Voice", () => {
     expect(useTabFormStore.getState().voice).toBe("female");
   });
 
+  it("matches the dashboard search bar height on voice and session length", () => {
+    renderWithProviders(<Voice />);
+
+    expect(screen.getByRole("group", { name: "Voice" })).toHaveClass(
+      "h-[3.625rem]",
+    );
+    expect(sessionInput()).toHaveClass("h-[3.625rem]");
+  });
+
   it("brightens the voice group and session length while they are focused", async () => {
     const user = userEvent.setup();
     renderWithProviders(<Voice />);

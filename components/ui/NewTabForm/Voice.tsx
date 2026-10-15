@@ -9,6 +9,7 @@ import { useTabFormStore } from "@/store/useTabFormStore";
 import TabContentHeader from "./TabContentHeader";
 import VoiceSelector from "./VoiceSelector";
 import PlanLimitHint from "./PlanLimitHint";
+import { DASHBOARD_SEARCH_HEIGHT } from "../HomeDashboard/dashboard-layout";
 import { lordColors } from "@/lib/brand";
 
 function getMaxMinutes(plan: string) {
@@ -87,7 +88,7 @@ function Voice() {
           onChange={handleSessionLengthChange}
           onBlur={() => validateSessionLength(sessionLength)}
           placeholder={`1 - ${maxMinutes}`}
-          className="h-12 text-base"
+          className={`${DASHBOARD_SEARCH_HEIGHT} text-base`}
           error={sessionLengthError}
           icon={
             <LordIcon

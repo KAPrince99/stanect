@@ -28,3 +28,9 @@ export const DASHBOARD_RESULTS_ID = "dashboard-companion-results";
  * continue strip: page pt-24/lg:pt-28 minus nav pt-4 and pill h-14/sm:h-16.
  */
 export const DASHBOARD_BELOW_SEARCH = "mb-6 sm:mb-4 lg:mb-8";
+
+/**
+ * Outer height of the dashboard search capsule (filter nest min-h-11 + m-1.5
+ * + border). Creation inputs match this so the fields feel like one system.
+ */
+export const DASHBOARD_SEARCH_HEIGHT = "h-[3.625rem]";

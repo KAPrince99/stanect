@@ -19,6 +19,7 @@ import {
   DASHBOARD_BELOW_SEARCH,
   DASHBOARD_ONE_CARD_WIDTH,
   DASHBOARD_RESULTS_ID,
+  DASHBOARD_SEARCH_HEIGHT,
   DASHBOARD_SEARCH_PAD_X,
 } from "./dashboard-layout";
 
@@ -124,6 +125,7 @@ function DashboardSearch({
       <div
         className={cn(
           "flex w-full min-w-0 items-stretch rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl",
+          DASHBOARD_SEARCH_HEIGHT,
           isSearchFocused && "animate-search-border",
         )}
       >

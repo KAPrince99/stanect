@@ -56,6 +56,17 @@ describe("Person", () => {
     expect(useTabFormStore.getState().scene).toBe("Gym");
   });
 
+  it("matches the dashboard search bar height on name and scene", () => {
+    renderWithProviders(<Person />);
+
+    expect(
+      screen.getByPlaceholderText("Sophia • Alex • Mia..."),
+    ).toHaveClass("h-[3.625rem]");
+    expect(
+      screen.getByPlaceholderText("Gym • Coffee Shop • Bookstore..."),
+    ).toHaveClass("h-[3.625rem]");
+  });
+
   it("brightens the name and scene borders while they are focused", async () => {
     const user = userEvent.setup();
     renderWithProviders(<Person />);

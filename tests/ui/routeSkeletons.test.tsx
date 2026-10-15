@@ -70,7 +70,7 @@ describe("route skeletons copy the live layouts", () => {
     expect(container.querySelector(".h-10.w-full")).toBeTruthy();
     expect(
       container.querySelector('[data-skeleton="dashboard-search"]'),
-    ).toBeTruthy();
+    ).toHaveClass("h-[3.625rem]");
     expect(
       container.querySelector('[data-skeleton="dashboard-filter"]'),
     ).toHaveClass("dashboard-one-card");

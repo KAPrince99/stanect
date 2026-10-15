@@ -279,7 +279,10 @@ describe("DashboardCompanionsView", () => {
       "aria-controls",
       "dashboard-companion-results",
     );
-    expect(screen.getByRole("search").parentElement).toHaveClass("rounded-3xl");
+    expect(screen.getByRole("search").parentElement).toHaveClass(
+      "rounded-3xl",
+      "h-[3.625rem]",
+    );
     expect(screen.getByRole("search").parentElement).not.toHaveClass(
       "grid-cols-subgrid",
     );

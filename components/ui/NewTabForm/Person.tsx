@@ -5,6 +5,7 @@ import LordIcon from "../lordIcon";
 import InputField from "./InputField";
 import { useTabFormStore } from "@/store/useTabFormStore";
 import { companionNameSchema, sceneSchema } from "@/schemas/newCompanionSchema";
+import { DASHBOARD_SEARCH_HEIGHT } from "../HomeDashboard/dashboard-layout";
 import TabContentHeader from "./TabContentHeader";
 import { lordColors } from "@/lib/brand";
 
@@ -55,7 +56,7 @@ function Person() {
           }}
           onBlur={() => validateCompanionName(companionName)}
           placeholder="Sophia • Alex • Mia..."
-          className="h-12 text-base"
+          className={`${DASHBOARD_SEARCH_HEIGHT} text-base`}
           error={errors.companionName}
           icon={
             <LordIcon
@@ -78,7 +79,7 @@ function Person() {
           }}
           onBlur={() => validateScene(scene)}
           placeholder="Gym • Coffee Shop • Bookstore..."
-          className="h-12 text-base placeholder:text-sm"
+          className={`${DASHBOARD_SEARCH_HEIGHT} text-base placeholder:text-sm`}
           error={errors.scene}
           icon={
             <LordIcon
