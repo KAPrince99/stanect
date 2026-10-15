@@ -28,4 +28,16 @@ describe("VoiceSelector", () => {
       screen.getByRole("button", { name: "male" }).querySelector(".bg-white\\/12"),
     ).toBeNull();
   });
+
+  it("brightens the voice group while a choice is focused", async () => {
+    const user = userEvent.setup();
+    render(<VoiceSelector voice={null} onSelectVoice={vi.fn()} />);
+
+    const voiceGroup = screen.getByRole("group", { name: "Voice" });
+    expect(voiceGroup).toHaveClass("border-white/20");
+    expect(voiceGroup).not.toHaveClass("animate-search-border");
+
+    await user.click(screen.getByRole("button", { name: "male" }));
+    expect(voiceGroup).toHaveClass("animate-search-border");
+  });
 });

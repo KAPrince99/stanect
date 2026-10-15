@@ -1,8 +1,11 @@
-import React, { memo } from "react";
+"use client";
+
+import React, { memo, useState } from "react";
 import { motion } from "framer-motion";
 import LordIcon from "../lordIcon";
 import { motionTransition } from "@/lib/motion";
 import { lordColors } from "@/lib/brand";
+import { cn } from "@/lib/utils";
 
 interface VoiceSelectorProps {
   voice: "male" | "female" | null;
@@ -10,6 +13,8 @@ interface VoiceSelectorProps {
 }
 
 function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <div className="my-10">
       <div className="flex justify-start items-center gap-2 mb-4">
@@ -23,7 +28,20 @@ function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
         <p className="type-label">Voice</p>
       </div>
 
-      <section className="my-5 flex items-center gap-4 bg-white/10 p-2 rounded-xl">
+      <section
+        role="group"
+        aria-label="Voice"
+        onFocus={() => setIsFocused(true)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+            setIsFocused(false);
+          }
+        }}
+        className={cn(
+          "my-5 flex items-center gap-4 rounded-xl border border-white/20 bg-white/10 p-2",
+          isFocused && "animate-search-border",
+        )}
+      >
         {(["male", "female"] as const).map((value) => {
           const isActive = voice === value;
 
@@ -34,7 +52,7 @@ function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.98 }}
               transition={motionTransition.soft}
-              className={`type-label relative flex-1 cursor-pointer rounded-lg py-3 text-center capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 ${
+              className={`type-label relative flex-1 cursor-pointer rounded-lg py-3 text-center capitalize focus-visible:outline-none focus-visible:ring-0 ${
                 isActive ? "text-white" : "text-white/70 hover:text-white"
               }`}
               onClick={() => onSelectVoice(value)}

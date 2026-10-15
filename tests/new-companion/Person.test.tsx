@@ -55,4 +55,25 @@ describe("Person", () => {
     ).not.toBeInTheDocument();
     expect(useTabFormStore.getState().scene).toBe("Gym");
   });
+
+  it("brightens the name and scene borders while they are focused", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Person />);
+
+    const name = screen.getByPlaceholderText("Sophia • Alex • Mia...");
+    const scene = screen.getByPlaceholderText(
+      "Gym • Coffee Shop • Bookstore...",
+    );
+
+    expect(name).not.toHaveClass("animate-search-border");
+    expect(scene).not.toHaveClass("animate-search-border");
+
+    await user.click(name);
+    expect(name).toHaveClass("animate-search-border");
+    expect(scene).not.toHaveClass("animate-search-border");
+
+    await user.click(scene);
+    expect(scene).toHaveClass("animate-search-border");
+    expect(name).not.toHaveClass("animate-search-border");
+  });
 });

@@ -75,4 +75,22 @@ describe("Voice", () => {
 
     expect(useTabFormStore.getState().voice).toBe("female");
   });
+
+  it("brightens the voice group and session length while they are focused", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Voice />);
+
+    const voiceGroup = screen.getByRole("group", { name: "Voice" });
+    const duration = sessionInput();
+
+    expect(voiceGroup).not.toHaveClass("animate-search-border");
+    expect(duration).not.toHaveClass("animate-search-border");
+
+    await user.click(screen.getByRole("button", { name: "female" }));
+    expect(voiceGroup).toHaveClass("animate-search-border");
+
+    await user.click(duration);
+    expect(duration).toHaveClass("animate-search-border");
+    expect(voiceGroup).not.toHaveClass("animate-search-border");
+  });
 });
