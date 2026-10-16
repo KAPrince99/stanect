@@ -10,59 +10,72 @@ import PricingCurrencyDialog from "./PricingCurrencyDialog";
 import { PricingBackground } from "./PricingBackground";
 import { PricingHeader } from "./PricingHeader";
 import { PricingTierCard } from "./PricingTierCard";
-import { pricingStagger, type BillingInterval } from "./pricingShared";
+import {
+  PRICING_TIER_GRID,
+  pricingStagger,
+  type BillingInterval,
+  type PricingIntent,
+} from "./pricingShared";
 
 type TierKey = (typeof TIERS)[number]["key"];
 
 interface PricingPageViewProps {
+  intent?: PricingIntent;
   billingInterval: BillingInterval;
   onIntervalChange: (interval: BillingInterval) => void;
   currentPlan?: string;
-  pendingTierKey: TierKey | null;
-  onSelectTier: (tierKey: TierKey) => void;
-  isCancelDialogOpen: boolean;
-  onCancelDialogOpenChange: (open: boolean) => void;
-  onConfirmDowngrade: () => void;
-  currencyDialogTier: TierKey | null;
-  onCurrencyDialogOpenChange: (open: boolean) => void;
-  onConfirmCurrencyAndPay: () => void;
-  currencyPlanName: string;
-  currencyUsdPrice: number;
-  currencyIntervalLabel: string;
+  pendingTierKey?: TierKey | null;
+  onSelectTier?: (tierKey: TierKey) => void;
+  isCancelDialogOpen?: boolean;
+  onCancelDialogOpenChange?: (open: boolean) => void;
+  onConfirmDowngrade?: () => void;
+  currencyDialogTier?: TierKey | null;
+  onCurrencyDialogOpenChange?: (open: boolean) => void;
+  onConfirmCurrencyAndPay?: () => void;
+  currencyPlanName?: string;
+  currencyUsdPrice?: number;
+  currencyIntervalLabel?: string;
 }
 
 function PricingPageView({
+  intent = "billing",
   billingInterval,
   onIntervalChange,
   currentPlan,
-  pendingTierKey,
+  pendingTierKey = null,
   onSelectTier,
-  isCancelDialogOpen,
+  isCancelDialogOpen = false,
   onCancelDialogOpenChange,
   onConfirmDowngrade,
-  currencyDialogTier,
+  currencyDialogTier = null,
   onCurrencyDialogOpenChange,
   onConfirmCurrencyAndPay,
-  currencyPlanName,
-  currencyUsdPrice,
-  currencyIntervalLabel,
+  currencyPlanName = "Pro",
+  currencyUsdPrice = 0,
+  currencyIntervalLabel = "/month",
 }: PricingPageViewProps) {
+  const isMarketing = intent === "marketing";
+
   return (
     <div className="app-column-x mt-3 min-h-screen bg-transparent py-25 text-white">
-      <PricingCancelDialog
-        open={isCancelDialogOpen}
-        onOpenChange={onCancelDialogOpenChange}
-        onConfirm={onConfirmDowngrade}
-      />
+      {isMarketing ? null : (
+        <>
+          <PricingCancelDialog
+            open={isCancelDialogOpen}
+            onOpenChange={onCancelDialogOpenChange ?? (() => {})}
+            onConfirm={onConfirmDowngrade ?? (() => {})}
+          />
 
-      <PricingCurrencyDialog
-        open={currencyDialogTier !== null}
-        onOpenChange={onCurrencyDialogOpenChange}
-        onConfirm={onConfirmCurrencyAndPay}
-        planName={currencyPlanName}
-        usdPrice={currencyUsdPrice}
-        intervalLabel={currencyIntervalLabel}
-      />
+          <PricingCurrencyDialog
+            open={currencyDialogTier !== null}
+            onOpenChange={onCurrencyDialogOpenChange ?? (() => {})}
+            onConfirm={onConfirmCurrencyAndPay ?? (() => {})}
+            planName={currencyPlanName}
+            usdPrice={currencyUsdPrice}
+            intervalLabel={currencyIntervalLabel}
+          />
+        </>
+      )}
 
       <PricingBackground />
 
@@ -77,12 +90,13 @@ function PricingPageView({
           onIntervalChange={onIntervalChange}
         />
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+        <div className={PRICING_TIER_GRID}>
           {TIERS.map((tier, index) => (
             <PricingTierCard
               key={tier.key}
               tier={tier}
               index={index}
+              intent={intent}
               billingInterval={billingInterval}
               currentPlan={currentPlan}
               pendingTierKey={pendingTierKey}

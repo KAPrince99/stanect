@@ -2,6 +2,7 @@
 import { AvatarProps } from "@/types/types";
 import { memo } from "react";
 import AvatarCard from "./AvatarCard";
+import { AVATAR_PICKER_GRID } from "./avatar-layout";
 
 interface AvatarGridProps {
   avatars: AvatarProps[] | undefined;
@@ -15,7 +16,7 @@ function AvatarGrid({
   handleSelectAvatar,
 }: AvatarGridProps) {
   return (
-    <div className="grid grid-cols-3 2xl:grid-cols-4 gap-6 max-w-4xl mx-auto px-8">
+    <div className={AVATAR_PICKER_GRID}>
       {avatars?.map((avatar, index) => {
         return (
           <AvatarCard

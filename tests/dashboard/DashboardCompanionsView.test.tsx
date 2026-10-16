@@ -178,6 +178,9 @@ describe("DashboardCompanionsView", () => {
       "/dashboard/c2",
     );
     expect(screen.getByRole("link", { name: "Continue convo" })).toHaveClass("h-8");
+    expect(
+      screen.getByRole("link", { name: "Continue convo" }).closest(".justify-between"),
+    ).toBeTruthy();
     expect(screen.getByRole("link", { name: "Create companion" })).toHaveAttribute(
       "href",
       "/new",
@@ -185,7 +188,7 @@ describe("DashboardCompanionsView", () => {
     expect(screen.getByRole("link", { name: "Create companion" })).toHaveClass(
       "h-10",
       "!text-sm",
-      "w-full",
+      "max-md:hidden",
     );
     expect(
       screen.getByRole("link", { name: "Create companion" }).querySelector("lord-icon"),

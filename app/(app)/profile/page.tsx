@@ -18,7 +18,7 @@ export default async function ProfilePage() {
   if (!userId) redirect("/login");
 
   return (
-    <section className="relative px-4 pt-24 pb-28 sm:px-6 lg:pt-28 md:pb-16">
+    <section className="app-column-x relative pt-24 pb-28 md:pb-16 lg:pt-28">
       <ProfileContainer userId={userId} />
     </section>
   );

@@ -4,7 +4,7 @@ import { Pulse } from "../Pulse";
 export function PreviewSkeleton() {
   return (
     <div className="w-full" role="status" aria-label="Loading preview">
-      <div className="mx-auto grid max-w-4xl grid-cols-1 items-center gap-8 px-4 lg:grid-cols-2 lg:gap-12">
+      <div className="mx-auto grid max-w-4xl grid-cols-1 items-center gap-6 px-0 sm:gap-8 lg:grid-cols-2 lg:gap-12">
         <div className="mx-auto w-full max-w-[320px]">
           <article className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl">
             <Pulse className={`w-full rounded-none ${companionPortraitAspect}`} />
@@ -15,7 +15,7 @@ export function PreviewSkeleton() {
         </div>
 
         <div className="mx-auto w-full max-w-md space-y-10">
-          <div className="space-y-5 rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div className="space-y-5 rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6 md:p-8">
             <Pulse className="mx-auto h-7 w-52 sm:h-8" />
             <Pulse className="mx-auto h-4 w-64 max-w-full" />
 

@@ -26,7 +26,7 @@ function EmptyCompanionState({
       transition={motionTransition.soft}
       className="flex flex-col items-center justify-center"
     >
-      <div className="w-full max-w-2xl rounded-3xl bg-white/5 px-6 py-10 text-center shadow-xl backdrop-blur-xl md:px-10 md:py-12">
+      <div className="w-full max-w-2xl rounded-3xl bg-white/5 px-5 py-8 text-center shadow-xl backdrop-blur-xl sm:px-6 sm:py-10 md:px-10 md:py-12">
         <div className="type-meta mb-6 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-400/10 px-4 py-1.5 uppercase tracking-wide text-amber-300">
           <Sparkles className="h-3.5 w-3.5" />
           New Companion Setup

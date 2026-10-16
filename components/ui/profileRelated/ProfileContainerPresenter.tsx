@@ -71,7 +71,7 @@ function ProfileContainerPresenter({
         transition={motionTransition.soft}
         className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl backdrop-blur-xl md:grid md:grid-cols-2"
       >
-        <div className="relative border-b border-white/10 p-8 text-center md:border-b-0 md:border-r md:p-10">
+        <div className="relative border-b border-white/10 p-6 text-center sm:p-8 md:border-b-0 md:border-r md:p-10">
           <ProfileIdentityHeader
             key={imgSrc}
             imgSrc={imgSrc}
@@ -85,7 +85,7 @@ function ProfileContainerPresenter({
           </div>
         </div>
 
-        <div className="p-8 md:p-10">
+        <div className="p-6 sm:p-8 md:p-10">
           <ProfileInfoList items={infoItems} />
         </div>
       </motion.div>

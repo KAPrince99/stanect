@@ -145,7 +145,7 @@ export function ConvoStatusBadge() {
 
   return (
     <div
-      className={`type-meta inline-flex h-9 min-w-42 items-center justify-center gap-2 rounded-full border px-3.5 backdrop-blur-md transition-colors ${currentStatus.color}`}
+      className={`type-meta inline-flex h-9 min-w-0 items-center justify-center gap-2 rounded-full border px-3 backdrop-blur-md transition-colors sm:min-w-42 sm:px-3.5 ${currentStatus.color}`}
     >
       {currentStatus.icon}
       <span className="tracking-wide">
@@ -171,7 +171,7 @@ function ConvoStatusHero() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-lg shrink-0 pb-2 text-center"
       >
-        <h1 className="type-display text-[1.75rem] md:text-[2rem]">
+        <h1 className="type-display text-[1.5rem] sm:text-[1.75rem] md:text-[2rem]">
           {companionName || "Your AI Companion"}
         </h1>
       </motion.div>

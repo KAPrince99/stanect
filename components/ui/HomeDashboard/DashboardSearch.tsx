@@ -190,7 +190,7 @@ function DashboardSearch({
           aria-controls={DASHBOARD_RESULTS_ID}
           onKeyDown={onFilterKeyDown}
           className={cn(
-            "relative m-1.5 grid min-h-11 grid-cols-2 items-stretch rounded-2xl border border-white/20",
+            "relative m-1.5 grid min-h-11 shrink-0 grid-cols-2 items-stretch rounded-2xl border border-white/20",
             DASHBOARD_ONE_CARD_WIDTH,
           )}
         >

@@ -17,7 +17,7 @@ function VoiceSelector({ voice, onSelectVoice }: VoiceSelectorProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="my-10">
+    <div className="my-6 sm:my-10">
       <div className="flex justify-start items-center gap-2 mb-4">
         <LordIcon
           src="https://cdn.lordicon.com/ckooqaow.json"

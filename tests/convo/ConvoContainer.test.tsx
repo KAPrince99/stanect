@@ -180,7 +180,13 @@ describe("ConvoContainer", () => {
     const scene = await screen.findByText("Gym");
     const deleteButton = screen.getByRole("button", { name: "Delete" });
 
-    expect(scene.closest("div")).toHaveClass("top-3", "sm:top-4", "h-9");
+    expect(scene.closest("div")).toHaveClass(
+      "hidden",
+      "sm:flex",
+      "top-3",
+      "sm:top-4",
+      "h-9",
+    );
     expect(deleteButton.parentElement).toHaveClass("top-3", "sm:top-4");
     expect(screen.getByText("Ready").closest("[data-convo-chrome='status']")).toHaveClass(
       "top-3",

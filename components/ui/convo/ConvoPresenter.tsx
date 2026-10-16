@@ -42,7 +42,7 @@ function ConvoPresenter() {
 
           {scene ? (
             // Same top line and height as Delete and Ready (top-3/4, h-9).
-            <div className="pointer-events-none absolute top-3 right-24 left-16 z-20 flex h-9 items-center sm:top-4 sm:right-28 sm:left-[4.5rem] lg:left-4">
+            <div className="pointer-events-none absolute top-3 right-24 left-16 z-20 hidden h-9 items-center sm:top-4 sm:right-28 sm:left-[4.5rem] sm:flex lg:left-4">
               <span
                 title={scene}
                 className="pointer-events-auto flex min-w-0 items-center gap-1.5 text-sm font-medium type-meta text-white/65"

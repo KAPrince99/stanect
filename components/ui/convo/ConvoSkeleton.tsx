@@ -15,12 +15,12 @@ export function ConvoRouteLoading() {
             <Pulse className="size-11 rounded-full border border-white/10 bg-white/8" />
           </div>
 
-          <div className="pointer-events-none absolute top-3 right-24 left-16 z-20 flex h-9 items-center sm:top-4 sm:right-28 sm:left-[4.5rem] lg:left-4">
+          <div className="pointer-events-none absolute top-3 right-24 left-16 z-20 hidden h-9 items-center sm:top-4 sm:right-28 sm:left-[4.5rem] sm:flex lg:left-4">
             <Pulse className="h-3.5 w-28" />
           </div>
 
           <div className="absolute top-3 left-1/2 z-20 flex h-9 -translate-x-1/2 items-center sm:top-4">
-            <Pulse className="h-9 min-w-42 rounded-full border border-white/15" />
+            <Pulse className="h-9 min-w-28 rounded-full border border-white/15 sm:min-w-42" />
           </div>
 
           <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4">
@@ -29,7 +29,7 @@ export function ConvoRouteLoading() {
 
           <div className="flex min-h-0 w-full flex-1 flex-col items-center">
             <div className="w-full max-w-lg shrink-0 pb-2 text-center">
-              <Pulse className="mx-auto h-8 w-48 md:h-9 md:w-56" />
+              <Pulse className="mx-auto h-7 w-40 sm:h-8 sm:w-48 md:h-9 md:w-56" />
             </div>
 
             <div className={CONVO_GLOBE_STAGE}>
@@ -39,7 +39,7 @@ export function ConvoRouteLoading() {
             </div>
           </div>
 
-          <div className="z-20 flex shrink-0 items-center justify-center gap-4 py-6 sm:gap-6 sm:py-8">
+          <div className="z-20 flex shrink-0 items-center justify-center gap-3 py-4 sm:gap-6 sm:py-6 lg:py-8">
             <Pulse className="h-11 w-32 rounded-full bg-emerald-400/25 sm:w-48" />
             <Pulse className="size-12 rounded-full lg:hidden" />
           </div>

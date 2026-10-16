@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Link from "next/link";
 import { TIERS } from "@/app/constants";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,7 +8,11 @@ import { Check, Crown, Loader2, Zap } from "lucide-react";
 
 import { motionTransition } from "@/lib/motion";
 
-import { pricingFadeUp, type BillingInterval } from "./pricingShared";
+import {
+  pricingFadeUp,
+  type BillingInterval,
+  type PricingIntent,
+} from "./pricingShared";
 
 type PricingTier = (typeof TIERS)[number];
 
@@ -15,22 +20,26 @@ interface PricingTierCardProps {
   tier: PricingTier;
   index: number;
   billingInterval: BillingInterval;
+  intent?: PricingIntent;
   currentPlan?: string;
-  pendingTierKey: string | null;
-  onSelectTier: (tierKey: PricingTier["key"]) => void;
+  pendingTierKey?: string | null;
+  onSelectTier?: (tierKey: PricingTier["key"]) => void;
 }
 
 export function PricingTierCard({
   tier,
   index,
   billingInterval,
+  intent = "billing",
   currentPlan,
-  pendingTierKey,
+  pendingTierKey = null,
   onSelectTier,
 }: PricingTierCardProps) {
-  const isCurrentPlan = currentPlan === tier.key;
+  const isMarketing = intent === "marketing";
+  const isCurrentPlan = !isMarketing && currentPlan === tier.key;
   const isPending = pendingTierKey === tier.key;
-  const isDowngrade = tier.key === "free" && currentPlan !== "free";
+  const isDowngrade =
+    !isMarketing && tier.key === "free" && currentPlan !== "free";
   const price = billingInterval === "monthly" ? tier.monthly : tier.yearly;
   const periodLabel = billingInterval === "monthly" ? "/month" : "/year";
 
@@ -141,23 +150,36 @@ export function PricingTierCard({
           </ul>
         </div>
 
-        <Button
-          variant={button.variant}
-          size="md"
-          disabled={pendingTierKey !== null || isCurrentPlan}
-          className={`w-full ${button.className}`}
-          onClick={() => onSelectTier(tier.key)}
-        >
-          {isPending ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : isCurrentPlan ? (
-            "Active"
-          ) : isDowngrade ? (
-            "Downgrade to Free"
-          ) : (
-            tier.cta
-          )}
-        </Button>
+        {isMarketing ? (
+          <Button
+            asChild
+            variant={tier.popular || tier.crown ? "primary" : "secondary"}
+            size="md"
+            className="w-full"
+          >
+            <Link href="/login">
+              {tier.key === "free" ? "Start for free" : tier.cta}
+            </Link>
+          </Button>
+        ) : (
+          <Button
+            variant={button.variant}
+            size="md"
+            disabled={pendingTierKey !== null || isCurrentPlan}
+            className={`w-full ${button.className}`}
+            onClick={() => onSelectTier?.(tier.key)}
+          >
+            {isPending ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : isCurrentPlan ? (
+              "Active"
+            ) : isDowngrade ? (
+              "Downgrade to Free"
+            ) : (
+              tier.cta
+            )}
+          </Button>
+        )}
       </div>
     </motion.div>
   );

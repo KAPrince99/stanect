@@ -507,23 +507,15 @@ h6 {
 }
 
 /*
-  All/Favorites nest: one companion-card column. Width is authored CSS so it
-  cannot collapse to the labels. Margin around the nest is m-1.5 in the
-  component, matching this track to the third card at lg.
+  All/Favorites nest: hug the labels below lg so the search field keeps the
+  leftover width. At lg it matches one companion-card column. Margin around
+  the nest is m-1.5 in the component.
 */
 .dashboard-one-card {
   box-sizing: border-box;
-  width: calc((100% - 0.75rem) / 2);
-  min-width: calc((100% - 0.75rem) / 2);
-  flex: 0 0 calc((100% - 0.75rem) / 2);
-}
-
-@media (min-width: 640px) {
-  .dashboard-one-card {
-    width: calc((100% - 1.5rem) / 2);
-    min-width: calc((100% - 1.5rem) / 2);
-    flex: 0 0 calc((100% - 1.5rem) / 2);
-  }
+  width: max-content;
+  min-width: 0;
+  flex: 0 0 auto;
 }
 
 @media (min-width: 1024px) {

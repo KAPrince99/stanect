@@ -143,7 +143,7 @@ describe("DashboardCompanionList", () => {
     expect(screen.getByRole("link", { name: "Create companion" })).toHaveClass(
       "h-10",
       "!text-sm",
-      "w-full",
+      "max-md:hidden",
     );
   });
 

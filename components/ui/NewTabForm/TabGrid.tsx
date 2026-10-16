@@ -21,7 +21,7 @@ function TabGrid({ tabs, completedTabs, isActive, onTabClick }: TabGridProps) {
       variants={motionVariants.fadeUp}
       initial="hidden"
       animate="visible"
-      className="flex items-center min-w-0 w-full max-w-[600px] mx-auto mb-5 rounded-full border border-white/10 bg-white/8 backdrop-blur-md p-2"
+      className="mx-auto mb-4 flex min-w-0 w-full max-w-[600px] items-center rounded-full border border-white/10 bg-white/8 p-1.5 backdrop-blur-md sm:mb-5 sm:p-2"
     >
       {tabs.map((tab, index) => {
         const isCompleted = Boolean(completedTabs[index]);

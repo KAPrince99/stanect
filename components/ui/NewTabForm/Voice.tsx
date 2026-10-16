@@ -74,11 +74,11 @@ function Voice() {
   );
 
   return (
-    <div className="mx-auto max-w-2xl px-8">
+    <div className="mx-auto max-w-2xl">
       <TabContentHeader title="Voice and Session Length" className="my-0" />
       <VoiceSelector voice={voice} onSelectVoice={setVoice} />
 
-      <section className="my-10">
+      <section className="my-6 sm:my-10">
         <InputField
           label="Session Length (minutes)"
           type="number"

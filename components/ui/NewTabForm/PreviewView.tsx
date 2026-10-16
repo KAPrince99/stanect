@@ -29,7 +29,7 @@ function PreviewView({
 }: PreviewViewProps) {
   return (
     <main className="w-full">
-      <div className="mx-auto grid max-w-4xl grid-cols-1 items-center gap-8 px-4 lg:grid-cols-2 lg:gap-12">
+      <div className="mx-auto grid max-w-4xl grid-cols-1 items-center gap-6 px-0 sm:gap-8 lg:grid-cols-2 lg:gap-12">
         <motion.div
           className="mx-auto w-full max-w-[320px]"
           variants={motionVariants.cardPop}
@@ -51,7 +51,7 @@ function PreviewView({
           animate="visible"
           transition={motionTransition.soft}
         >
-          <div className="space-y-5 rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8">
+          <div className="space-y-5 rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6 md:p-8">
             <h3 className="type-display text-center text-[1.5rem] sm:text-[1.875rem]">
               Review companion
             </h3>

@@ -12,10 +12,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../button";
 import LordIcon from "../lordIcon";
 import { CREATE_LORD_ICON } from "../sidebar/sidebarNavConfig";
-import {
-  DASHBOARD_CARD_GRID,
-  DASHBOARD_CONTINUE_AVATAR_INSET,
-} from "./dashboard-layout";
+import { DASHBOARD_CONTINUE_AVATAR_INSET } from "./dashboard-layout";
 
 interface DashboardContinueStripProps {
   companionName: string;
@@ -41,10 +38,10 @@ function DashboardContinueStrip({
   const prefetchRoute = usePrefetchRoute();
 
   return (
-    <div className={cn(DASHBOARD_CARD_GRID, "mb-3 items-center sm:mb-4")}>
+    <div className="mb-3 flex items-center justify-between gap-3 sm:mb-4 sm:gap-6 md:gap-8">
       <div
         className={cn(
-          "col-span-2 flex min-w-0 items-center gap-2",
+          "flex min-w-0 flex-1 items-center gap-2 sm:gap-3",
           DASHBOARD_CONTINUE_AVATAR_INSET,
         )}
       >
@@ -57,7 +54,7 @@ function DashboardContinueStrip({
             sizes="40px"
           />
         </div>
-        <p className="min-w-0 truncate text-base text-white/55">
+        <p className="min-w-0 truncate text-sm text-white/55 sm:text-base">
           Keep going with{" "}
           <span className="font-semibold text-white">{companionName}</span>?
         </p>
@@ -65,16 +62,18 @@ function DashboardContinueStrip({
           asChild
           variant="primary"
           size="sm"
-          className={cn(THIN_PILL, "border-0")}
+          className={cn(THIN_PILL, "shrink-0 border-0")}
         >
           <Link
             href={continueHref}
             prefetch
+            aria-label="Continue convo"
             onMouseEnter={() => prefetchRoute(continueHref)}
             onFocus={() => prefetchRoute(continueHref)}
             onTouchStart={() => prefetchRoute(continueHref)}
           >
-            Continue convo
+            <span className="sm:hidden">Continue</span>
+            <span className="hidden sm:inline">Continue convo</span>
             <ArrowRight className="size-3.5" />
           </Link>
         </Button>
@@ -85,7 +84,10 @@ function DashboardContinueStrip({
           asChild
           variant="secondary"
           size="sm"
-          className={cn(CREATE_PILL, "w-full justify-center border-0")}
+          className={cn(
+            CREATE_PILL,
+            "max-md:hidden shrink-0 justify-center border-0",
+          )}
         >
           <Link
             href="/new"

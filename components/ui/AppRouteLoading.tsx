@@ -19,7 +19,7 @@ const PROFILE_INFO_COUNT = 4;
 
 function NewCompanionTabBarSkeleton() {
   return (
-    <div className="mx-auto mb-5 flex min-w-0 w-full max-w-[600px] items-center rounded-full border border-white/10 bg-white/8 p-2 backdrop-blur-md">
+    <div className="mx-auto mb-4 flex min-w-0 w-full max-w-[600px] items-center rounded-full border border-white/10 bg-white/8 p-1.5 backdrop-blur-md sm:mb-5 sm:p-2">
       {Array.from({ length: TAB_SLOT_COUNT }).map((_, index) => (
         <Fragment key={index}>
           <Pulse className="h-[30px] w-16 shrink-0 rounded-full" />
@@ -43,15 +43,15 @@ export function DashboardRouteLoading() {
       aria-label="Loading dashboard"
     >
       <div className={DASHBOARD_BOARD}>
-        <div className={`${DASHBOARD_CARD_GRID} mb-3 items-center sm:mb-4`}>
+        <div className="mb-3 flex items-center justify-between gap-3 sm:mb-4 sm:gap-6 md:gap-8">
           <div
-            className={`col-span-2 flex min-w-0 items-center gap-2 ${DASHBOARD_CONTINUE_AVATAR_INSET}`}
+            className={`flex min-w-0 flex-1 items-center gap-2 sm:gap-3 ${DASHBOARD_CONTINUE_AVATAR_INSET}`}
           >
             <Pulse className="size-10 shrink-0 rounded-xl" />
             <Pulse className="h-4 w-44" />
             <Pulse className="h-8 w-24 shrink-0 rounded-full bg-amber-400/25" />
           </div>
-          <Pulse className="h-10 w-full" />
+          <Pulse className="h-10 w-40 max-md:hidden shrink-0 rounded-full" />
         </div>
 
         <div
@@ -66,7 +66,7 @@ export function DashboardRouteLoading() {
           </div>
           <div
             data-skeleton="dashboard-filter"
-            className={`relative m-1.5 grid min-h-11 grid-cols-2 items-center rounded-2xl border border-white/20 ${DASHBOARD_ONE_CARD_WIDTH}`}
+            className={`relative m-1.5 grid min-h-11 shrink-0 grid-cols-2 items-center rounded-2xl border border-white/20 ${DASHBOARD_ONE_CARD_WIDTH}`}
           >
             <Pulse className="h-8 w-full rounded-xl" />
             <Pulse className="h-8 w-full rounded-xl" />
@@ -99,11 +99,11 @@ export function DashboardRouteLoading() {
 export function NewCompanionRouteLoading() {
   return (
     <div
-      className="flex min-h-screen flex-col bg-transparent pt-24 pb-28 lg:pb-16"
+      className="app-column-x flex min-h-screen flex-col bg-transparent pt-24 pb-28 md:pb-16 lg:pb-16"
       role="status"
       aria-label="Loading companion setup"
     >
-      <div className="mx-auto w-full max-w-4xl px-4">
+      <div className="mx-auto w-full max-w-4xl">
         <NewCompanionTabBarSkeleton />
         <AvatarSkeleton announce={false} showNav />
       </div>
@@ -169,7 +169,7 @@ export function PricingRouteLoading() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, index) => (
             <PricingTierGhost key={index} index={index} />
           ))}
@@ -203,7 +203,7 @@ export function ProfileRouteLoading() {
       aria-label="Loading profile"
     >
       <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl backdrop-blur-xl md:grid md:grid-cols-2">
-        <div className="relative border-b border-white/10 p-8 text-center md:border-b-0 md:border-r md:p-10">
+        <div className="relative border-b border-white/10 p-6 text-center sm:p-8 md:border-b-0 md:border-r md:p-10">
           <div className="relative z-10 grid grid-cols-[1fr_3fr] items-center gap-4 md:place-items-center md:px-6">
             <Pulse className="h-28 w-28 rounded-full md:h-32 md:w-32" />
             <div className="flex flex-col items-start space-y-2">
@@ -220,7 +220,7 @@ export function ProfileRouteLoading() {
           </div>
         </div>
 
-        <div className="p-8 md:p-10">
+        <div className="p-6 sm:p-8 md:p-10">
           <div className="mx-auto grid max-w-3xl gap-6">
             {Array.from({ length: PROFILE_INFO_COUNT }).map((_, index) => (
               <ProfileInfoRowGhost key={index} />

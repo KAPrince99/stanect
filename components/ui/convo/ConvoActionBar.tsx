@@ -30,7 +30,7 @@ function ConvoActionBar() {
   const showStarting = loadingStart || isStarting;
 
   return (
-    <div className="z-20 flex shrink-0 items-center justify-center gap-4 py-6 sm:gap-6 sm:py-8">
+    <div className="z-20 flex shrink-0 items-center justify-center gap-3 py-4 sm:gap-6 sm:py-6 lg:py-8">
       {!isCallLive ? (
         <Button
           variant="success"

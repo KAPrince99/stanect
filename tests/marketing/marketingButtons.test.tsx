@@ -5,6 +5,7 @@ import CompanyAbout from "@/app/(company)/company/CompanyAbout";
 import FeaturesPage from "@/app/(features)/features/page";
 import { NavbarPrimaryAction } from "@/app/(marketing)/components/Navbar/NavbarPrimaryAction";
 import Scenario from "@/app/(marketing)/components/Scenario/Scenario";
+import MarketingPricing from "@/components/ui/pricing/MarketingPricing";
 
 vi.mock("@/components/ui/lordIcon", () => ({
   default: () => null,
@@ -66,5 +67,24 @@ describe("marketing buttons", () => {
     const github = screen.getByRole("link", { name: "GitHub" });
     expect(github).toHaveAttribute("target", "_blank");
     expect(github).toHaveClass("border-white/20", "rounded-full", "h-12");
+  });
+
+  it("homepage pricing sells the plans instead of managing a subscription", () => {
+    render(<MarketingPricing />);
+
+    const startFree = screen.getByRole("link", { name: "Start for free" });
+    const goPro = screen.getByRole("link", { name: "Go Pro" });
+    const claimThrone = screen.getByRole("link", { name: "Claim Your Throne" });
+
+    expect(startFree).toHaveAttribute("href", "/login");
+    expect(goPro).toHaveAttribute("href", "/login");
+    expect(claimThrone).toHaveAttribute("href", "/login");
+    expect(startFree).toHaveClass("border-white/20", "rounded-full", "h-11");
+    expect(goPro).toHaveClass("from-brand-from", "rounded-full", "h-11");
+    expect(claimThrone).toHaveClass("from-brand-from", "rounded-full", "h-11");
+    expect(screen.queryByRole("button", { name: "Active" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Downgrade to Free" }),
+    ).not.toBeInTheDocument();
   });
 });

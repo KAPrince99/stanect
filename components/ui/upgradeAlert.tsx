@@ -15,7 +15,7 @@ export default function UpgradeAlert({
 }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
-      <div className="backdrop-blur-2xl bg-white/10 border border-white/20 p-10 rounded-3xl shadow-2xl max-w-md">
+      <div className="max-w-md rounded-3xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-2xl sm:p-10">
         <LordIcon
           src="https://cdn.lordicon.com/wdbwxkvh.json"
           trigger="loop"

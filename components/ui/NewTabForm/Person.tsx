@@ -45,7 +45,7 @@ function Person() {
     <div>
       <TabContentHeader title="Create Your Character" />
 
-      <div className="max-w-2xl mx-auto px-8 my-10 space-y-6">
+      <div className="mx-auto my-6 max-w-2xl space-y-6 sm:my-10">
         <InputField
           label="Companion Name"
           value={companionName}

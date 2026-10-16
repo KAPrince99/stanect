@@ -15,9 +15,8 @@ export const DASHBOARD_CARD_GRID =
   "grid w-full grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3";
 
 /**
- * One card column: 2-col + gap-3, sm 2-col + gap-6, lg 3-col + gap-6.
- * All/Favorites nest uses this width; m-1.5 insets it uniformly from the
- * outer search capsule.
+ * All/Favorites nest: hugs the labels below lg, one card column at lg.
+ * m-1.5 insets it uniformly from the outer search capsule.
  */
 export const DASHBOARD_ONE_CARD_WIDTH = "dashboard-one-card";
 

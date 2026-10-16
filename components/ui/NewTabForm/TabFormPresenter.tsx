@@ -42,7 +42,7 @@ function TabFormPresenter({
   canGoNext,
 }: TabFormPresenterProps) {
   return (
-    <div className="mx-auto w-full max-w-4xl px-4">
+    <div className="mx-auto w-full max-w-4xl">
       <TabGrid
         tabs={tabs}
         completedTabs={completedTabs}

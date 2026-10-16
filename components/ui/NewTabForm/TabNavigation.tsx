@@ -26,7 +26,7 @@ function TabNavigation({
       variants={motionVariants.fadeUp}
       initial="hidden"
       animate="visible"
-      className="my-8 flex justify-end gap-3"
+      className="my-6 flex justify-end gap-3 sm:my-8"
     >
       <Button
         type="button"
